@@ -68,17 +68,29 @@ jobs:
           start=$(date +%s)
           sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf timeout 1500 ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" 2>&1 | tail -60
           echo "LAUNCH_EXIT=$? LAUNCH_SECONDS=$(( $(date +%s) - start ))"
+          timeout 120 ./bin/adb wait-for-device || true
           ./bin/adb devices || true
-          ./bin/adb shell getprop ro.build.fingerprint || true
-          ./bin/adb shell getprop ro.build.version.release || true
-          ./bin/adb shell getprop sys.boot_completed || true
-          ./bin/adb shell getprop ro.hardware.egl || true
-          ./bin/adb shell getprop ro.boot.hardware.vulkan || true
+          for p in ro.build.fingerprint ro.build.version.release ro.build.version.sdk ro.product.cpu.abilist sys.boot_completed ro.hardware.egl ro.hardware.vulkan ro.boot.hardware.gralloc ro.debuggable; do
+            echo "PROP $p=$(./bin/adb shell getprop $p 2>&1)"
+          done
           ./bin/adb shell 'dumpsys SurfaceFlinger | grep -i -m3 "GLES"' || true
-          ps aux | grep -E 'crosvm|qemu' | grep -v grep | cut -c1-300 | head -5 || true
+          ./bin/adb shell 'ls /dev/input; getevent -pl 2>/dev/null | grep -E "add device|name:" | head -30' || true
+          ps -eo comm,args | grep -E '^(crosvm|qemu)' | cut -c1-200 | head -3 || true
+      - name: Stop, then boot under QEMU
+        continue-on-error: true
+        run: |
+          cd "$HOME/cf"
+          sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf ./bin/stop_cvd" 2>&1 | tail -2 || true
+          ls bin | grep -i qemu || echo "no qemu in host package bin/"
+          start=$(date +%s)
+          sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf timeout 1200 ./bin/launch_cvd --daemon --vm_manager=qemu_cli --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" 2>&1 | grep -vE 'casimir|log_tee' | tail -40
+          echo "QEMU_LAUNCH_SECONDS=$(( $(date +%s) - start ))"
+          timeout 120 ./bin/adb wait-for-device || true
+          echo "PROP qemu sys.boot_completed=$(./bin/adb shell getprop sys.boot_completed 2>&1)"
+          ps -eo comm,args | grep -E '^(crosvm|qemu)' | cut -c1-200 | head -3 || true
       - name: Logs on failure or success
         if: always()
         run: |
           cd "$HOME/cf" 2>/dev/null || exit 0
-          tail -n 60 cuttlefish/instances/cvd-1/logs/launcher.log 2>/dev/null || tail -n 60 cuttlefish_runtime/launcher.log 2>/dev/null || find . -name 'launcher.log' | head
+          f=$(find . /var/tmp/cvd -name launcher.log 2>/dev/null | head -n 1); grep -vE 'casimir|log_tee' "$f" | grep -E ' E |ERROR|BOOT|qemu|Detected unexpected' | tail -n 40 || true
           HOME="$HOME/cf" ./bin/stop_cvd 2>&1 | tail -3 || true
