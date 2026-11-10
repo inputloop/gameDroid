@@ -7,6 +7,7 @@
 
 use std::path::PathBuf;
 use std::process::ExitCode;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use gamedroid::frontend::{Action, Frontend, HostState, Mode};
@@ -177,6 +178,19 @@ impl Guest {
     }
 }
 
+/// Records every key that goes down, as the window system reports it,
+/// so that a press and release inside one frame is still noticed.
+struct KeyDowns(Arc<Mutex<Vec<minifb::Key>>>);
+
+impl minifb::InputCallback for KeyDowns {
+    fn add_char(&mut self, _: u32) {}
+    fn set_key_state(&mut self, key: minifb::Key, down: bool) {
+        if down {
+            self.0.lock().unwrap().push(key);
+        }
+    }
+}
+
 struct Args {
     dir: Option<PathBuf>,
     demo: bool,
@@ -298,6 +312,8 @@ fn run() -> Result<(), String> {
     )
     .map_err(|e| format!("opening the window: {e}"))?;
     window.set_target_fps(60);
+    let tapped = Arc::new(Mutex::new(Vec::new()));
+    window.set_input_callback(Box::new(KeyDowns(tapped.clone())));
 
     let mut pixels: Vec<u32> = vec![0; guest_size.0 as usize * guest_size.1 as usize];
     let mut picture = guest_size;
@@ -321,7 +337,7 @@ fn run() -> Result<(), String> {
         };
         // A key tapped and let go between two frames is not in the held
         // list any more; count it as held for this one frame so it is seen.
-        for key in window.get_keys_pressed(minifb::KeyRepeat::No) {
+        for key in tapped.lock().unwrap().drain(..) {
             if !state.keys.contains(&key) {
                 state.keys.push(key);
             }
@@ -364,6 +380,12 @@ fn main() -> ExitCode {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("gamedroid: {e}\n\n{USAGE}");
+            // Started by a double click, the console closes with the
+            // program: hold it open so the message can be read.
+            if cfg!(windows) && std::env::args().len() == 1 {
+                eprintln!("\nPress Enter to close.");
+                let _ = std::io::stdin().read_line(&mut String::new());
+            }
             ExitCode::FAILURE
         }
     }

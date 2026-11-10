@@ -217,6 +217,14 @@ pub fn ensure(
 /// [`ensure`] in gameDroid's own data folder, reporting progress as lines
 /// on standard error. The archive can be supplied with `GAMEDROID_IMAGE_ZIP`.
 pub fn ensure_default() -> Result<PathBuf, String> {
+    // Say what is missing before spending minutes on a download.
+    let host = bvmm::probe();
+    if !host.usable {
+        return Err(format!(
+            "this machine cannot run Android yet. {}",
+            host.detail
+        ));
+    }
     let data = data_dir();
     let archive = std::env::var_os("GAMEDROID_IMAGE_ZIP").map(PathBuf::from);
     if !data

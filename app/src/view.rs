@@ -43,7 +43,9 @@ impl Fit {
 pub fn rgb_to_window(rgb: &[u8], out: &mut Vec<u32>) {
     out.clear();
     out.extend(
-        rgb.chunks_exact(3)
+        rgb.as_chunks::<3>()
+            .0
+            .iter()
             .map(|p| (p[0] as u32) << 16 | (p[1] as u32) << 8 | p[2] as u32),
     );
 }
