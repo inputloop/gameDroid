@@ -74,7 +74,9 @@ jobs:
           grep -E 'tsc|TSC|clocksource|alibrat|APIC|apic|hpet|HPET|PIT|ypervisor|MHz|imer|sched_clock|Command line' boot.log | cut -c1-200 | head -n 70
           echo "--- last 25 lines"
           tail -n 25 boot.log | cut -c1-200
-          if grep -q "^Linux .*android" boot.log; then echo "E0B_KVM=PASS"; else echo "E0B_KVM=FAIL"; exit 1; fi
+          grep -q "^Linux .*android" boot.log || { echo "E0B_KVM=FAIL"; exit 1; }
+          echo "E0B_KVM=PASS"
+          if grep -qE "Switched to clocksource (tsc|kvm-clock)" boot.log; then echo "E0C_KVM=PASS"; else echo "E0C_KVM=FAIL (no precise clocksource)"; exit 1; fi
   whp:
     needs: kernel
     runs-on: windows-latest
@@ -100,4 +102,6 @@ jobs:
           Select-String -Path boot.log -CaseSensitive -Pattern 'tsc|TSC|clocksource|alibrat|APIC|apic|hpet|HPET|PIT|ypervisor|MHz|imer|sched_clock|Command line' | Select-Object -First 70 | ForEach-Object { $l = $_.Line; if ($l.Length -gt 200) { $l.Substring(0,200) } else { $l } }
           "--- last 25 lines"
           Get-Content boot.log -Tail 25 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
-          if (Select-String -Path boot.log -Pattern '^Linux .*android' -Quiet) { "E0B_WHP=PASS"; exit 0 } else { "E0B_WHP=FAIL"; exit 1 }
+          if (-not (Select-String -Path boot.log -Pattern '^Linux .*android' -Quiet)) { "E0B_WHP=FAIL"; exit 1 }
+          "E0B_WHP=PASS"
+          if (Select-String -Path boot.log -Pattern 'Switched to clocksource tsc' -Quiet) { "E0C_WHP=PASS"; exit 0 } else { "E0C_WHP=FAIL (no precise clocksource)"; exit 1 }

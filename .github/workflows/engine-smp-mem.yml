@@ -2,6 +2,7 @@
 # Engine track, milestone E2. More memory than fits below 4 GiB, and several
 # virtual processors, with a virtio disk still working. KVM runs both parts;
 # WHP runs the memory part (it has one processor for now).
+# Re-run trigger: bContain d2a0b5d+ (clock on WHP, memory above 4 GiB, SMP on KVM).
 name: engine-smp-mem
 on:
   workflow_dispatch:

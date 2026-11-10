@@ -2,6 +2,7 @@
 # Engine track, milestone E1. A real Linux kernel on bvmm finds a PCI bus,
 # binds its virtio-blk driver to a disk, reads what the host put there and
 # writes something the host can read back. KVM and WHP.
+# Re-run trigger: bContain d2a0b5d+ (clock on WHP, memory above 4 GiB, SMP on KVM).
 name: engine-disk
 on:
   workflow_dispatch:
