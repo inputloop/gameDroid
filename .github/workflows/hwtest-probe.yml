@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Runs the host probes on GitHub's runners. Two purposes: prove the scripts
+# execute cleanly on both platforms, and learn what the runners themselves
+# offer (KVM, hypervisor) for later CI boot tests.
+name: hwtest-probe
+on:
+  push:
+    paths:
+      - "tools/hwtest/**"
+      - ".github/workflows/hwtest-probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run probe
+        run: |
+          f="$(tools/hwtest/probe.sh results)"
+          cat "$f"
+          grep -q '^ready_for_boot_spike: ' "$f"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: probe-linux
+          path: results/
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run probe
+        shell: powershell
+        run: |
+          $f = & tools\hwtest\probe.ps1 -OutDir results
+          Get-Content $f
+          if (-not (Select-String -Path $f -Pattern '^ready_for_boot_spike: ' -Quiet)) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: probe-windows
+          path: results/
