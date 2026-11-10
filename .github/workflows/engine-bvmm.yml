@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Engine track, milestone E0. Builds bvmm from inputloop/bcontain and runs it
 # on real hardware virtualization: KVM on the Linux runner, Windows Hypervisor
-# Platform on the Windows runner. Steps continue after a failure so one run
-# shows how far the engine gets.
+# Platform on the Windows runner. A green run means every step passed.
 name: engine-bvmm
 on:
   workflow_dispatch:
@@ -38,18 +37,15 @@ jobs:
       - name: Unit tests
         run: cargo test -p bvmm
       - name: hypervisor-test (40-byte guest)
-        continue-on-error: true
         run: ./target/release/bcontain hypervisor-test
       - name: Fetch guest kernel
-        continue-on-error: true
         run: ./target/release/bcontain kernel fetch
       - name: Boot a container on bvmm (E0)
-        continue-on-error: true
         run: |
           set +e
           timeout 120 ./target/release/bcontain run --engine native alpine:3.20 -- uname -a 2>&1 | tee boot.log | tail -n 80
           echo "EXIT=${PIPESTATUS[0]}"
-          if grep -q "^Linux " boot.log; then echo "E0_KVM=PASS"; else echo "E0_KVM=FAIL"; fi
+          if grep -q "^Linux " boot.log; then echo "E0_KVM=PASS"; else echo "E0_KVM=FAIL"; exit 1; fi
   whp:
     runs-on: windows-latest
     timeout-minutes: 30
@@ -63,18 +59,14 @@ jobs:
       - name: Unit tests
         run: cargo test -p bvmm
       - name: hypervisor-test (40-byte guest)
-        continue-on-error: true
         run: .\target\release\bcontain.exe hypervisor-test
       - name: Fetch guest kernel
-        continue-on-error: true
         run: .\target\release\bcontain.exe kernel fetch
       - name: Boot a container on bvmm (E0)
-        continue-on-error: true
         shell: pwsh
         run: |
           $p = Start-Process -FilePath .\target\release\bcontain.exe -ArgumentList 'run','--engine','native','alpine:3.20','--','uname','-a' -RedirectStandardOutput boot.log -RedirectStandardError boot.err -PassThru -NoNewWindow
           if (-not $p.WaitForExit(120000)) { $p.Kill(); "TIMEOUT after 120 s" }
           Get-Content boot.log -Tail 80 -ErrorAction SilentlyContinue
           Get-Content boot.err -Tail 40 -ErrorAction SilentlyContinue
-          if (Select-String -Path boot.log -Pattern '^Linux ' -Quiet) { "E0_WHP=PASS" } else { "E0_WHP=FAIL" }
-          exit 0
+          if (Select-String -Path boot.log -Pattern '^Linux ' -Quiet) { "E0_WHP=PASS"; exit 0 } else { "E0_WHP=FAIL"; exit 1 }
