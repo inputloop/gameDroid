@@ -1,6 +1,6 @@
 # gameDroid design plan
 
-Status: draft v0.1, 2026-11-10. Nothing here has been built or benchmarked yet.
+Status: draft v0.2, 2026-11-10. License: GPL-3.0-or-later (see COPYING). Nothing here has been built or benchmarked yet.
 
 gameDroid is a free and open source Android emulator for desktop, built for
 playing games: first-class keymaps, controller support, high frame rates, and
@@ -16,6 +16,10 @@ These came from the project owner on 2026-11-10 and shape everything below.
 | Engine | A virtual machine running our own AOSP build |
 | Proprietary parts | FOSS core. Google apps and ARM translation are an opt-in download the user performs, never bundled |
 | Game targets | Offline and single-player; online gacha, RPG and strategy; competitive shooters and MOBAs; our own and sideloaded builds |
+| License | GPLv3 or later |
+| Android version | The current release (android17-release at the time of writing) |
+| Who builds it | One AI coding agent with subagents; the owner runs hardware tests |
+| Hardware | Variable; an NVIDIA RTX 3080 Ti must work and is the reference machine |
 
 One consequence to state plainly: competitive shooters and MOBAs cannot be
 promised. See section 8.
@@ -164,7 +168,8 @@ Profiles:
 
 ### 4.4 Guest image
 
-- Base: the current AOSP release branch (android-latest-release). Google now
+- Base: the current AOSP release branch (android-latest-release, which today
+  points at android17-release). Google now
   publishes source twice a year, which gives us a predictable rebase rhythm.
 - Device tree derived from Cuttlefish, x86_64, 64-bit primary with 32-bit app support if needed for older games.
 - Tablet-class defaults, landscape, hardware keyboard present so the IME stays out of the way.
@@ -219,7 +224,7 @@ tools/       image builder, compatibility-pack fetcher
 
 | Phase | Outcome | Exit test |
 |---|---|---|
-| 0. Spikes | Boot a Cuttlefish-derived image under crosvm and QEMU, on Linux and Windows, with gfxstream. Choose the VMM. Record the decision as an ADR | A 3D benchmark APK renders with GPU acceleration on both hosts, on Intel, AMD and NVIDIA |
+| 0. Spikes | Boot a Cuttlefish-derived image under crosvm and QEMU, on Linux and Windows, with gfxstream. Choose the VMM. Record the decision as an ADR | A 3D benchmark APK renders with GPU acceleration on both hosts on the RTX 3080 Ti reference machine |
 | 1. Playable shell | Window, audio, mouse as touch, keyboard, APK install, one instance, settings | An x86-native offline game is playable start to finish on both hosts |
 | 2. Input | Virtual devices, mapping engine, editor, profiles, controller passthrough and controller to touch | A touch-only shooter and a MOBA are comfortable on keyboard and mouse and on a controller |
 | 3. Compatibility | Compatibility pack (microG or GApps, ARM translation), device profiles, public compatibility database | An ARM-only gacha title installs from its store and runs |
@@ -298,19 +303,80 @@ we publish a compatibility entry.
 | Anti-cheat blocks the most popular titles | Stated up front; success is measured on the other three tiers first |
 | Scope | Linux and Windows together roughly doubles graphics and test work; the roadmap keeps features minimal until phase 2 |
 
-## 10. Still open
+## 10. License: GPLv3 or later
 
-1. Project license. Not chosen here. Note that QEMU is GPLv2 and Trinity is
-   GPLv2, so borrowing code from either constrains the choice; running the VMM
-   as a separate process keeps options open.
-2. Android version to start on: the current release branch, or one release
-   back for wider game compatibility.
-3. Team size and time budget, which sets how far phase 0 can go in parallel.
-4. Minimum host hardware and GPU vendors to support at first release.
-5. How compatibility-pack downloads are hosted and described, pending a
+Decided 2026-11-10. What it means for the parts we reuse:
+
+| Component | Its license | How we may use it |
+|---|---|---|
+| crosvm | BSD-3 | Link or patch freely |
+| gfxstream, AOSP, Cuttlefish, scrcpy | Apache 2.0 | Compatible with GPLv3; link or patch freely |
+| virglrenderer, SDL3 | MIT, zlib | Link freely |
+| XtMapper | GPLv3 | Code may be borrowed with attribution |
+| QEMU | GPLv2, with some files GPLv2 only | Run as a separate process only. Do not copy its code into ours; keep any QEMU patches under QEMU's own license in the vmm/ tree |
+| Trinity | GPLv2 per its README | Ideas only, unless its files turn out to say "or later". Not checked |
+| Google apps, ARM translators | Proprietary | Never in the repository or the image; user-fetched |
+
+Our AOSP device tree and guest agent are our own work and carry GPLv3+ too.
+Patches we hope to send upstream to an Apache or BSD project are written under
+that project's license from the start.
+
+## 11. How the work gets done: one agent
+
+The builder is a single AI coding agent that can fan work out to subagents. The
+plan has to fit what such an agent can and cannot verify.
+
+Measured in the agent's cloud session on 2026-11-10: 4 CPU cores, 15 GB RAM,
+about 31 GB free disk, no /dev/kvm, no GPU, Linux only, and the container is
+discarded when the session ends.
+
+| Work | Can the agent verify it alone? | How it gets verified |
+|---|---|---|
+| Input engine, mapping maths, profile schema and loader, instance manager logic | Yes | Unit and property tests in the session and in CI |
+| Host builds for Linux and Windows | Build only | GitHub Actions on Linux and Windows runners |
+| Launcher and overlay UI | Partly | Headless render tests and screenshots; feel is judged by the owner |
+| Booting the VM, WHPX, KVM | No | Owner's machine |
+| GPU acceleration, frame rate, latency | No | Owner's RTX 3080 Ti machine |
+| AOSP image build | No. A full build needs several hundred GB of disk and far more CPU and RAM than a session has | A build machine or self-hosted runner the owner provides; until then, start from prebuilt Cuttlefish images and add our device changes as overlays |
+
+Working rules that follow:
+
+1. Logic first. The mapping engine and profile format are the product's core
+   and are fully testable without hardware, so they are built first and in
+   parallel with the phase 0 spikes rather than after them.
+2. Every hardware-dependent step ships with a script the owner runs
+   (`tools/hwtest`), which collects versions, logs and a pass or fail result
+   into one file to hand back. The agent never reports such a step as working
+   on its own word.
+3. Subagents take separable, checkable units (one mapping primitive and its
+   tests, one CI job, one doc survey). Anything load-bearing is reviewed by the
+   main agent before merge.
+4. Nothing lives only in a session. Each unit of work ends in a pushed commit.
+5. Decisions are recorded as short ADRs in docs/, since the agent has no
+   memory between sessions beyond the repository.
+
+### Hardware targets
+
+- Reference and must-pass: NVIDIA RTX 3080 Ti with the proprietary driver, on
+  Linux and on Windows. The VM design helps here: the guest never loads the
+  host's GPU driver, so the NVIDIA limitation that hurts Waydroid does not apply.
+- Should work: recent AMD and Intel GPUs with Vulkan 1.3 drivers.
+- Best effort: integrated graphics and older cards. Settings scale down
+  (resolution, frame cap); no promise of high refresh.
+- CPU: x86_64 with hardware virtualization enabled. On Windows, the Windows
+  Hypervisor Platform feature turned on.
+
+## 12. Still open
+
+1. Does the owner have a machine for AOSP builds (roughly 400 GB disk, 64 GB
+   RAM, many cores), or do we stay on prebuilt Cuttlefish images plus overlays
+   for the first phases?
+2. Is the 3080 Ti machine dual-boot, or are Linux and Windows separate machines?
+   This sets how fast the hardware test loop can turn.
+3. How compatibility-pack downloads are hosted and described, pending a
    reading of the actual license texts.
 
-## 11. Sources
+## 13. Sources
 
 Gathered by web search on 2026-11-10. Search summaries were used; the
 underlying repositories and papers were not read in full.
