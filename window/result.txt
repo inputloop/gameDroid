@@ -1,4 +1,4 @@
-window 450x800 at 125,50: gameDroid - direct (F1: game mode, Example Shooter)
+window 383x680 at 158,110: gameDroid - direct (F1: game mode, Example Shooter)
 ok: /home/runner/window/1-direct-drag.png #FFFFFF
 ok: 0 ]
 ok: /home/runner/window/3-typing.png #E0E040
