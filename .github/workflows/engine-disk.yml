@@ -2,7 +2,7 @@
 # Engine track, milestone E1. A real Linux kernel on bvmm finds a PCI bus,
 # binds its virtio-blk driver to a disk, reads what the host put there and
 # writes something the host can read back. KVM and WHP.
-# Re-run trigger: bContain d2a0b5d+ (clock on WHP, memory above 4 GiB, SMP on KVM).
+# Every test also requires the guest to shut down cleanly.
 name: engine-disk
 on:
   workflow_dispatch:
@@ -54,6 +54,7 @@ jobs:
           grep -q '^BVMM-DISK-TEST' boot.log || { echo "FAIL: guest did not read the host's bytes"; ok=0; }
           grep -q '^SECTORS=131072' boot.log || { echo "FAIL: wrong or missing capacity"; ok=0; }
           [ "$back" = "WRITTEN-BY-GUEST" ] || { echo "FAIL: host does not see the guest's write"; ok=0; }
+          grep -qE "Restarting system|machine restart" boot.log || { echo "FAIL: guest did not shut down cleanly"; ok=0; }
           if [ "$ok" = 1 ]; then echo "E1_KVM=PASS"; else echo "E1_KVM=FAIL"; exit 1; fi
   whp:
     runs-on: windows-latest
@@ -93,4 +94,5 @@ jobs:
           if (-not (Select-String -Path boot.log -Pattern '^BVMM-DISK-TEST' -Quiet)) { "FAIL: guest did not read the host's bytes"; $ok = $false }
           if (-not (Select-String -Path boot.log -Pattern '^SECTORS=131072' -Quiet)) { "FAIL: wrong or missing capacity"; $ok = $false }
           if ($back -ne "WRITTEN-BY-GUEST") { "FAIL: host does not see the guest's write"; $ok = $false }
+          if (-not (Select-String -Path boot.log -Pattern 'Restarting system|machine restart' -Quiet)) { "FAIL: guest did not shut down cleanly"; $ok = $false }
           if ($ok) { "E1_WHP=PASS"; exit 0 } else { "E1_WHP=FAIL"; exit 1 }

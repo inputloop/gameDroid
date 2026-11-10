@@ -2,7 +2,7 @@
 # Engine track, milestone E2. More memory than fits below 4 GiB, and several
 # virtual processors, with a virtio disk still working. KVM runs both parts;
 # WHP runs the memory part (it has one processor for now).
-# Re-run trigger: bContain d2a0b5d+ (clock on WHP, memory above 4 GiB, SMP on KVM).
+# Every test also requires the guest to shut down cleanly.
 name: engine-smp-mem
 on:
   workflow_dispatch:
@@ -55,6 +55,7 @@ jobs:
           echo "MEMTOTAL_KB=$kb"
           [ "${kb:-0}" -gt 4700000 ] || { echo "FAIL: guest sees too little memory"; ok=0; }
           grep -q '^BVMM-DISK-TEST' boot.log || { echo "FAIL: disk read failed"; ok=0; }
+          grep -qE "Restarting system|machine restart" boot.log || { echo "FAIL: guest did not shut down cleanly"; ok=0; }
           if [ "$ok" = 1 ]; then echo "E2_KVM=PASS"; else echo "E2_KVM=FAIL"; exit 1; fi
   whp:
     runs-on: windows-latest
@@ -93,4 +94,5 @@ jobs:
           "MEMTOTAL_KB=$kb"
           if ($kb -le 4700000) { "FAIL: guest sees too little memory"; $ok = $false }
           if (-not (Select-String -Path boot.log -Pattern '^BVMM-DISK-TEST' -Quiet)) { "FAIL: disk read failed"; $ok = $false }
+          if (-not (Select-String -Path boot.log -Pattern 'Restarting system|machine restart' -Quiet)) { "FAIL: guest did not shut down cleanly"; $ok = $false }
           if ($ok) { "E2_WHP_MEMORY=PASS"; exit 0 } else { "E2_WHP_MEMORY=FAIL"; exit 1 }

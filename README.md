@@ -19,6 +19,7 @@ profiles, and high frame rates. Linux and Windows. GPLv3 or later.
 | Engine boots a Linux kernel on Linux (KVM) | Working in CI |
 | Engine boots a Linux kernel on Windows (WHP) | Working in CI |
 | Engine has a PCI bus and a virtio disk | Working in CI on both hosts |
+| Several processors and more than 4 GiB of memory | Working in CI on Linux. On Windows: memory yes, still one processor |
 | Android's own kernel boots on the engine | Working in CI on both hosts; on Windows its clock is still coarse |
 | Engine boots Android | Not yet. Needs several CPUs, more memory, more devices, and Android's boot sequence |
 | A picture on screen | Not yet |
@@ -112,9 +113,9 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 |---|---|---|
 | E0 | A real Linux kernel boots on KVM and on WHP | Done in CI. Still to repeat on the Intel reference laptop |
 | E0b | Android's own kernel boots on both hosts | Done in CI |
-| E0c | That kernel gets a precise clock on Windows | Next |
+| E0c | That kernel gets a precise clock on Windows | Open. A first fix failed and was withdrawn |
 | E1 | PCI and a virtio disk | Done in CI on both hosts |
-| E2 | Several CPUs and large memory | Planned |
+| E2 | Several CPUs and large memory | Done in CI on Linux; Windows has the memory, one CPU so far |
 | E3 | ACPI and clean power-off | Planned |
 | E4 | Network and vsock | Planned |
 | E5 | Android boots, no screen | Planned |
@@ -128,6 +129,10 @@ the mapping editor needs E7, performance work needs E8.
 
 ## Things worth knowing before you get excited
 
+- **Windows is behind Linux.** On Windows the engine runs one processor, and
+  Android's kernel has only a coarse clock there. A first fix for the clock
+  made things worse and was withdrawn
+  ([what happened](docs/engine/results/2026-11-10-E2-and-clock.md)).
 - **No GPU acceleration until E8.** Leading with our own engine was a choice;
   the faster route through existing engines was set aside. What that route
   would probably have delivered is recorded as numbered guesses in
