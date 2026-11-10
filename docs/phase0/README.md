@@ -10,13 +10,21 @@ Nothing in this phase is product code. Spikes are thrown away; findings are kept
 
 | Step | State | Evidence |
 |---|---|---|
-| 0.1 Host probe scripts | Written. Linux script run in the agent's container. Both run in CI on GitHub's runners | `tools/hwtest/`, workflow `hwtest-probe` |
+| 0.1 Host probe scripts | Done. Both run green on GitHub's Linux and Windows runners | `tools/hwtest/`, workflow `hwtest-probe` run 2 |
 | 0.2 Owner runs the probes on both 3080 Ti machines | Waiting on owner | result files |
-| 0.3 Linux boot spike: crosvm, then QEMU | Not started; needs 0.2 | |
+| 0.3a Linux boot, crosvm, software GPU, in CI | Done: Android 17 boots in 77 s | `results/2026-11-10-ci-linux-crosvm.md` |
+| 0.3b Linux boot, QEMU, in CI | Attempted, inconclusive (script fault, QEMU not installed) | same file |
+| 0.3c Linux boot with gfxstream on the 3080 Ti | Not started; needs 0.2 | |
 | 0.4 Windows control: stock Android Emulator | Not started; needs 0.2 | |
-| 0.5 Windows boot spike: crosvm, then QEMU | Not started; needs 0.2 | |
-| 0.6 Overlay or rebuild: classify guest changes | Draft below, to be confirmed in 0.3 | |
+| 0.5a Windows: build crosvm with WHPX in CI | Not started. The Windows runner has the hypervisor platform on, so this can be tried without the owner | |
+| 0.5b Windows boot with gfxstream on the 3080 Ti | Not started; needs 0.2 and 0.5a | |
+| 0.6 Overlay or rebuild: classify guest changes | Draft below | |
 | 0.7 ADR 0001 decided | Open | |
+
+What CI can and cannot do, learned from the probes: GitHub's Linux runner has
+KVM and its Windows runner has the Windows Hypervisor Platform enabled. Neither
+has a GPU. So VMM boot spikes can run in CI; anything about graphics still
+needs the owner's machines.
 
 ## What research says before any hardware is touched
 

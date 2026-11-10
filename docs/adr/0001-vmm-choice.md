@@ -23,7 +23,11 @@ See "How the VMM gets chosen" in `docs/phase0/README.md`.
 
 ## Evidence
 
-None yet. Result files from the spike matrix will be listed here.
+- 2026-11-10: crosvm boots the prebuilt Android 17 Cuttlefish image under KVM
+  on Linux with software graphics, in CI.
+  `docs/phase0/results/2026-11-10-ci-linux-crosvm.md`
+- QEMU on Linux: attempted, inconclusive.
+- Windows: nothing yet. This is the deciding evidence.
 
 ## Decision
 
