@@ -46,11 +46,14 @@ output, not photos of a screen. Image pull progress lines were left out.
 
 ### The target: stock Android 17 in a virtual machine
 
-<!-- android-reference-screenshot -->
-The same Android 17 image gameDroid will run has been booted in CI under a
-different, existing engine (crosvm) to learn what Android expects. A screenshot
-from that run will appear here once the capture job has produced one.
-<!-- /android-reference-screenshot -->
+This is the Android 17 image gameDroid will run, booted in CI on 2026-11-10
+under a different, existing engine (crosvm) to learn what Android expects. It
+is a real screenshot taken from inside the guest with `screencap`. It is not
+gameDroid's engine and not GPU accelerated: the picture was drawn by the CPU.
+
+<img src="docs/screenshots/android17-crosvm-reference.png" alt="Android 17 home screen in the reference VM" width="300">
+
+Getting this same screen out of bvmm, in a window, is milestone E6.
 
 What that run taught us is written up in
 [docs/engine/reference](docs/engine/reference/README.md). The short version:
