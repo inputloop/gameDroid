@@ -21,7 +21,7 @@ on:
       - "core/device/**"
       - "Cargo.lock"
 permissions:
-  contents: write  # the last step commits a screenshot, when Android drew one
+  contents: write  # to publish logs and the screenshot to the ci-logs branch
 env:
   RUN_SECONDS: ${{ inputs.seconds || '300' }}
 jobs:
@@ -74,10 +74,11 @@ jobs:
           exec > >(tee summary.txt) 2>&1
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
-          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'system_server' 'ISensors' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
+          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'system_server' 'ISensors' 'sys.boot_completed=1'; do
             n=$(grep -c -- "$pat" android.log); l=$(grep -m1 -- "$pat" android.log | show)
             echo "[$n] $pat :: $l"
           done
+          if grep -q 'sys.boot_completed=1' android.log; then echo "E5_KVM=PASS (Android reported boot completed)"; else echo "E5_KVM=FAIL"; fi
           echo "=== first-stage init and mounts (first 60)"
           grep -E 'init: |fs_mgr|avb|dm-|device-mapper|EXT4-fs|F2FS|erofs|super|by-name' android.log | show | head -n 60
           echo "=== errors and failures (first 70, deduplicated by message)"
@@ -110,15 +111,5 @@ jobs:
         run: |
           cd "$HOME/gd" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
           "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png
-      - name: Commit the screenshot, if there is one
-        if: always()
-        run: |
-          [ -f "$HOME/gd/screen.png" ] || exit 0
-          mkdir -p docs/screenshots
-          cp "$HOME/gd/screen.png" docs/screenshots/android17-bvmm-kvm-latest.png
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/android17-bvmm-kvm-latest.png
-          git commit -m "Screenshot: Android 17 on bvmm under KVM (CI run ${GITHUB_RUN_ID})" || exit 0
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Verdict
+        run: grep -q 'sys.boot_completed=1' "$HOME/gd/android.log"
