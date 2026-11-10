@@ -1,5 +1,9 @@
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 69 to lock.ppm
-gamedroid-run: saved frame 166 to after-swipe.ppm
-gamedroid-run: saved frame 183 to after-second-swipe.ppm
+gamedroid-run: saved frame 109 to lock.ppm
+gamedroid-run: saved frame 229 to after-swipe.ppm
+gamedroid-run: saw `GD_SHELL_OK`
+gamedroid-run: APK installed (30275058 bytes)
+gamedroid-run: EXPECT FAILED: `GD_START_STATUS=0` did not appear within 60 s
+gamedroid-run: saved frame 457 to game-1.ppm
+gamedroid-run: saved frame 458 to game-2.ppm
 gamedroid-run: script finished
