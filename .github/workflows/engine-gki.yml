@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Engine track, milestone E0b. Android's kernel (a stock GKI build) has no
+# Hyper-V support, which bvmm leans on for timers on Windows. This takes the
+# kernel out of the stock Android 17 image and boots it on bvmm with a small
+# container as userspace, on KVM and on WHP, to see whether it gets a clock.
+name: engine-gki
+on:
+  workflow_dispatch:
+    inputs:
+      bcontain_ref:
+        description: "Branch, tag or commit of inputloop/bcontain to test"
+        default: "claude/gifted-ramanujan-i2r9yh"
+      kernel_args:
+        description: "Extra kernel arguments"
+        default: "ignore_loglevel"
+  push:
+    paths:
+      - ".github/workflows/engine-gki.yml"
+      - "tools/engine/extract-boot-kernel.py"
+permissions:
+  contents: read
+env:
+  BCONTAIN_REF: ${{ inputs.bcontain_ref || 'claude/gifted-ramanujan-i2r9yh' }}
+  BCONTAIN_KERNEL_ARGS: ${{ inputs.kernel_args || 'ignore_loglevel' }}
+jobs:
+  kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the stock Android image and take its kernel
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          sudo curl -fsSL https://us-apt.pkg.dev/doc/repo-signing-key.gpg -o /etc/apt/trusted.gpg.d/artifact-registry.asc
+          echo "deb https://us-apt.pkg.dev/projects/android-cuttlefish-artifacts android-cuttlefish main" | sudo tee /etc/apt/sources.list.d/artifact-registry.list
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cuttlefish-base cuttlefish-user >/dev/null
+          mkdir -p "$HOME/cf" out
+          cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory="$HOME/cf" 2>&1 | tail -2
+          python3 tools/engine/extract-boot-kernel.py "$HOME/cf/boot.img" out/gki-kernel
+          ls -la out/ && sha256sum out/gki-kernel
+          strings out/gki-kernel | grep -m1 -E '^[0-9]+\.[0-9]+\.[0-9]+.*android' || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gki-kernel
+          path: out/gki-kernel
+  kvm:
+    needs: kernel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: inputloop/bcontain
+          ref: ${{ env.BCONTAIN_REF }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: gki-kernel
+          path: gki
+      - name: Open /dev/kvm to the runner user
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - run: cargo build --release -p bcontain
+      - name: Boot the Android kernel on bvmm (KVM)
+        run: |
+          set +e
+          timeout 90 ./target/release/bcontain run --engine native --kernel gki/gki-kernel alpine:3.20 -- uname -a > boot.log 2>&1
+          echo "EXIT=$?"
+          grep -vE '^\s+\[[0-9]+/[0-9]+\]' boot.log | cut -c1-200 | tail -n 150
+          if grep -q "^Linux .*android" boot.log; then echo "E0B_KVM=PASS"; else echo "E0B_KVM=FAIL"; exit 1; fi
+  whp:
+    needs: kernel
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: inputloop/bcontain
+          ref: ${{ env.BCONTAIN_REF }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: gki-kernel
+          path: gki
+      - run: cargo build --release -p bcontain
+      - name: Boot the Android kernel on bvmm (WHP)
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath .\target\release\bcontain.exe -ArgumentList 'run','--engine','native','--kernel','gki\gki-kernel','alpine:3.20','--','uname','-a' -RedirectStandardOutput boot.log -RedirectStandardError boot.err -PassThru -NoNewWindow
+          if (-not $p.WaitForExit(90000)) { $p.Kill(); "TIMEOUT after 90 s" }
+          Get-Content boot.err -Tail 30 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
+          Get-Content boot.log -Tail 150 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
+          if (Select-String -Path boot.log -Pattern '^Linux .*android' -Quiet) { "E0B_WHP=PASS"; exit 0 } else { "E0B_WHP=FAIL"; exit 1 }
