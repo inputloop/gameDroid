@@ -13,7 +13,7 @@ permissions:
   contents: read
 jobs:
   boot:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # cuttlefish-base 1.57.14 does not install on 26.04 (libxml2 dependency)
     timeout-minutes: 45
     steps:
       - name: Open /dev/kvm to the runner user
@@ -33,6 +33,9 @@ jobs:
           sudo apt-get install -y cuttlefish-base cuttlefish-user
           sudo usermod -aG kvm,cvdnetwork,render "$USER"
           dpkg -l | grep -i cuttlefish || true
+          sudo systemctl restart cuttlefish-host-resources || true
+          systemctl --no-pager status cuttlefish-host-resources | head -15 || true
+          ip -br link | head -20
       - name: Record tool help (launch flags are not confirmed by docs we read)
         continue-on-error: true
         run: |
@@ -45,7 +48,7 @@ jobs:
         run: |
           mkdir -p "$HOME/cf" && cd "$HOME/cf"
           df -h .
-          sg cvdnetwork -c "cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory=$HOME/cf" 2>&1 | tail -40
+          sudo su "$USER" -c "id; cd $HOME/cf && cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory=$HOME/cf" 2>&1 | tail -40
           ls -la "$HOME/cf" | head -60
           df -h .
           ls bin 2>/dev/null | head -40
@@ -55,7 +58,7 @@ jobs:
         run: |
           cd "$HOME/cf"
           start=$(date +%s)
-          sudo -u "$USER" -g kvm env HOME="$HOME/cf" sg cvdnetwork -c "HOME=$HOME/cf ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" 2>&1 | tail -60
+          sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf timeout 1500 ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" 2>&1 | tail -60
           echo "LAUNCH_EXIT=$? LAUNCH_SECONDS=$(( $(date +%s) - start ))"
           ./bin/adb devices || true
           ./bin/adb shell getprop ro.build.fingerprint || true
