@@ -6,11 +6,14 @@ on:
   push:
     paths:
       - "core/**"
+      - "app/**"
+      - "tools/ci/window-test.sh"
+      - "Cargo.lock"
       - "profiles/**"
       - "Cargo.toml"
       - ".github/workflows/core.yml"
 permissions:
-  contents: read
+  contents: write  # the window job publishes its screenshots to ci-logs
 jobs:
   test:
     strategy:
@@ -26,3 +29,19 @@ jobs:
       - run: cargo fmt --all -- --check
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace
+
+  # The window, driven with real X input in demo mode (no Android needed).
+  window:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev >/dev/null
+      - run: cargo build --release -p gamedroid
+      - name: Drive the window
+        run: xvfb-run -a -s "-screen 0 700x900x24" tools/ci/window-test.sh target/release/gamedroid "$HOME/window" 2>&1 | tee "$HOME/window/result.txt"
+      - name: Publish screenshots to the ci-logs branch
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/window" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" window result.txt window.err 1-direct-drag.png 2-released.png 3-typing.png 4-game-mode.png 5-let-go.png
