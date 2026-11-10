@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Proves tools/hwtest/win-control.ps1 runs end to end on a clean Windows
+# machine before the owner is asked to run it. No GPU on the runner, so it uses
+# software rendering; the owner's run uses the real GPU.
+name: hwtest-win-control
+on:
+  push:
+    paths:
+      - "tools/hwtest/win-control.ps1"
+      - ".github/workflows/hwtest-win-control.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  control:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run control (software GPU, headless, private JDK path)
+        shell: powershell
+        run: |
+          & tools\hwtest\win-control.ps1 -AcceptLicenses -Gpu swiftshader_indirect -Headless -ForceLocalJdk -OutDir results -WorkDir D:\hwtest
+          $code = $LASTEXITCODE
+          Get-ChildItem results | ForEach-Object { Get-Content $_.FullName }
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: win-control
+          path: results/
