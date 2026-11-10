@@ -239,6 +239,12 @@ def runtime_bootconfig(boot_device, vbmeta_guid, memory_mib, display):
         'androidboot.hypervisor.protected_vm.supported = "0"',
         'androidboot.hypervisor.version = "gamedroid-bvmm"',
         'androidboot.serialconsole = "0"',
+        # Services that listen on vsock for a host peer. Nobody connects yet,
+        # but they need the address to start.
+        'androidboot.vsock_lights_port = "6900"',
+        'androidboot.vsock_lights_cid = "3"',
+        'androidboot.vsock_tombstone_port = "6600"',
+        'androidboot.modem_simulator_ports = "9600"',
         # Verified boot: unlocked, as on the stock virtual device.
         f'androidboot.vbmeta.device = "PARTUUID={vbmeta_guid}"',
         'androidboot.vbmeta.avb_version = "1.2"',

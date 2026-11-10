@@ -69,7 +69,8 @@ jobs:
           timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/bcontain/target/release/bvmm" run \
             --kernel kernel --initrd initrd.img --cmdline-file cmdline.txt \
             --disk os.layout --cpus 2 --memory 4096 \
-            --display 720x1280 --screenshot screen.ppm > android.log 2> bvmm.err
+            --display 720x1280 --screenshot screen.ppm --touchscreen --keyboard \
+            --sink-consoles 21 --vsock 3 --rng > android.log 2> bvmm.err
           echo "EXIT=$? (124 means it was still running when time was up)"
           echo "LINES=$(wc -l < android.log)"
           echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
@@ -81,7 +82,7 @@ jobs:
           exec > >(tee summary.txt) 2>&1
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
-          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
+          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'system_server' 'hw_random\|virtio_rng' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
             n=$(grep -c -- "$pat" android.log); l=$(grep -m1 -- "$pat" android.log | show)
             echo "[$n] $pat :: $l"
           done
