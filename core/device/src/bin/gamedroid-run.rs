@@ -190,8 +190,12 @@ fn run_script(steps: Vec<Step>, session: Session) {
                         }
                     }
                 },
+                // Ask the package manager for the app's launcher activity,
+                // then start that. (`monkey`, the usual shortcut, aborts on
+                // this image.)
                 Step::Start(package) => session.shell(&format!(
-                    "monkey -p {package} -c android.intent.category.LAUNCHER 1; \
+                    "am start -n \"$(cmd package resolve-activity --brief \
+                     -c android.intent.category.LAUNCHER {package} | tail -n 1)\"; \
                      echo GD_START''_STATUS=$?"
                 )),
             }
