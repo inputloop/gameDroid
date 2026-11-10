@@ -1,15 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Engine track, milestone E5. Boot the stock Android 17 image on bvmm.
 # The image set is prepared by tools/engine/android_prepare.py (which does
-# what Cuttlefish's bootloader would) and started with the bvmm command.
+# what Cuttlefish's bootloader would) and started with gamedroid-run, which
+# describes the machine and runs it on the bvmm engine.
 # KVM only for now. Exploratory: it reports how far Android gets.
 name: engine-android
 on:
   workflow_dispatch:
     inputs:
-      bcontain_ref:
-        description: "Branch, tag or commit of inputloop/bcontain to test"
-        default: "claude/gifted-ramanujan-i2r9yh"
       seconds:
         description: "How long to let Android run"
         default: "300"
@@ -20,10 +18,11 @@ on:
       - "tools/engine/test_android_prepare.py"
       - "tools/engine/ppm_to_png.py"
       - "tools/ci/publish-logs.sh"
+      - "core/device/**"
+      - "Cargo.lock"
 permissions:
   contents: write  # the last step commits a screenshot, when Android drew one
 env:
-  BCONTAIN_REF: ${{ inputs.bcontain_ref || 'claude/gifted-ramanujan-i2r9yh' }}
   RUN_SECONDS: ${{ inputs.seconds || '300' }}
 jobs:
   kvm:
@@ -31,17 +30,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: inputloop/bcontain
-          ref: ${{ env.BCONTAIN_REF }}
-          path: bcontain
-      - run: git -C bcontain log -1 --format='bcontain %H %s'
       - name: Tool tests
         run: python3 -W error tools/engine/test_android_prepare.py
       - uses: dtolnay/rust-toolchain@stable
-      - name: Build bvmm
-        run: cd bcontain && cargo build --release -p bvmm --bin bvmm
+      - name: Build gamedroid-run
+        run: |
+          cargo build --release -p gamedroid-device --bin gamedroid-run
+          grep -A3 'name = "bvmm"' Cargo.lock | grep source
       - name: Host setup and image fetch
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
@@ -66,11 +61,8 @@ jobs:
         run: |
           set +e
           cd "$HOME/gd"
-          timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/bcontain/target/release/bvmm" run \
-            --kernel kernel --initrd initrd.img --cmdline-file cmdline.txt \
-            --disk os.layout --cpus 2 --memory 4096 \
-            --display 720x1280 --screenshot screen.ppm --touchscreen --keyboard \
-            --sink-consoles 21 --vsock 3 --rng > android.log 2> bvmm.err
+          timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/target/release/gamedroid-run" . \
+            --cpus 2 --memory 4096 --display 720x1280 --screenshot screen.ppm > android.log 2> bvmm.err
           echo "EXIT=$? (124 means it was still running when time was up)"
           echo "LINES=$(wc -l < android.log)"
           echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
@@ -82,7 +74,7 @@ jobs:
           exec > >(tee summary.txt) 2>&1
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
-          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'system_server' 'hw_random\|virtio_rng' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
+          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'system_server' 'ISensors' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
             n=$(grep -c -- "$pat" android.log); l=$(grep -m1 -- "$pat" android.log | show)
             echo "[$n] $pat :: $l"
           done

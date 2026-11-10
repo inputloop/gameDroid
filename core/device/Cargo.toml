@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[package]
+name = "gamedroid-device"
+description = "gameDroid's virtual Android device: the machine Android runs in, built on the bvmm engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# The engine. Pinned by Cargo.lock; `cargo update -p bvmm` moves it.
+bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-ramanujan-i2r9yh" }
+
+[[bin]]
+name = "gamedroid-run"
+path = "src/bin/gamedroid-run.rs"
