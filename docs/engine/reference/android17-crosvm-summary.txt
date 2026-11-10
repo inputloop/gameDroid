@@ -1,0 +1,260 @@
+=== uname
+Linux localhost 6.12.74-android16-6-g3ec022196c4e-ab15076761 #1 SMP PREEMPT Tue Mar 24 05:36:21 UTC 2026 x86_64 Toybox
+=== kernel config, the parts that decide transport and boot
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_X86_X2APIC=y
+CONFIG_X86_MPPARSE=y
+CONFIG_EFI=y
+CONFIG_RELOCATABLE=y
+CONFIG_RANDOMIZE_BASE=y
+CONFIG_ACPI=y
+CONFIG_PCI_MMCONFIG=y
+CONFIG_VSOCKETS=y
+CONFIG_VIRTIO_VSOCKETS=m
+CONFIG_VIRTIO_VSOCKETS_COMMON=y
+CONFIG_PCI=y
+CONFIG_OF=y
+CONFIG_VIRTIO_BLK=m
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_VIRTIO_ANCHOR=y
+CONFIG_VIRTIO=y
+CONFIG_VIRTIO_PCI_LIB=m
+CONFIG_VIRTIO_PCI_LIB_LEGACY=m
+CONFIG_VIRTIO_MENU=y
+CONFIG_VIRTIO_PCI=m
+CONFIG_VIRTIO_PCI_ADMIN_LEGACY=y
+CONFIG_VIRTIO_PCI_LEGACY=y
+CONFIG_VIRTIO_BALLOON=m
+CONFIG_VIRTIO_FS=y
+=== virtio devices in guest
+virtio0 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:01.0
+virtio1 modalias=virtio:d00000001v00001AF4 driver=virtio_net parent=0000:00:01.1
+virtio10 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:04.0
+virtio11 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:05.0
+virtio12 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:06.0
+virtio13 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:07.0
+virtio14 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:08.0
+virtio15 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:09.0
+virtio16 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0a.0
+virtio17 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0b.0
+virtio18 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0c.0
+virtio19 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0d.0
+virtio2 modalias=virtio:d00000001v00001AF4 driver=virtio_net parent=0000:00:01.2
+virtio20 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0e.0
+virtio21 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:0f.0
+virtio22 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:10.0
+virtio23 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:11.0
+virtio24 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:12.0
+virtio25 modalias=virtio:d00000002v00001AF4 driver=virtio_blk parent=0000:00:13.0
+virtio26 modalias=virtio:d00000002v00001AF4 driver=virtio_blk parent=0000:00:14.0
+virtio27 modalias=virtio:d00000002v00001AF4 driver=virtio_blk parent=0000:00:15.0
+virtio28 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:16.0
+virtio29 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:17.0
+virtio3 modalias=virtio:d0000001Dv00001AF4 driver=mac80211_hwsim parent=0000:00:01.3
+virtio30 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:18.0
+virtio31 modalias=virtio:d0000001Bv00001AF4 driver=virtio_pmem parent=0000:00:19.0
+virtio32 modalias=virtio:d0000001Bv00001AF4 driver=virtio_pmem parent=0000:00:1a.0
+virtio33 modalias=virtio:d00000004v00001AF4 driver=virtio_rng parent=0000:00:1b.0
+virtio34 modalias=virtio:d00000005v00001AF4 driver= parent=0000:00:1c.0
+virtio35 modalias=virtio:d00000013v00001AF4 driver=vmw_vsock_virtio_transport parent=0000:00:1d.0
+virtio36 modalias=virtio:d0000001Av00001AF4 driver=virtiofs parent=0000:00:1e.0
+virtio37 modalias=virtio:d00000019v00001AF4 driver=virtio_snd parent=0000:00:1f.0
+virtio4 modalias=virtio:d00000012v00001AF4 driver=virtio_input parent=0000:00:01.4
+virtio5 modalias=virtio:d00000012v00001AF4 driver=virtio_input parent=0000:00:01.5
+virtio6 modalias=virtio:d00000012v00001AF4 driver=virtio_input parent=0000:00:01.6
+virtio7 modalias=virtio:d00000012v00001AF4 driver=virtio_input parent=0000:00:01.7
+virtio8 modalias=virtio:d00000010v00001AF4 driver=virtio_gpu parent=0000:00:02.0
+virtio9 modalias=virtio:d00000003v00001AF4 driver=virtio_console parent=0000:00:03.0
+=== pci devices in guest
+0000:00:00.0 vendor=0x8086 device=0x1237 class=0x060000 driver=
+0000:00:01.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:01.1 vendor=0x1af4 device=0x1041 class=0x028000 driver=virtio-pci
+0000:00:01.2 vendor=0x1af4 device=0x1041 class=0x028000 driver=virtio-pci
+0000:00:01.3 vendor=0x1af4 device=0x105d class=0x0d8000 driver=virtio-pci
+0000:00:01.4 vendor=0x1af4 device=0x1052 class=0x098000 driver=virtio-pci
+0000:00:01.5 vendor=0x1af4 device=0x1052 class=0x098000 driver=virtio-pci
+0000:00:01.6 vendor=0x1af4 device=0x1052 class=0x098000 driver=virtio-pci
+0000:00:01.7 vendor=0x1af4 device=0x1052 class=0x098000 driver=virtio-pci
+0000:00:02.0 vendor=0x1af4 device=0x1050 class=0x038000 driver=virtio-pci
+0000:00:02.1 vendor=0x1b36 device=0x0011 class=0xffff00 driver=
+0000:00:02.2 vendor=0x8086 device=0x3420 class=0x060400 driver=pcieport
+0000:00:03.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:04.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:05.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:06.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:07.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:08.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:09.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0a.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0b.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0c.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0d.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0e.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:0f.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:10.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:11.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:12.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:13.0 vendor=0x1af4 device=0x1042 class=0x018000 driver=virtio-pci
+0000:00:14.0 vendor=0x1af4 device=0x1042 class=0x018000 driver=virtio-pci
+0000:00:15.0 vendor=0x1af4 device=0x1042 class=0x018000 driver=virtio-pci
+0000:00:16.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:17.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:18.0 vendor=0x1af4 device=0x1043 class=0x078000 driver=virtio-pci
+0000:00:19.0 vendor=0x1af4 device=0x105b class=0x010800 driver=virtio-pci
+0000:00:1a.0 vendor=0x1af4 device=0x105b class=0x010800 driver=virtio-pci
+0000:00:1b.0 vendor=0x1af4 device=0x1044 class=0x088000 driver=virtio-pci
+0000:00:1c.0 vendor=0x1af4 device=0x1045 class=0x088000 driver=virtio-pci
+0000:00:1d.0 vendor=0x1af4 device=0x1053 class=0x028000 driver=virtio-pci
+0000:00:1e.0 vendor=0x1af4 device=0x105a class=0x018000 driver=virtio-pci
+0000:00:1f.0 vendor=0x1af4 device=0x1059 class=0x040100 driver=virtio-pci
+=== modules loaded (count, then virtio-related)
+58
+virtio_snd virtio_pmem virtio_media vhci_hcd usbip_core hci_vhci goldfish_sync goldfish_pipe goldfish_battery goldfish_address_space bluetooth vmw_vsock_virtio_transport virtio_pci virtio_pci_legacy_dev virtio_pci_modern_dev virtio_console virtio_blk mac80211_hwsim mac80211 cfg80211 libarc4 virtio_rng virtio_net virtio_input virtio_gpu virtio_dma_buf net_failover nd_virtio
+=== guest cmdline
+vmw_vsock_virtio_transport_common.virtio_transport_max_vsock_pkt_buf_size=16384 console=ttynull stack_depot_disable=on cgroup_disable=pressure bootconfig  printk.devkmsg=on audit=1 panic=-1 8250.nr_uarts=1 binder.impl=rust cma=0 firmware_class.path=/vendor/etc/ loop.max_part=7 init=/init bootconfig panic=-1 console=hvc0 earlycon=uart8250,io,0x3f8 ramoops.mem_address=0x138000000 ramoops.mem_size=0x200000
+=== bootconfig (first 45 lines)
+androidboot.hardware = "cutf_cvm"
+androidboot.hardware.hwcomposer = "ranchu"
+androidboot.hardware.hwcomposer.display_finder_mode = "drm"
+androidboot.hardware.hwcomposer.display_framebuffer_format = "rgba"
+androidboot.hardware.gralloc = "minigbm"
+androidboot.hardware.vulkan = "pastel"
+androidboot.hardware.angle_feature_overrides_enabled = "mapUnspecifiedColorSpaceToPassThrough"
+androidboot.hardware.egl = "angle"
+androidboot.hardware.angle_feature_overrides_disabled = "exposeES32ForTesting"
+androidboot.slot_suffix = "_a"
+androidboot.force_normal_boot = "1"
+androidboot.vendor.apex.com.google.emulated.camera.provider.hal = "com.google.emulated.camera.provider.hal"
+androidboot.vendor.apex.com.android.hardware.weaver = "none"
+androidboot.vendor.apex.com.android.hardware.strongbox = "none"
+androidboot.vendor.apex.com.android.hardware.secure_element = "com.android.hardware.secure_element"
+androidboot.vendor.apex.com.android.hardware.gatekeeper = "com.android.hardware.gatekeeper.nonsecure"
+androidboot.vendor.apex.com.android.hardware.keymint = "com.android.hardware.keymint.rust_nonsecure"
+androidboot.vendor.apex.com.android.hardware.graphics.composer = "com.android.hardware.graphics.composer.ranchu"
+androidboot.vendor.audiocontrol.server.port = "9410"
+androidboot.vendor.audiocontrol.server.cid = "3"
+androidboot.wifi_impl = "mac80211_hwsim_virtio"
+androidboot.auto_eth_guest_addr = "192.168.98.3"
+androidboot.vhal_proxy_server_port = "9300"
+androidboot.hw_timeout_multiplier = "3"
+androidboot.fstab_suffix = "cf.f2fs.hctr2"
+androidboot.hypervisor.protected_vm.supported = "0"
+androidboot.hypervisor.vm.supported = "1"
+androidboot.hypervisor.version = "cf-crosvm"
+androidboot.modem_simulator_ports = "9600"
+androidboot.vsock_lights_port = "6900"
+androidboot.lcd_density = "280"
+androidboot.enable_confirmationui = "1"
+androidboot.openthread_node_id = "1"
+androidboot.setupwizard_mode = "DISABLED"
+androidboot.serialno = "CUTTLEFISHCVD01"
+androidboot.ddr_size = "4915MB"
+androidboot.cpuvulkan.version = "4206592"
+androidboot.enable_bootanimation = "1"
+androidboot.vsock_lights_cid = "3"
+androidboot.boot_devices = "pci0000:00/0000:00:13.0", "pci0000:00/0000:00:14.0"
+androidboot.opengles.version = "196609"
+androidboot.wifi_mac_prefix = "5554"
+androidboot.vsock_tombstone_port = "6600"
+androidboot.serialconsole = "0"
+androidboot.vbmeta.device = "PARTUUID=c5a1e1d2-05f1-4bd1-8d8d-26a182987591"
+=== arm translation
+ls: /system/lib64/libndk_translation*: No such file or directory
+ls: /system/lib64/libberberis*: No such file or directory
+ls: /system/lib64/libhoudini*: No such file or directory
+ls: /system/etc/ld.config.arm64.txt: No such file or directory
+ls: /system/bin/arm64: No such file or directory
+[ro.dalvik.vm.native.bridge]: [0]
+[ro.product.cpu.abilist]: [x86_64,arm64-v8a]
+[ro.product.cpu.abilist32]: []
+[ro.product.cpu.abilist64]: [x86_64,arm64-v8a]
+=== host helper processes
+     21 pcivirtio-conso
+      8 serial
+      8 log_tee
+      4 socket_vsock_pr
+      4 pcivirtio-block
+      4 cf_vhost_user_i
+      3 process_restart
+      3 php-fpm8.3
+      3 pcivirtio-net
+      2 systemd
+      2 sort
+      2 run_cvd
+      2 python3
+      2 psimon
+      2 pcivirtio-rng
+      2 pcivirtio-pmem
+      2 pcivirtio-ballo
+      2 kworker/R-ext4-rsv-conversion
+      2 dnsmasq
+      2 crosvm
+      2 chronyd
+      2 agetty
+      1 wmediumd
+      1 webRTC
+      1 watchdogd
+      1 uniq
+      1 udisksd
+      1 tombstone_recei
+      1 tcp_connector
+      1 systemd-udevd
+=== crosvm args
+/var/tmp/cvd/1001/1794342840982600/artifacts/host_tools/bin/process_restarter
+-when_exited_with_code=32
+-ignore_sigtstp
+--
+/var/tmp/cvd/1001/1794342840982600/artifacts/host_tools/bin/crosvm
+--extended-status
+run
+--socket=/tmp/cf_avd_1001/cvd-1/internal/crosvm_control.sock
+--no-smt
+--no-usb
+--core-scheduling=false
+--vhost-user-connect-timeout-ms=30000
+--vhost-user=mac80211-hwsim,socket=/tmp/cf_env_1001/env-1/vhost_user_mac80211
+--wayland-sock=/tmp/cf_avd_1001/cvd-1/internal/frames.sock
+--gpu=displays=[[mode=windowed[720,1348],dpi=[280,280],refresh-rate=60]],backend=2D,pci-address=00:02.0
+--pmem=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/hwcomposer-pmem
+--mem=4096
+--cpus=2
+--block=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/overlay.img,pci-address=00:13.0
+--block=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/persistent_composite.img,pci-address=00:14.0
+--block=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/sdcard.img,pci-address=00:15.0
+--vhost-user=type=input,socket=/tmp/cf_avd_1001/cvd-1/internal/touch_0.sock,max-queue-size=256
+--vhost-user=type=input,socket=/tmp/cf_avd_1001/cvd-1/internal/rotary.sock,max-queue-size=256
+--vhost-user=type=input,socket=/tmp/cf_avd_1001/cvd-1/internal/keyboard.sock,max-queue-size=256
+--vhost-user=type=input,socket=/tmp/cf_avd_1001/cvd-1/internal/switches.sock,max-queue-size=256
+--net=tap-name=cvd-mtap-01,mac=00:1a:11:e0:cf:00,pci-address=00:01.1
+--net=tap-name=cvd-etap-01,mac=00:1a:11:e1:cf:00,pci-address=00:01.2
+--pmem=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/access-kregistry
+--pstore=path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/pstore,size=2097152
+--seccomp-policy-dir=/var/tmp/cvd/1001/1794342840982600/artifacts/host_tools/usr/share/crosvm/x86_64-linux-gnu/seccomp
+--vsock=cid=3
+--serial=hardware=virtio-console,num=1,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/kernel-log-pipe,console=true
+--serial=hardware=serial,num=1,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/kernel-log-pipe,earlycon=true
+--serial=hardware=virtio-console,num=2,type=sink
+--serial=hardware=virtio-console,num=3,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/logcat-pipe
+--serial=hardware=virtio-console,num=4,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/keymaster_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/c
+--serial=hardware=virtio-console,num=5,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/gatekeeper_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/
+--serial=hardware=virtio-console,num=6,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/bt_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/in
+--serial=hardware=virtio-console,num=7,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/gnsshvc_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd
+--serial=hardware=virtio-console,num=8,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/locationhvc_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances
+--serial=hardware=virtio-console,num=9,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/confui_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-
+--serial=hardware=virtio-console,num=10,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/uwb_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/
+--serial=hardware=virtio-console,num=11,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/oemlock_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cv
+--serial=hardware=virtio-console,num=12,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/keymint_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cv
+--serial=hardware=virtio-console,num=13,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/nfc_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/
+--serial=hardware=virtio-console,num=14,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/weaver_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd
+--serial=hardware=virtio-console,num=15,type=sink
+--serial=hardware=virtio-console,num=16,type=sink
+--serial=hardware=virtio-console,num=17,type=sink
+--serial=hardware=virtio-console,num=18,type=sink
+--serial=hardware=virtio-console,num=19,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/sensors_control_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/inst
+--serial=hardware=virtio-console,num=20,type=file,path=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/internal/sensors_data_fifo_vm.out,input=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instanc
+--sound=/tmp/cf_avd_1001/cvd-1/internal/audio_server.sock
+--shared-dir=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/shared:shared:type=fs:security_ctx=false
+--pflash=/var/tmp/cvd/1001/1794342840982600/home/cuttlefish/instances/cvd-1/pflash.img
+--bios=/var/tmp/cvd/1001/1794342840982600/artifacts/host_tools/etc/bootloader_x86_64/bootloader.crosvm

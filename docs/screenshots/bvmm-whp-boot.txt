@@ -1,0 +1,19 @@
+PS> .\bcontain.exe hypervisor-test
+Testing bContain's own hypervisor on this machine:
+  - accelerator: Windows Hypervisor Platform (C:\Windows\System32\WinHvPlatform.dll found)
+  - guest memory, page tables and GDT ready
+  - guest finished (Reset); console printed [4f, 4b, 11, 0a]
+  - port I/O, MMIO (I/O APIC version 0x11) and reset all work
+PASS: bContain's hypervisor works here. Try: bcontain run --engine native alpine:3.20 -- uname -a
+
+PS> .\bcontain.exe run --engine native alpine:3.20 -- uname -a
+pulling registry-1.docker.io/library/alpine:3.20
+image registry-1.docker.io/library/alpine:3.20
+building initramfs from C:\Users\runneradmin\AppData\Local\bcontain\images\alpine_3.20
+  rootfs 7.4 MiB
+  bContain's own hypervisor runs 1 vCPU for now
+booting on bContain's own hypervisor (Windows Hypervisor Platform): 1 vCPU, 2048 MiB
+[bcontain] container started
+Linux run-2936 6.12.59-linuxkit #1 SMP PREEMPT_DYNAMIC Mon Dec  8 09:07:52 UTC 2025 x86_64 Linux
+[bcontain] container exited with code 0
+[    1.442400] reboot: Restarting system

@@ -10,12 +10,13 @@ on:
     paths:
       - ".github/workflows/engine-android-oracle.yml"
 permissions:
-  contents: read
+  contents: write  # the last step commits the capture and a screenshot to this branch
 jobs:
   oracle:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
+      - uses: actions/checkout@v4
       - name: Host setup
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
@@ -31,6 +32,7 @@ jobs:
       - name: Fetch and boot
         run: |
           mkdir -p "$HOME/cf" "$GITHUB_WORKSPACE/oracle"
+          echo "oracle/" >> "$GITHUB_WORKSPACE/.git/info/exclude"
           sudo su "$USER" -c "cd $HOME/cf && cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory=$HOME/cf" 2>&1 | tail -3
           sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf timeout 1500 ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" > "$GITHUB_WORKSPACE/oracle/launch.log" 2>&1 || true
           grep -E 'BOOT_COMPLETED|failed' "$GITHUB_WORKSPACE/oracle/launch.log" | tail -3
@@ -60,6 +62,15 @@ jobs:
           $adb shell 'dmesg | head -n 400' > guest-dmesg-head.txt 2>&1 || true
           $adb shell 'getprop | grep -E "ro.boot|ro.dalvik.vm.native.bridge|ro.product.cpu|ro.hardware"' > guest-props.txt 2>&1 || true
           $adb shell 'ls -la /system/lib64/libndk_translation* /system/lib64/libberberis* /system/lib64/libhoudini* /system/etc/ld.config.arm64.txt /system/bin/arm64 2>&1 | head -20' > guest-arm-translation.txt 2>&1 || true
+      - name: Screenshot of the guest
+        run: |
+          adb="$HOME/cf/bin/adb"
+          sleep 45
+          $adb shell input keyevent KEYCODE_WAKEUP || true
+          $adb shell wm dismiss-keyguard || true
+          sleep 8
+          $adb exec-out screencap -p > "$GITHUB_WORKSPACE/oracle/screen.png"
+          file "$GITHUB_WORKSPACE/oracle/screen.png"
       - name: Summary for the log
         if: always()
         run: |
@@ -80,3 +91,16 @@ jobs:
         with:
           name: android-oracle
           path: oracle/
+      - name: Commit the capture to the repository
+        run: |
+          mkdir -p docs/engine/reference/raw docs/screenshots
+          cp oracle/*.txt docs/engine/reference/raw/
+          rm -f docs/engine/reference/raw/guest-kernel-config.txt  # large; the summary keeps the relevant lines
+          sed -i -E "s#/var/tmp/cvd/[0-9]+/[0-9]+#CVD#g" docs/engine/reference/raw/*.txt
+          if file oracle/screen.png | grep -q 'PNG image'; then cp oracle/screen.png docs/screenshots/android17-crosvm-reference.png; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/engine/reference/raw docs/screenshots
+          git commit -m "Reference capture: stock Android 17 under crosvm (CI run ${GITHUB_RUN_ID})" || exit 0
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

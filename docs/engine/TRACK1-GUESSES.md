@@ -82,3 +82,16 @@ Planning assumptions the engine track takes from them:
 The remaining phase 0 spikes for crosvm and QEMU are parked, not deleted:
 `.github/workflows/spike-linux-boot.yml` and `tools/hwtest/win-control.ps1`
 stay in the repository and now run only when started by hand.
+
+## Results appended
+
+Guesses above are left as written. Results go here, by guess number.
+
+- **X5** (guess: Android needs virtio over PCI, 70%). 2026-11-10: TRUE. The
+  stock kernel has `CONFIG_VIRTIO_PCI=m` and no `CONFIG_VIRTIO_MMIO`; all 38
+  virtio devices are on PCI. `docs/engine/reference/README.md`
+- **X3** (guess: the ARM translator in the stock image is a prebuilt binary
+  without a clear grant, 55%). 2026-11-10: the premise was wrong. There is no
+  translator in the image at all: native bridge is disabled and none of the
+  known translator libraries are present, although the ABI list names
+  `arm64-v8a`. Scored as a miss. Same source.

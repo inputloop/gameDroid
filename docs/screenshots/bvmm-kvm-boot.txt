@@ -1,0 +1,20 @@
+$ bcontain hypervisor-test
+Testing bContain's own hypervisor on this machine:
+  - accelerator: KVM (/dev/kvm is present and writable)
+  - guest memory, page tables and GDT ready
+  - guest finished (Reset); console printed [4f, 4b, 11, 0a]
+  - port I/O, MMIO (I/O APIC version 0x11) and reset all work
+PASS: bContain's hypervisor works here. Try: bcontain run --engine native alpine:3.20 -- uname -a
+
+$ bcontain run --engine native alpine:3.20 -- uname -a
+pulling registry-1.docker.io/library/alpine:3.20
+image registry-1.docker.io/library/alpine:3.20
+building initramfs from /home/runner/.local/share/bcontain/images/alpine_3.20
+  rootfs 7.4 MiB
+  bContain's own hypervisor runs 1 vCPU for now
+booting on bContain's own hypervisor (KVM): 1 vCPU, 2048 MiB
+[    0.090159] RDSEED32 is broken. Disabling the corresponding CPUID bit.
+[bcontain] container started
+Linux run-3856 6.12.59-linuxkit #1 SMP PREEMPT_DYNAMIC Mon Dec  8 09:07:52 UTC 2025 x86_64 Linux
+[bcontain] container exited with code 0
+[    0.902468] reboot: Restarting system
