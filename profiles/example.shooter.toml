@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# An invented twin-stick shooter, to show the profile format.
+schema = 1
+package = "com.example.shooter"
+name = "Example Shooter"
+
+# Move: WASD drives the on-screen stick at the bottom left.
+[[bind]]
+type = "joystick"
+up = "W"
+left = "A"
+down = "S"
+right = "D"
+x = 0.15
+y = 0.75
+radius = 0.08           # fraction of the shorter side of the screen
+
+# Aim: the mouse drags the camera on the right half of the screen.
+[[bind]]
+type = "look"
+x = 0.70
+y = 0.45
+width = 0.50
+height = 0.70
+sensitivity = 1.0
+
+# Fire, jump, reload: held while the control is held.
+[[bind]]
+type = "tap"
+key = "MouseLeft"
+x = 0.88
+y = 0.62
+
+[[bind]]
+type = "tap"
+key = "Space"
+x = 0.93
+y = 0.82
+
+[[bind]]
+type = "tap"
+key = "R"
+x = 0.80
+y = 0.88
