@@ -9,7 +9,7 @@ on:
     paths:
       - ".github/workflows/app-android.yml"
       - "app/**"
-      - "core/device/src/setup.rs"
+      - "core/device/**"
 permissions:
   contents: write  # to publish the screenshots to the ci-logs branch
 jobs:
