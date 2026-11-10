@@ -70,7 +70,10 @@ jobs:
           set +e
           timeout 90 ./target/release/bcontain run --engine native --kernel gki/gki-kernel alpine:3.20 -- uname -a > boot.log 2>&1
           echo "EXIT=$?"
-          grep -vE '^\s+\[[0-9]+/[0-9]+\]' boot.log | cut -c1-200 | tail -n 150
+          echo "--- timing-related kernel lines"
+          grep -E 'tsc|TSC|clocksource|alibrat|APIC|apic|hpet|HPET|PIT|ypervisor|MHz|imer|sched_clock|Command line' boot.log | cut -c1-200 | head -n 70
+          echo "--- last 25 lines"
+          tail -n 25 boot.log | cut -c1-200
           if grep -q "^Linux .*android" boot.log; then echo "E0B_KVM=PASS"; else echo "E0B_KVM=FAIL"; exit 1; fi
   whp:
     needs: kernel
@@ -93,5 +96,8 @@ jobs:
           $p = Start-Process -FilePath .\target\release\bcontain.exe -ArgumentList 'run','--engine','native','--kernel','gki\gki-kernel','alpine:3.20','--','uname','-a' -RedirectStandardOutput boot.log -RedirectStandardError boot.err -PassThru -NoNewWindow
           if (-not $p.WaitForExit(90000)) { $p.Kill(); "TIMEOUT after 90 s" }
           Get-Content boot.err -Tail 30 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
-          Get-Content boot.log -Tail 150 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
+          "--- timing-related kernel lines"
+          Select-String -Path boot.log -CaseSensitive -Pattern 'tsc|TSC|clocksource|alibrat|APIC|apic|hpet|HPET|PIT|ypervisor|MHz|imer|sched_clock|Command line' | Select-Object -First 70 | ForEach-Object { $l = $_.Line; if ($l.Length -gt 200) { $l.Substring(0,200) } else { $l } }
+          "--- last 25 lines"
+          Get-Content boot.log -Tail 25 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.Length -gt 200) { $_.Substring(0,200) } else { $_ } }
           if (Select-String -Path boot.log -Pattern '^Linux .*android' -Quiet) { "E0B_WHP=PASS"; exit 0 } else { "E0B_WHP=FAIL"; exit 1 }
