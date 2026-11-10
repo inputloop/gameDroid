@@ -1,0 +1,24 @@
+PS> $env:BCONTAIN_NATIVE_DISKS = "disk.img"      # 64 MiB, starts with "BVMM-DISK-TEST"
+PS> .\bcontain.exe run --engine native alpine:3.20 -- sh -c "head -c 14 /dev/vda; ..."
+[    0.485862] PCI: Using configuration type 1 for base access
+[    0.576607] PCI host bridge to bus 0000:00
+[    0.581004] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.583684] pci 0000:00:01.0: [1af4:1042] type 00 class 0x018000 conventional PCI endpoint
+[    0.585503] pci 0000:00:01.0: BAR 0 [mem 0xc0010000-0xc0013fff]
+[    0.587502] pci 0000:00:01.0: BAR 1 [mem 0xc0018000-0xc0018fff]
+[    0.779751] virtio-pci 0000:00:01.0: enabling device (0000 -> 0002)
+[    0.870750] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.875144] virtio_blk virtio0: [vda] 131072 512-byte logical blocks (67.1 MB/64.0 MiB)
+[    1.682463] Run /.bcontain/init as init process
+[bcontain] container started
+BVMM-DISK-TEST
+0+1 records in
+0+1 records out
+17 bytes (17B) copied, 0.000181 seconds, 91.7KB/s
+SECTORS=131072
+ 24:          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 25:          4  PCI-MSIX-0000:00:01.0   1-edge      virtio0-req.0
+GUEST-DONE
+[bcontain] container exited with code 0
+
+host> first 16 bytes of sector 8 of disk.img:  WRITTEN-BY-GUEST
