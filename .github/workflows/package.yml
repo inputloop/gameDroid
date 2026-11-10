@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Build the single file (ADR 0002): gamedroid.exe for Windows and a Linux
+# binary, as downloadable artifacts. The Windows file carries its own C
+# runtime, so it needs nothing installed beside it.
+name: package
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "core/**"
+      - "app/**"
+      - "Cargo.lock"
+      - "Cargo.toml"
+      - ".github/workflows/package.yml"
+permissions:
+  contents: write  # to publish the smoke-test result to the ci-logs branch
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build gamedroid.exe
+        env:
+          RUSTFLAGS: -C target-feature=+crt-static
+        run: |
+          cargo build --release -p gamedroid
+          ls -la target/release/gamedroid.exe
+      - name: What it needs from Windows
+        run: |
+          set +e
+          mkdir -p out && exec > >(tee out/result.txt) 2>&1
+          echo "size: $(stat -c %s target/release/gamedroid.exe) bytes"
+          echo "--- libraries the file asks Windows for"
+          objdump -p target/release/gamedroid.exe | grep 'DLL Name' | sort -u
+          echo "--- window smoke test (demo mode, 120 frames)"
+          timeout 60 target/release/gamedroid.exe --demo --frames 120
+          echo "DEMO_EXIT=$?"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gamedroid-windows-x86_64
+          path: target/release/gamedroid.exe
+      - name: Publish the result to the ci-logs branch
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" package-windows result.txt
+  linux:
+    runs-on: ubuntu-22.04  # an older system library, so the file runs on more machines
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libx11-dev libxkbcommon-dev >/dev/null
+      - run: cargo build --release -p gamedroid
+      - run: ls -la target/release/gamedroid && ldd target/release/gamedroid
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gamedroid-linux-x86_64
+          path: target/release/gamedroid
