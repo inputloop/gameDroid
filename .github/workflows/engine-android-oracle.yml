@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Engine track reference. Boots the stock Android 17 Cuttlefish image under
+# crosvm (which works today) and records exactly what the guest is given and
+# what its kernel supports. That list is the checklist for bvmm's Android
+# milestones, and answers "virtio over PCI or MMIO?".
+name: engine-android-oracle
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/engine-android-oracle.yml"
+permissions:
+  contents: read
+jobs:
+  oracle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Host setup
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          sudo curl -fsSL https://us-apt.pkg.dev/doc/repo-signing-key.gpg -o /etc/apt/trusted.gpg.d/artifact-registry.asc
+          echo "deb https://us-apt.pkg.dev/projects/android-cuttlefish-artifacts android-cuttlefish main" | sudo tee /etc/apt/sources.list.d/artifact-registry.list
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cuttlefish-base cuttlefish-user >/dev/null
+          sudo usermod -aG kvm,cvdnetwork,render "$USER"
+          sudo systemctl restart cuttlefish-host-resources || true
+      - name: Fetch and boot
+        run: |
+          mkdir -p "$HOME/cf" "$GITHUB_WORKSPACE/oracle"
+          sudo su "$USER" -c "cd $HOME/cf && cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory=$HOME/cf" 2>&1 | tail -3
+          sudo su "$USER" -c "cd $HOME/cf && HOME=$HOME/cf timeout 1500 ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" > "$GITHUB_WORKSPACE/oracle/launch.log" 2>&1 || true
+          grep -E 'BOOT_COMPLETED|failed' "$GITHUB_WORKSPACE/oracle/launch.log" | tail -3
+      - name: Record host side
+        run: |
+          cd "$GITHUB_WORKSPACE/oracle"
+          pid=$(pgrep -f 'crosvm --extended-status run --socket=[^ ]*crosvm_control.sock' | head -n 1)
+          tr '\0' '\n' < /proc/$pid/cmdline > crosvm-args.txt
+          wc -l crosvm-args.txt
+          ps -eo comm | sort | uniq -c | sort -rn | head -40 > host-processes.txt
+          ls -la "$HOME/cf" > image-files.txt
+      - name: Record guest side
+        run: |
+          cd "$GITHUB_WORKSPACE/oracle"
+          adb="$HOME/cf/bin/adb"
+          timeout 120 $adb wait-for-device
+          $adb root || true; sleep 3; timeout 60 $adb wait-for-device
+          $adb shell cat /proc/cmdline > guest-cmdline.txt
+          $adb shell cat /proc/bootconfig > guest-bootconfig.txt 2>&1 || true
+          $adb shell 'zcat /proc/config.gz' > guest-kernel-config.txt 2>&1 || true
+          $adb shell uname -a > guest-uname.txt
+          $adb shell 'for d in /sys/bus/virtio/devices/*; do echo "$(basename $d) modalias=$(cat $d/modalias) driver=$(basename $(readlink $d/driver 2>/dev/null) 2>/dev/null) parent=$(basename $(dirname $(readlink -f $d)))"; done' > guest-virtio.txt 2>&1 || true
+          $adb shell 'for d in /sys/bus/pci/devices/*; do echo "$(basename $d) vendor=$(cat $d/vendor) device=$(cat $d/device) class=$(cat $d/class) driver=$(basename $(readlink $d/driver 2>/dev/null) 2>/dev/null)"; done' > guest-pci.txt 2>&1 || true
+          $adb shell 'ls /sys/bus/platform/devices' > guest-platform.txt 2>&1 || true
+          $adb shell lsmod > guest-lsmod.txt 2>&1 || true
+          $adb shell cat /proc/interrupts > guest-interrupts.txt 2>&1 || true
+          $adb shell 'dmesg | head -n 400' > guest-dmesg-head.txt 2>&1 || true
+          $adb shell 'getprop | grep -E "ro.boot|ro.dalvik.vm.native.bridge|ro.product.cpu|ro.hardware"' > guest-props.txt 2>&1 || true
+          $adb shell 'ls -la /system/lib64/libndk_translation* /system/lib64/libberberis* /system/lib64/libhoudini* /system/etc/ld.config.arm64.txt /system/bin/arm64 2>&1 | head -20' > guest-arm-translation.txt 2>&1 || true
+      - name: Summary for the log
+        if: always()
+        run: |
+          cd "$GITHUB_WORKSPACE/oracle"
+          echo "=== uname"; cat guest-uname.txt
+          echo "=== kernel config, the parts that decide transport and boot"
+          grep -E '^CONFIG_(VIRTIO[A-Z_]*|PCI|PCI_HOST_GENERIC|PCI_MMCONFIG|ACPI|OF|X86_MPPARSE|HYPERV|VSOCKETS|VIRTIO_VSOCKETS|DRM_VIRTIO_GPU|SND_VIRTIO|SERIAL_8250|SERIAL_8250_CONSOLE|HW_RANDOM_VIRTIO|BLK_DEV_INITRD|X86_X2APIC|PVH|EFI|EFI_STUB|RELOCATABLE|RANDOMIZE_BASE)=' guest-kernel-config.txt
+          echo "=== virtio devices in guest"; cat guest-virtio.txt
+          echo "=== pci devices in guest"; cat guest-pci.txt
+          echo "=== modules loaded (count, then virtio-related)"; wc -l < guest-lsmod.txt; grep -iE 'virtio|vsock|vmw|gpu|snd|pci|goldfish|hci|mac80211' guest-lsmod.txt | awk '{print $1}' | tr '\n' ' '; echo
+          echo "=== guest cmdline"; cat guest-cmdline.txt
+          echo "=== bootconfig (first 45 lines)"; head -n 45 guest-bootconfig.txt
+          echo "=== arm translation"; cat guest-arm-translation.txt; grep -E 'native.bridge|abilist' guest-props.txt
+          echo "=== host helper processes"; cat host-processes.txt | head -30
+          echo "=== crosvm args"; cat crosvm-args.txt | cut -c1-220
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-oracle
+          path: oracle/
