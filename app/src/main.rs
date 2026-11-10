@@ -22,7 +22,10 @@ usage: gamedroid [options]
        gamedroid --demo [options]
 
   (no folder)         gameDroid's own Android image; the first run downloads
-                      and prepares it (about 1.2 GB down, 8 GB of disk)
+                      and prepares it (1.2 GB down), after asking where to
+                      keep it and how much room games may use. The answers
+                      are saved; these variables override them:
+                        GAMEDROID_DATA=<folder>  GAMEDROID_STORAGE_GB=<n>
 
   <prepared-dir>      a prepared Android image set to use instead
   --demo              no Android: a test card that shows the touches it receives

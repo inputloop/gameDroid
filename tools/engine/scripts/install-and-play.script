@@ -8,6 +8,9 @@ screenshot after-swipe.ppm
 # The marker is split so the shell's echo of this line does not match it.
 shell id; getprop ro.build.version.release; echo GD_""SHELL_OK
 expect GD_SHELL_OK 40
+# How big Android made the storage for games and data.
+shell echo GD_""DATA_KB=$(df -k /data | tail -n 1 | tr -s " " | cut -d " " -f 2)
+expect GD_DATA_KB= 20
 install
 start PACKAGE
 expect GD_START_STATUS=0 60

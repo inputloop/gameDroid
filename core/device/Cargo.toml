@@ -14,6 +14,10 @@ bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-
 # For setting up on first run: fetching the Android image and unpacking it.
 ureq = { version = "2", default-features = false, features = ["tls"] }
 zip = { version = "2", default-features = false, features = ["deflate"] }
+sha2 = "0.10"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
 
 [[bin]]
 name = "gamedroid-run"

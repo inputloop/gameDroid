@@ -3,8 +3,8 @@
 # gamedroid-run --setup does everything a user's first run does: download
 # the image from the public build site, unpack it, prepare it (what
 # Cuttlefish's bootloader would do) and boot it on the bvmm engine.
-# Linux (KVM) must pass. Windows (WHP) is exploratory: it reports how far
-# Android gets and does not fail the run.
+# Both hosts must pass. Each asks for a different amount of storage for
+# games and data, and the run reports how much Android then sees.
 name: engine-android
 on:
   workflow_dispatch:
@@ -35,8 +35,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { name: engine-android, os: ubuntu-24.04, py: python3, cpus: 2, seconds: 420, required: true }
-          - { name: engine-android-windows, os: windows-latest, py: python, cpus: 1, seconds: 1500, required: false }
+          - { name: engine-android, os: ubuntu-24.04, py: python3, cpus: 2, seconds: 420, storage: 12, required: true }
+          - { name: engine-android-windows, os: windows-latest, py: python, cpus: 1, seconds: 1500, storage: 20, required: true }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     defaults:
@@ -44,6 +44,7 @@ jobs:
         shell: bash
     env:
       PY: ${{ matrix.py }}
+      GAMEDROID_STORAGE_GB: ${{ matrix.storage }}
     steps:
       - uses: actions/checkout@v4
       - name: Choose the data folder
@@ -111,6 +112,9 @@ jobs:
             echo "$f: $("$PY" "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png")"
           done
           echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 25
+          echo "=== storage for games and data (asked for ${GAMEDROID_STORAGE_GB:-the default} GB)"
+          grep -m1 -oE 'GD_DATA_KB=[0-9]+' android.log
+          grep -iE 'userdata|/data' android.log | grep -iE 'format|mkfs|f2fs|ext4|wipe|mount' | cut -c1-200 | head -n 12
           echo "=== shell and install lines from the console"
           grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30
       - name: Publish the logs to the ci-logs branch

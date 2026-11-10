@@ -22,9 +22,16 @@ use crate::prepare::{self, sparse, Settings};
 pub const BUILD: &str = "16644040";
 const TARGET: &str = "aosp_cf_x86_64_only_phone-userdebug";
 const PRODUCT: &str = "aosp_cf_x86_64_only_phone";
-/// Room needed in the data folder to set up: the archive, the unpacked
-/// images, and what the partitions hold once expanded.
-pub const SPACE_NEEDED: u64 = 8 << 30;
+/// The archive's size and SHA-256, checked after the download.
+pub const ARCHIVE_BYTES: u64 = 1_163_636_385;
+pub const ARCHIVE_SHA256: Option<&str> = None;
+/// Free room needed to set up, before any game is installed: the archive
+/// (1.2 GB, deleted afterwards) and the system partitions (about 2 GB).
+pub const SPACE_NEEDED: u64 = 5 << 30;
+/// Room for games and their data when nothing else is chosen, in GiB.
+pub const DEFAULT_STORAGE_GIB: u64 = 32;
+/// The least room for games and data that is worth having, in GiB.
+pub const MIN_STORAGE_GIB: u64 = 4;
 
 /// Members of the archive that gameDroid uses.
 const MEMBERS: &[&str] = &[
@@ -46,16 +53,15 @@ pub fn archive_url(build: &str) -> String {
     )
 }
 
-/// gameDroid's folder for downloaded and generated files.
-pub fn data_dir() -> PathBuf {
-    let var = |name: &str| {
-        std::env::var_os(name)
-            .map(PathBuf::from)
-            .filter(|p| p.is_absolute())
-    };
-    if let Some(dir) = var("GAMEDROID_DATA") {
-        return dir;
-    }
+fn var(name: &str) -> Option<PathBuf> {
+    std::env::var_os(name)
+        .map(PathBuf::from)
+        .filter(|p| p.is_absolute())
+}
+
+/// gameDroid's own small folder, where its settings are kept, and where
+/// Android goes too unless another place is chosen.
+pub fn home_dir() -> PathBuf {
     if cfg!(windows) {
         if let Some(dir) = var("LOCALAPPDATA") {
             return dir.join("gameDroid");
@@ -82,57 +88,133 @@ fn io(what: &str, path: &Path, e: std::io::Error) -> String {
     format!("{what} {}: {e}", path.display())
 }
 
+fn hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+
 /// Download `url` to `to`, by way of a `.part` file so an interrupted
-/// download is never mistaken for a finished one.
-pub fn download(url: &str, to: &Path, progress: &mut dyn FnMut(Progress)) -> Result<(), String> {
+/// download is never mistaken for a finished one. A `.part` file left by an
+/// earlier attempt is continued, not started again. Returns the SHA-256 of
+/// the whole file.
+pub fn download(
+    url: &str,
+    to: &Path,
+    progress: &mut dyn FnMut(Progress),
+) -> Result<String, String> {
+    use sha2::Digest;
     let part = to.with_extension("part");
     let agent = ureq::AgentBuilder::new()
         .timeout_connect(std::time::Duration::from_secs(30))
         .timeout_read(std::time::Duration::from_secs(120))
         .build();
-    let response = agent
-        .get(url)
-        .call()
-        .map_err(|e| format!("downloading the Android image: {e}"))?;
-    let total = response
+    let have = std::fs::metadata(&part).map(|m| m.len()).unwrap_or(0);
+    let mut request = agent.get(url);
+    if have > 0 {
+        request = request.set("Range", &format!("bytes={have}-"));
+    }
+    let response = match request.call() {
+        Ok(r) => r,
+        // "Range not satisfiable": what we have is not the start of the file.
+        Err(ureq::Error::Status(416, _)) if have > 0 => {
+            std::fs::remove_file(&part).map_err(|e| io("removing", &part, e))?;
+            return download(url, to, progress);
+        }
+        Err(e) => return Err(format!("downloading the Android image: {e}")),
+    };
+    let resumed = have > 0 && response.status() == 206;
+    let length = response
         .header("content-length")
         .and_then(|v| v.parse::<u64>().ok());
-    let mut body = response.into_reader();
-    let mut file = std::fs::File::create(&part).map_err(|e| io("creating", &part, e))?;
+    let mut hash = sha2::Sha256::new();
     let mut buf = vec![0u8; 1 << 20];
     let mut done = 0u64;
-    let mut reported = 0u64;
+    let mut file = if resumed {
+        // Hash what is already here, then carry on after it.
+        let mut old = std::fs::File::open(&part).map_err(|e| io("opening", &part, e))?;
+        loop {
+            let n = old.read(&mut buf).map_err(|e| io("reading", &part, e))?;
+            if n == 0 {
+                break;
+            }
+            hash.update(&buf[..n]);
+            done += n as u64;
+        }
+        std::fs::OpenOptions::new()
+            .append(true)
+            .open(&part)
+            .map_err(|e| io("opening", &part, e))?
+    } else {
+        std::fs::File::create(&part).map_err(|e| io("creating", &part, e))?
+    };
+    let total = length.map(|l| l + done);
+    let again = "Start gameDroid again and it carries on from there";
+    let mut body = response.into_reader();
+    let mut reported = done;
     loop {
-        let n = body
-            .read(&mut buf)
-            .map_err(|e| format!("downloading the Android image: {e}"))?;
+        let n = body.read(&mut buf).map_err(|e| {
+            format!(
+                "the download was interrupted after {} MB ({e}). {again}",
+                done >> 20
+            )
+        })?;
         if n == 0 {
             break;
         }
         file.write_all(&buf[..n])
             .map_err(|e| io("writing", &part, e))?;
+        hash.update(&buf[..n]);
         done += n as u64;
         if done - reported >= 32 << 20 {
             reported = done;
             progress(Progress::Downloading { done, total });
         }
     }
-    if total.is_some_and(|t| t != done) {
+    if let Some(total) = total.filter(|t| *t != done) {
         return Err(format!(
-            "the download stopped early: {done} of {} bytes",
-            total.unwrap_or(0)
+            "the download stopped early, at {done} of {total} bytes. {again}"
         ));
     }
     progress(Progress::Downloading { done, total });
     drop(file);
-    std::fs::rename(&part, to).map_err(|e| io("finishing", to, e))
+    std::fs::rename(&part, to).map_err(|e| io("finishing", to, e))?;
+    Ok(hex(&hash.finalize()))
+}
+
+/// Check a downloaded archive against what is expected of it. A wrong
+/// archive is deleted, so the next start downloads it afresh.
+fn check_archive(path: &Path, sha256: &str) -> Result<(), String> {
+    let bytes = std::fs::metadata(path).map(|m| m.len()).unwrap_or(0);
+    let wrong = if bytes != ARCHIVE_BYTES {
+        Some(format!("it is {bytes} bytes, not {ARCHIVE_BYTES}"))
+    } else {
+        match ARCHIVE_SHA256 {
+            Some(want) if want != sha256 => Some(format!("its SHA-256 is {sha256}, not {want}")),
+            _ => None,
+        }
+    };
+    match wrong {
+        None => Ok(()),
+        Some(why) => {
+            let _ = std::fs::remove_file(path);
+            Err(format!(
+                "the downloaded Android image is not the expected one: {why}. \
+                 It has been deleted; start gameDroid again to download it afresh"
+            ))
+        }
+    }
 }
 
 /// Unpack the partition images from the archive into `images`, expanding
 /// the ones stored in Android's sparse format.
+///
+/// `storage` is the size in bytes of the partition for games and their
+/// data. Android formats a blank partition on its first start, so a blank
+/// file of that size is made instead of unpacking the archive's own
+/// (8 GiB, empty) one. 0 keeps the archive's.
 pub fn unpack(
     archive: &Path,
     images: &Path,
+    storage: u64,
     progress: &mut dyn FnMut(Progress),
 ) -> Result<(), String> {
     std::fs::create_dir_all(images).map_err(|e| io("creating", images, e))?;
@@ -143,12 +225,18 @@ pub fn unpack(
         progress(Progress::Unpacking {
             file: name.to_string(),
         });
+        let out = images.join(name);
+        if *name == "userdata.img" && storage > 0 {
+            let dst = std::fs::File::create(&out).map_err(|e| io("creating", &out, e))?;
+            sparse::allow_holes(&dst);
+            dst.set_len(storage).map_err(|e| io("sizing", &out, e))?;
+            continue;
+        }
         let mut member = zip
             .by_name(name)
             .map_err(|e| format!("the archive has no usable {name}: {e}"))?;
         let mut head = [0u8; 4];
         let got = read_up_to(&mut member, &mut head).map_err(|e| format!("reading {name}: {e}"))?;
-        let out = images.join(name);
         if sparse::is_sparse(&head[..got]) {
             // Expand straight from the archive: no intermediate copy.
             let mut whole = std::io::Read::chain(&head[..got], member);
@@ -185,6 +273,7 @@ fn read_up_to(r: &mut impl Read, buf: &mut [u8]) -> std::io::Result<usize> {
 pub fn ensure(
     data: &Path,
     archive: Option<&Path>,
+    storage: u64,
     settings: &Settings,
     progress: &mut dyn FnMut(Progress),
 ) -> Result<PathBuf, String> {
@@ -200,12 +289,14 @@ pub fn ensure(
         Some(path) => path.to_path_buf(),
         None => {
             if !downloaded.exists() {
-                download(&archive_url(BUILD), &downloaded, progress)?;
+                let sha256 = download(&archive_url(BUILD), &downloaded, progress)?;
+                eprintln!("gameDroid: the archive's SHA-256 is {sha256}");
+                check_archive(&downloaded, &sha256)?;
             }
             downloaded.clone()
         }
     };
-    unpack(&archive, &images, progress)?;
+    unpack(&archive, &images, storage, progress)?;
     progress(Progress::Preparing);
     prepare::prepare(&images, &prepared, settings)?;
     // The archive is no longer needed; a failure to delete it is harmless.
@@ -214,7 +305,255 @@ pub fn ensure(
     Ok(prepared)
 }
 
-/// [`ensure`] in gameDroid's own data folder, reporting progress as lines
+/// Free bytes on the filesystem that holds `path` (or would, if `path`
+/// does not exist yet). `None` if the system will not say.
+pub fn free_space(path: &Path) -> Option<u64> {
+    let existing = path.ancestors().find(|p| p.exists())?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStrExt;
+        let c = std::ffi::CString::new(existing.as_os_str().as_bytes()).ok()?;
+        // SAFETY: a valid C string and a zeroed struct for the result.
+        unsafe {
+            let mut st: libc::statvfs = std::mem::zeroed();
+            (libc::statvfs(c.as_ptr(), &mut st) == 0)
+                .then(|| st.f_bavail as u64 * st.f_frsize as u64)
+        }
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::ffi::OsStrExt;
+        #[link(name = "kernel32")]
+        extern "system" {
+            fn GetDiskFreeSpaceExW(
+                dir: *const u16,
+                free_to_caller: *mut u64,
+                total: *mut u64,
+                free: *mut u64,
+            ) -> i32;
+        }
+        let wide: Vec<u16> = existing.as_os_str().encode_wide().chain([0]).collect();
+        let mut free = 0u64;
+        // SAFETY: a NUL-terminated path and one valid out-pointer.
+        let ok = unsafe {
+            GetDiskFreeSpaceExW(
+                wide.as_ptr(),
+                &mut free,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+            )
+        };
+        (ok != 0).then_some(free)
+    }
+}
+
+/// Places Android could be kept: gameDroid's own folder first, then a
+/// `gameDroid` folder on each other fixed drive (Windows).
+pub fn places() -> Vec<PathBuf> {
+    #[cfg_attr(not(windows), allow(unused_mut))]
+    let mut out = vec![home_dir()];
+    #[cfg(windows)]
+    {
+        #[link(name = "kernel32")]
+        extern "system" {
+            fn GetLogicalDrives() -> u32;
+            fn GetDriveTypeW(root: *const u16) -> u32;
+        }
+        const DRIVE_FIXED: u32 = 3;
+        let home = out[0].to_string_lossy().to_uppercase();
+        // SAFETY: no arguments; returns a bit per drive letter.
+        let drives = unsafe { GetLogicalDrives() };
+        for i in 0..26u8 {
+            if drives & (1 << i) == 0 {
+                continue;
+            }
+            let letter = (b'A' + i) as char;
+            let root: Vec<u16> = format!("{letter}:\\").encode_utf16().chain([0]).collect();
+            // SAFETY: a NUL-terminated drive root.
+            if unsafe { GetDriveTypeW(root.as_ptr()) } == DRIVE_FIXED
+                && !home.starts_with(&format!("{letter}:"))
+            {
+                out.push(PathBuf::from(format!("{letter}:\\gameDroid")));
+            }
+        }
+    }
+    out
+}
+
+/// Where Android is kept and how much room games and data may take.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Plan {
+    pub data: PathBuf,
+    pub storage_gib: u64,
+}
+
+impl Plan {
+    /// The settings file's text for this plan.
+    pub fn to_text(&self) -> String {
+        format!(
+            "# gameDroid's settings. Delete this file to be asked again.\n\
+             data = {}\nstorage_gib = {}\n",
+            self.data.display(),
+            self.storage_gib
+        )
+    }
+
+    /// Read a plan back from the settings file's text.
+    pub fn from_text(text: &str) -> Option<Plan> {
+        let get = |key: &str| {
+            text.lines()
+                .filter_map(|l| l.split_once('='))
+                .find(|(k, _)| k.trim() == key)
+                .map(|(_, v)| v.trim().to_string())
+        };
+        Some(Plan {
+            data: PathBuf::from(get("data")?),
+            storage_gib: get("storage_gib")?.parse().ok()?,
+        })
+    }
+}
+
+/// The room to offer for games and data on a disk with `free` bytes free:
+/// the usual amount, or less if the disk cannot hold that beside Android.
+pub fn suggested_storage_gib(free: Option<u64>) -> u64 {
+    match free {
+        Some(free) => {
+            let room = free.saturating_sub(SPACE_NEEDED) >> 30;
+            DEFAULT_STORAGE_GIB.min(room).max(MIN_STORAGE_GIB)
+        }
+        None => DEFAULT_STORAGE_GIB,
+    }
+}
+
+fn gb(bytes: Option<u64>) -> String {
+    match bytes {
+        Some(b) => format!("{} GB free", b >> 30),
+        None => "free space unknown".into(),
+    }
+}
+
+/// Ask the person where Android should go and how much room it may take.
+/// `answers` yields their typed lines; a blank line takes the default.
+pub fn ask(
+    places: &[PathBuf],
+    free: &dyn Fn(&Path) -> Option<u64>,
+    answers: &mut dyn FnMut() -> Option<String>,
+    say: &mut dyn FnMut(String),
+) -> Plan {
+    say("gameDroid keeps Android (about 3 GB), your games and their data in one folder.".into());
+    say("Where should that folder be?".into());
+    for (i, place) in places.iter().enumerate() {
+        say(format!(
+            "  {}. {}   ({})",
+            i + 1,
+            place.display(),
+            gb(free(place))
+        ));
+    }
+    let data = loop {
+        say("Type a number, or a full folder path, then Enter [1]:".into());
+        let line = answers().unwrap_or_default();
+        let line = line.trim();
+        if line.is_empty() {
+            break places[0].clone();
+        }
+        if let Ok(n) = line.parse::<usize>() {
+            if (1..=places.len()).contains(&n) {
+                break places[n - 1].clone();
+            }
+            say(format!("There is no choice {n}."));
+            continue;
+        }
+        let path = PathBuf::from(line);
+        if path.is_absolute() {
+            break path;
+        }
+        say("That is not a full path (on Windows it starts with a drive, like D:\\Games).".into());
+    };
+    let available = free(&data);
+    let suggested = suggested_storage_gib(available);
+    say(format!(
+        "How much room may games and their data use, in GB? ({} there.)",
+        gb(available)
+    ));
+    say("It is a limit, not a reservation: disk is used only as Android fills it.".into());
+    let storage_gib = loop {
+        say(format!("Type a number of GB, then Enter [{suggested}]:"));
+        let line = answers().unwrap_or_default();
+        let line = line.trim().trim_end_matches(['G', 'g', 'B', 'b']).trim();
+        if line.is_empty() {
+            break suggested;
+        }
+        match line.parse::<u64>() {
+            Ok(n) if n < MIN_STORAGE_GIB => say(format!(
+                "Android needs at least {MIN_STORAGE_GIB} GB for games and data."
+            )),
+            Ok(n) if n > 2048 => say("That is more than 2048 GB; please choose less.".into()),
+            Ok(n) => {
+                if available.is_some_and(|f| (n << 30) + SPACE_NEEDED > f) {
+                    say(
+                        "Note: that is more than is free there now. Android will run, \
+                         but will fail to save once the disk is full."
+                            .into(),
+                    );
+                }
+                break n;
+            }
+            Err(_) => say("Please type a whole number, such as 64.".into()),
+        }
+    };
+    Plan { data, storage_gib }
+}
+
+/// The plan to use: from the environment, else the settings file, else by
+/// asking (when someone is there to answer), else the defaults.
+fn plan() -> Result<Plan, String> {
+    use std::io::IsTerminal;
+    let settings = home_dir().join("settings.txt");
+    let saved = std::fs::read_to_string(&settings)
+        .ok()
+        .and_then(|t| Plan::from_text(&t));
+    let env_storage = std::env::var("GAMEDROID_STORAGE_GB")
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok());
+    let mut plan = match saved {
+        Some(plan) => plan,
+        None => {
+            let unattended = var("GAMEDROID_DATA").is_some() || !std::io::stdin().is_terminal();
+            let plan = if unattended {
+                let data = home_dir();
+                let storage_gib = suggested_storage_gib(free_space(&data));
+                Plan { data, storage_gib }
+            } else {
+                ask(
+                    &places(),
+                    &free_space,
+                    &mut || {
+                        let mut line = String::new();
+                        std::io::stdin().read_line(&mut line).ok().map(|_| line)
+                    },
+                    &mut |text| eprintln!("{text}"),
+                )
+            };
+            if var("GAMEDROID_DATA").is_none() {
+                let home = home_dir();
+                std::fs::create_dir_all(&home).map_err(|e| io("creating", &home, e))?;
+                std::fs::write(&settings, plan.to_text())
+                    .map_err(|e| io("writing", &settings, e))?;
+            }
+            plan
+        }
+    };
+    if let Some(dir) = var("GAMEDROID_DATA") {
+        plan.data = dir;
+    }
+    if let Some(gib) = env_storage {
+        plan.storage_gib = gib.max(MIN_STORAGE_GIB);
+    }
+    Ok(plan)
+}
+
+/// [`ensure`] in the place the person chose, reporting progress as lines
 /// on standard error. The archive can be supplied with `GAMEDROID_IMAGE_ZIP`.
 pub fn ensure_default() -> Result<PathBuf, String> {
     // Say what is missing before spending minutes on a download.
@@ -225,37 +564,57 @@ pub fn ensure_default() -> Result<PathBuf, String> {
             host.detail
         ));
     }
-    let data = data_dir();
+    let plan = plan()?;
+    let data = plan.data.clone();
     let archive = std::env::var_os("GAMEDROID_IMAGE_ZIP").map(PathBuf::from);
-    if !data
+    let first = !data
         .join("images")
         .join(BUILD)
         .join("prepared/READY")
-        .exists()
-    {
+        .exists();
+    if first {
         eprintln!(
             "gameDroid: first run. Setting up Android (build {BUILD}) in {}",
             data.display()
         );
-        eprintln!("gameDroid: this downloads about 1.2 GB and needs about 8 GB of disk.");
+        eprintln!(
+            "gameDroid: this downloads about 1.2 GB; games and data may use up to {} GB.",
+            plan.storage_gib
+        );
+        if let Some(free) = free_space(&data).filter(|f| *f < SPACE_NEEDED) {
+            return Err(format!(
+                "not enough free disk in {}: {:.1} GB free, and setting up needs {} GB. \
+                 Free some space, or delete {} to choose another place",
+                data.display(),
+                free as f64 / (1u64 << 30) as f64,
+                SPACE_NEEDED >> 30,
+                home_dir().join("settings.txt").display()
+            ));
+        }
     }
     let started = std::time::Instant::now();
     let mut worked = false;
-    let prepared = ensure(&data, archive.as_deref(), &Settings::default(), &mut |p| {
-        worked = true;
-        match p {
-            Progress::Downloading { done, total } => match total {
-                Some(total) => eprintln!(
-                    "gameDroid: downloading, {} of {} MB",
-                    done >> 20,
-                    total >> 20
-                ),
-                None => eprintln!("gameDroid: downloading, {} MB", done >> 20),
-            },
-            Progress::Unpacking { file } => eprintln!("gameDroid: unpacking {file}"),
-            Progress::Preparing => eprintln!("gameDroid: preparing the boot files"),
-        }
-    })?;
+    let prepared = ensure(
+        &data,
+        archive.as_deref(),
+        plan.storage_gib << 30,
+        &Settings::default(),
+        &mut |p| {
+            worked = true;
+            match p {
+                Progress::Downloading { done, total } => match total {
+                    Some(total) => eprintln!(
+                        "gameDroid: downloading, {} of {} MB",
+                        done >> 20,
+                        total >> 20
+                    ),
+                    None => eprintln!("gameDroid: downloading, {} MB", done >> 20),
+                },
+                Progress::Unpacking { file } => eprintln!("gameDroid: unpacking {file}"),
+                Progress::Preparing => eprintln!("gameDroid: preparing the boot files"),
+            }
+        },
+    )?;
     if worked {
         eprintln!(
             "gameDroid: setup finished in {} s",
@@ -315,7 +674,7 @@ mod tests {
         archive(&zip);
         let data = dir.join("data");
         let mut seen = Vec::new();
-        let prepared = ensure(&data, Some(&zip), &Settings::default(), &mut |p| {
+        let prepared = ensure(&data, Some(&zip), 0, &Settings::default(), &mut |p| {
             seen.push(p)
         })
         .unwrap();
@@ -347,13 +706,108 @@ mod tests {
         // A second call does nothing: no archive is needed any more.
         std::fs::remove_file(&zip).unwrap();
         let mut again = Vec::new();
-        let same = ensure(&data, Some(&zip), &Settings::default(), &mut |p| {
+        let same = ensure(&data, Some(&zip), 0, &Settings::default(), &mut |p| {
             again.push(p)
         })
         .unwrap();
         assert_eq!(same, prepared);
         assert!(again.is_empty());
         std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn a_chosen_storage_size_makes_a_blank_partition_of_that_size() {
+        let dir = std::env::temp_dir().join(format!("gd-setup-size-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        let zip = dir.join("img.zip");
+        archive(&zip);
+        let data = dir.join("data");
+        let prepared = ensure(
+            &data,
+            Some(&zip),
+            3 << 20,
+            &Settings::default(),
+            &mut |_| {},
+        )
+        .unwrap();
+        let userdata = std::fs::read(data.join("images").join(BUILD).join("userdata.img")).unwrap();
+        assert_eq!(userdata.len(), 3 << 20);
+        assert!(
+            userdata.iter().all(|b| *b == 0),
+            "blank, for Android to format"
+        );
+        let layout = std::fs::read_to_string(prepared.join("os.layout")).unwrap();
+        assert!(
+            layout
+                .lines()
+                .any(|l| l.starts_with(&format!("{} rw ", 3 << 20)) && l.ends_with("userdata.img")),
+            "{layout}"
+        );
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn asking_takes_defaults_numbers_and_paths_and_insists_on_sense() {
+        let places = [PathBuf::from("/home/me/gd"), PathBuf::from("/mnt/big/gd")];
+        let free = |p: &Path| {
+            Some(if p.starts_with("/mnt/big") {
+                500u64 << 30
+            } else {
+                20 << 30
+            })
+        };
+        let run = |typed: &[&str]| {
+            let mut lines = typed.iter().map(|s| s.to_string());
+            let mut said = Vec::new();
+            let plan = ask(&places, &free, &mut || lines.next(), &mut |t| said.push(t));
+            (plan, said.join("\n"))
+        };
+        // Enter twice: the first place, and as much as fits beside Android.
+        let (plan, said) = run(&["", ""]);
+        assert_eq!(
+            plan,
+            Plan {
+                data: places[0].clone(),
+                storage_gib: 15
+            }
+        );
+        assert!(said.contains("2. /mnt/big/gd   (500 GB free)"), "{said}");
+        // The second place, with room for the usual amount; then a larger one.
+        assert_eq!(
+            run(&["2", ""]).0,
+            Plan {
+                data: places[1].clone(),
+                storage_gib: 32
+            }
+        );
+        assert_eq!(run(&["2", "128 GB"]).0.storage_gib, 128);
+        // Nonsense is refused and asked again.
+        let (plan, said) = run(&["7", "games", "/srv/x", "2", "lots", "64"]);
+        assert_eq!(
+            plan,
+            Plan {
+                data: PathBuf::from("/srv/x"),
+                storage_gib: 64
+            }
+        );
+        assert!(said.contains("no choice 7") && said.contains("not a full path"));
+        assert!(said.contains("at least 4 GB") && said.contains("whole number"));
+        // More than is free is allowed, with a warning.
+        assert!(run(&["1", "100"]).1.contains("more than is free"));
+        // Nobody answering takes the defaults rather than waiting for ever.
+        assert_eq!(run(&[]).0.data, places[0]);
+    }
+
+    #[test]
+    fn the_plan_survives_being_saved() {
+        let plan = Plan {
+            data: PathBuf::from("/mnt/big/gd"),
+            storage_gib: 64,
+        };
+        assert_eq!(Plan::from_text(&plan.to_text()), Some(plan));
+        assert_eq!(Plan::from_text("data = /x\n"), None);
+        assert!(free_space(&std::env::temp_dir().join("not/there/yet")).is_some());
     }
 
     #[test]
@@ -364,7 +818,7 @@ mod tests {
         let zip = dir.join("img.zip");
         std::fs::write(&zip, b"this is not a zip file").unwrap();
         let data = dir.join("data");
-        let e = ensure(&data, Some(&zip), &Settings::default(), &mut |_| {}).unwrap_err();
+        let e = ensure(&data, Some(&zip), 0, &Settings::default(), &mut |_| {}).unwrap_err();
         assert!(e.contains("not a usable archive"), "{e}");
         assert!(!data
             .join("images")

@@ -230,7 +230,8 @@ powershell -ExecutionPolicy Bypass -File tools\hwtest\probe.ps1
 
 Boot Android in a window, on Linux with KVM or on Windows with the Windows
 Hypervisor Platform feature turned on. The first run downloads Android
-(1.2 GB) from Google's public build site and needs about 8 GB of disk. This
+(1.2 GB) from Google's public build site, after asking where to keep it and
+how much room games and their data may use (5 GB free is the least to set up). This
 is proven in CI on both hosts, and not yet on a real machine.
 
 ```bash
