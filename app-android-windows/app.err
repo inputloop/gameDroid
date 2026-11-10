@@ -45,5 +45,4 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 13 s
-gamedroid: this platform runs at most 1 virtual processor(s) for now
+gameDroid: setup finished in 14 s
