@@ -1,0 +1,57 @@
+﻿probe: gamedroid-hwtest-probe
+probe_version: 1
+platform: windows
+utc: 2026-11-10T20:09:35Z
+elevated: False
+
+[os]
+caption: Microsoft Windows 11 Home
+version: 10.0.26300
+build: 26300
+arch: 64-bit
+
+[cpu]
+model: 12th Gen Intel(R) Core(TM) i9-12900H
+logical_cores: 20
+mem_total_gb: 31.8
+virt_firmware_enabled: False
+slat: False
+hypervisor_present: True
+
+[features]
+HypervisorPlatform: UNKNOWN (needs Administrator, or feature not on this edition)
+VirtualMachinePlatform: UNKNOWN (needs Administrator, or feature not on this edition)
+Hyper-V: UNKNOWN (needs Administrator, or feature not on this edition)
+winhvplatform_dll: True
+
+[gpu]
+gpu0: Parsec Virtual Display Adapter | driver 0.45.0.0 | 1/24/2024 7:00:00 PM
+gpu1: NVIDIA GeForce RTX 3080 Ti Laptop GPU | driver 32.0.16.1714 | 9/16/2026 8:00:00 PM
+nvidia: NVIDIA GeForce RTX 3080 Ti Laptop GPU, 617.14, 16384 MiB
+vulkan:
+    Vulkan Instance Version: 1.4.341
+    apiVersion         = 1.4.351
+    deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+    deviceName         = NVIDIA GeForce RTX 3080 Ti Laptop GPU
+    driverName         = NVIDIA
+    driverInfo         = 617.14
+vulkan_loader_dll: True
+
+[disk]
+free_here_gb: 60.7
+
+[tools]
+git: git version 2.49.0.windows.1
+cargo: cargo 1.99.1 (5f94df478 2026-08-27)
+rustc: rustc 1.99.1 (58cf8f9c3 2026-10-13)
+qemu-system-x86_64: MISSING
+crosvm: MISSING
+adb: MISSING
+emulator: MISSING
+python: Python 3.11.15
+visual_studio: 17.14.41 (September 2026)
+android_sdk_root: not set
+
+[verdict]
+note: could not read the Windows Hypervisor Platform state; rerun elevated
+ready_for_boot_spike: yes

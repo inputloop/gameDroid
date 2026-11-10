@@ -1,0 +1,147 @@
+E0B evidence - repo inputloop/gameDroid, run 42900855102 (workflow engine-gki)
+head_sha 9b84de72444a7d0a5ca80e25e90f3a2be84667ea, branch claude/gifted-ramanujan-i2r9yh
+Job conclusions: kernel=success (130126104448), kvm=success (130127646739), whp=success (130127646841)
+Leading ISO timestamps stripped from all quoted lines.
+
+IMPORTANT LIMITATION (both jobs)
+The step prints only the LAST 150 lines of boot.log (kvm: "tail -n 150", whp: "Get-Content boot.log -Tail 150").
+The earliest console line visible is [    0.140735] on kvm and [    0.398933] on whp.
+Everything before that is NOT in the Actions log, so these are MISSING for both jobs:
+  "Command line:" / "Kernel command line:", "Hypervisor detected", "tsc: Detected ... MHz",
+  any TSC/APIC-timer calibration lines, earlycon lines, "console [ttyS0]" lines, "APIC"/"lapic"/"hpet"/"PIT" lines.
+Step env for both jobs: BCONTAIN_KERNEL_ARGS: ignore_loglevel 8250.nr_uarts=1 earlycon=uart8250,io,0x3f8
+kvm command:  timeout 90 ./target/release/bcontain run --engine native --kernel gki/gki-kernel alpine:3.20 -- uname -a > boot.log 2>&1
+whp command:  Start-Process .\target\release\bcontain.exe 'run','--engine','native','--kernel','gki\gki-kernel','alpine:3.20','--','uname','-a' (stdout boot.log, stderr boot.err; WaitForExit(90000))
+
+======================================================================
+## kvm   (step "Boot the Android kernel on bvmm (KVM)", step conclusion success)
+======================================================================
+
+1. EXIT / PASS-FAIL
+EXIT=0
+E0B_KVM=PASS
+
+2. uname line
+Linux run-3732 6.12.74-android16-6-g3ec022196c4e-ab15076761 #1 SMP PREEMPT Tue Mar 24 05:36:21 UTC 2026 x86_64 Linux
+
+3. keyword-matching console lines (11 lines, NOT capped; only the visible tail of the console was searched)
+[    0.145553] dyndbg: Ignore empty _ddebug table in a CONFIG_DYNAMIC_DEBUG_CORE build
+     (matches only because "DEBUG" contains "BUG"; not a kernel BUG)
+[    0.148373] smpboot: Total of 1 processors activated (5192.24 BogoMIPS)
+[    0.152858] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.186609] clocksource: Switched to clocksource kvm-clock
+[    0.225184] kvm_amd: TSC scaling supported
+[    0.237481] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x256becde448, max_idle_ns: 440795276694 ns
+[    0.244055] clocksource: Switched to clocksource tsc
+[    0.316122] printk: legacy console [ttynull0] enabled
+[    1.009905] Run /.bcontain/init as init process
+[    1.022446] reboot: Restarting system
+[    1.022888] reboot: machine restart
+
+   Not matched by the keyword list but relevant to timing / platform (verbatim):
+[    0.146898] smp: Bringing up secondary CPUs ...
+[    0.147684] smp: Brought up 1 node, 1 CPU
+[    0.162748] PCI: Fatal: No config space access function found
+[    0.169896] ACPI: Interpreter disabled.
+[    0.184931] PCI: System does not support PCI
+[    0.224185] kvm_intel: VMX not supported by CPU 0
+[    0.226031] kvm_amd: Nested Virtualization enabled
+[    0.312260] serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.346760] i8042: PNP detection disabled
+[    0.929894] i8042: Can't read CTR while initializing i8042
+     (note the ~0.58 s gap between 0.346760 and 0.929894)
+[    0.935798] rtc_cmos rtc_cmos: setting system clock to 2026-11-10T21:04:33 UTC (1794344673)
+[    0.985823] sched_clock: Marking stable (972011702, 12032803)->(1069973823, -85929318)
+[bcontain] container started
+[bcontain] container exited with code 0
+[    1.021848] kvm: exiting hardware virtualization
+
+   No WARNING, no panic, no "Call Trace", no "unchecked MSR" in the visible kvm tail.
+
+4. last kernel timestamp seen
+[    1.022888]
+
+======================================================================
+## whp   (step "Boot the Android kernel on bvmm (WHP)", step conclusion success)
+======================================================================
+
+1. EXIT / PASS-FAIL
+EXIT= line: NONE (the whp step script does not print one; no "TIMEOUT after 90 s" line either)
+E0B_WHP=PASS
+
+   Lines printed before the console (from boot.err, verbatim):
+pulling registry-1.docker.io/library/alpine:3.20
+  [1/2] sha256:bf8527eb54c3
+  [2/2] sha256:25f1d6b1951a
+image registry-1.docker.io/library/alpine:3.20
+building initramfs from C:\Users\runneradmin\AppData\Local\bcontain\images\alpine_3.20
+  rootfs 7.4 MiB
+  bContain's own hypervisor runs 1 vCPU for now
+booting on bContain's own hypervisor (Windows Hypervisor Platform): 1 vCPU, 2048 MiB
+
+2. uname line
+Linux run-2392 6.12.74-android16-6-g3ec022196c4e-ab15076761 #1 SMP PREEMPT Tue Mar 24 05:36:21 UTC 2026 x86_64 Linux
+
+3. keyword-matching console lines (9 lines, NOT capped; only the visible tail of the console was searched)
+[    0.400311]  smpboot_thread_fn+0x16c/0x210
+[    0.402931]  ? __cfi_smpboot_thread_fn+0x10/0x10
+[    0.420263]  smpboot_thread_fn+0x16c/0x210
+[    0.422739]  ? __cfi_smpboot_thread_fn+0x10/0x10
+     (the four lines above are stack-trace frames, matched on "smpboot")
+[    0.472373] clocksource: Switched to clocksource refined-jiffies
+[    0.611101] printk: legacy console [ttynull0] enabled
+[    0.846960] Run /.bcontain/init as init process
+[    0.871261] reboot: Restarting system
+[    0.872060] reboot: machine restart
+
+   ABSENT on whp compared with kvm: no "clocksource: tsc: mask ..." line, no "Switched to clocksource tsc",
+   no "kvm-clock", no "sched_clock: Marking stable" line, no "smpboot: Total of ..." line in the visible tail.
+
+   Not matched by the keyword list but relevant to timing / platform (verbatim):
+   -- the visible tail starts in the middle of a call trace; first visible lines:
+[    0.398933]  cpuhp_thread_fun+0xf4/0x150
+[    0.400311]  smpboot_thread_fn+0x16c/0x210
+[    0.401662]  kthread+0x15b/0x180
+[    0.402931]  ? __cfi_smpboot_thread_fn+0x10/0x10
+[    0.404630]  ? __cfi_kthread+0x10/0x10
+[    0.405919]  ret_from_fork+0x4e/0x60
+[    0.406933]  ? __cfi_kthread+0x10/0x10
+[    0.408324]  ret_from_fork_asm+0x1a/0x30
+[    0.409722]  </TASK>
+[    0.410937] unchecked MSR access error: WRMSR to 0xc001001f (tried to write 0x0000400000000000) at rIP: 0xffffffff82d0963e (amd_bus_cpu_online+0x3e/0x90)
+[    0.414931] Call Trace:
+[    0.416033]  <TASK>
+[    0.416814]  cpuhp_invoke_callback+0x1cf/0x5f0
+[    0.418933]  cpuhp_thread_fun+0xf4/0x150
+[    0.420263]  smpboot_thread_fn+0x16c/0x210
+[    0.421605]  kthread+0x15b/0x180
+[    0.422739]  ? __cfi_smpboot_thread_fn+0x10/0x10
+[    0.422933]  ? __cfi_kthread+0x10/0x10
+[    0.424178]  ret_from_fork+0x4e/0x60
+[    0.425400]  ? __cfi_kthread+0x10/0x10
+[    0.426931]  ret_from_fork_asm+0x1a/0x30
+[    0.428236]  </TASK>
+     (the header of the FIRST trace, ending at 0.409722, is cut off by the 150-line tail; its cause is not visible)
+[    0.429312] PCI: Fatal: No config space access function found
+[    0.440778] ACPI: Interpreter disabled.
+[    0.469175] PCI: System does not support PCI
+[    0.523203] kvm_intel: VMX not supported by CPU 0
+[    0.524752] kvm_amd: SVM not supported by CPU 0
+[    0.605547] serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.714824] i8042: PNP detection disabled
+[    0.718994] i8042: Can't read CTR while initializing i8042
+[    0.729124] rtc_cmos rtc_cmos: setting system clock to 2026-11-10T21:06:35 UTC (1794344795)
+[    0.838104] Unstable clock detected, switching default tracing clock to "global"
+[    0.838104] If you want to keep using the local clock, then add:
+[    0.838104]   "trace_clock=local"
+[    0.838104] on the kernel command line
+[bcontain] container started
+[bcontain] container exited with code 0
+
+   Observation: many whp timestamps end in a jiffy-like pattern (0.406933, 0.410937, 0.414931, 0.418933,
+   0.422933, 0.426931, 0.446930, 0.454944, 0.458940, 0.502953, 0.506951, 0.510940, 0.514943, 0.586941,
+   0.594950, 0.702975, 0.742949, 0.750948, 0.766956, 0.830967, 0.846960, 0.850963), consistent with the
+   kernel running on the refined-jiffies clocksource.
+
+4. last kernel timestamp seen
+[    0.872060]

@@ -1,0 +1,180 @@
+E1 evidence - repo inputloop/gameDroid, run 42900953163 (workflow engine-disk)
+head_sha b2cb80073c82b5a82a4aa93724704cbab7c82020, branch claude/gifted-ramanujan-i2r9yh
+Job conclusions: kvm=success (130126446701), whp=success (130126446362)
+Leading ISO timestamps stripped from all quoted lines. Lines are cut to 180 chars by the workflow itself.
+
+Step env (both jobs):
+  BCONTAIN_KERNEL_ARGS: ignore_loglevel
+  GUEST_SCRIPT: head -c 14 /dev/vda; echo; echo WRITTEN-BY-GUEST | dd of=/dev/vda bs=512 seek=8 conv=notrunc; sync; echo SECTORS=$(cat /sys/block/vda/size); grep -i virtio /proc/interrupts; echo GUEST-DONE
+Kernel used (both jobs): pulling registry-1.docker.io/linuxkit/kernel:6.12.59 / installed kernel (12.7 MiB)
+cargo test -p bvmm (both jobs): test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+======================================================================
+## kvm   (step "Boot with a disk (E1)", step conclusion success)
+======================================================================
+
+5. result lines
+EXIT=0
+HOST_READS_BACK=WRITTEN-BY-GUEST
+E1_KVM=PASS
+Lines starting with "FAIL:": NONE
+
+6. lines under "--- kernel lines about PCI, virtio and the disk" (27 lines, under the 60 cap)
+[    0.000000] Command line: console=ttyS0 rdinit=/.bcontain/init panic=-1 ignore_loglevel reboot=k panic=-1 acpi=off no_timer_check tsc=reliable i8042.noaux i8042.nomux i8042.nopn
+[    0.045256] [mem 0x80000000-0xffffffff] available for PCI devices
+[    0.057891] Kernel command line: console=ttyS0 rdinit=/.bcontain/init panic=-1 ignore_loglevel reboot=k panic=-1 acpi=off no_timer_check tsc=reliable i8042.noaux i8042.nomux i80
+[    0.208466] PCI: Using configuration type 1 for base access
+[    0.273288] PCI: Probing PCI hardware
+[    0.273945] PCI: root bus 00: using default resources
+[    0.274288] PCI: Probing PCI hardware (bus 00)
+[    0.275121] PCI host bridge to bus 0000:00
+[    0.275289] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    0.276287] pci_bus 0000:00: root bus resource [mem 0x00000000-0x3fffffffffff]
+[    0.277287] pci_bus 0000:00: No busn resource found for root bus, will use [bus 00-ff]
+[    0.278356] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.280271] pci 0000:00:01.0: [1af4:1042] type 00 class 0x018000 conventional PCI endpoint
+[    0.280436] pci 0000:00:01.0: BAR 0 [mem 0xc0010000-0xc0013fff]
+[    0.281362] pci 0000:00:01.0: BAR 1 [mem 0xc0018000-0xc0018fff]
+[    0.284011] pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
+[    0.284338] PCI: pci_cache_line_size set to 64 bytes
+[    0.334656] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
+[    0.335665] pci_bus 0000:00: resource 5 [mem 0x00000000-0x3fffffffffff]
+[    0.336854] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.337947] PCI: CLS 0 bytes, default 64
+[    0.420360] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[    0.425364] virtio-pci 0000:00:01.0: enabling device (0000 -> 0002)
+[    0.464767] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.466668] virtio_blk virtio0: [vda] 131072 512-byte logical blocks (67.1 MB/64.0 MiB)
+ 24:          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 25:          4  PCI-MSIX-0000:00:01.0   1-edge      virtio0-req.0
+
+   (count note: 27 lines listed above; the two command-line lines are truncated at 180 chars by the workflow)
+
+7. lines under "--- last 40 lines"
+[    1.110294] registered taskstats version 1
+[    1.112817] Key type .fscrypt registered
+[    1.113555] Key type fscrypt-provisioning registered
+[    1.115004] Key type encrypted registered
+[    1.115772] AppArmor: AppArmor sha256 policy hashing enabled
+[    1.116798] ima: No TPM chip found, activating TPM-bypass!
+[    1.117795] ima: Allocated hash algorithm: sha256
+[    1.118662] ima: No architecture policies found
+[    1.119504] evm: Initialising EVM extended attributes:
+[    1.120456] evm: security.selinux (disabled)
+[    1.121240] evm: security.SMACK64 (disabled)
+[    1.121996] evm: security.SMACK64EXEC (disabled)
+[    1.122837] evm: security.SMACK64TRANSMUTE (disabled)
+[    1.123752] evm: security.SMACK64MMAP (disabled)
+[    1.124590] evm: security.apparmor
+[    1.125221] evm: security.ima
+[    1.125759] evm: security.capability
+[    1.126419] evm: HMAC attrs: 0x1
+[    1.127338] clk: Disabling unused clocks
+[    1.134745] Freeing unused kernel image (initmem) memory: 3692K
+[    1.135396] Write protecting the kernel read-only data: 26624k
+[    1.136532] Freeing unused kernel image (rodata/data gap) memory: 1960K
+[    1.137183] Run /.bcontain/init as init process
+[    1.137666]   with arguments:
+[    1.137975]     /.bcontain/init
+[    1.138326]   with environment:
+[    1.138651]     HOME=/
+[    1.138901]     TERM=linux
+[bcontain] container started
+BVMM-DISK-TEST
+0+1 records in
+0+1 records out
+17 bytes (17B) copied, 0.000191 seconds, 86.9KB/s
+SECTORS=131072
+ 24:          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 25:          4  PCI-MSIX-0000:00:01.0   1-edge      virtio0-req.0
+GUEST-DONE
+[bcontain] container exited with code 0
+[    1.153038] reboot: Restarting system
+[    1.153449] reboot: machine restart
+
+======================================================================
+## whp   (steps "Boot with a disk (E1)" and "Check the result", both conclusion success)
+======================================================================
+
+5. result lines
+EXIT=0                                (from step "Boot with a disk (E1)")
+HOST_READS_BACK=WRITTEN-BY-GUEST      (from step "Check the result")
+E1_WHP=PASS                           (from step "Check the result")
+Lines starting with "FAIL:": NONE
+
+6. lines under "--- kernel lines about PCI, virtio and the disk" (28 lines, under the 60 cap)
+[    0.000000] Command line: console=ttyS0 rdinit=/.bcontain/init panic=-1 ignore_loglevel reboot=k panic=-1 acpi=off no_timer_check tsc=reliable i8042.noaux i8042.nomux i8042.nopn
+[    0.165344] [mem 0x80000000-0xffffffff] available for PCI devices
+[    0.182880] Kernel command line: console=ttyS0 rdinit=/.bcontain/init panic=-1 ignore_loglevel reboot=k panic=-1 acpi=off no_timer_check tsc=reliable i8042.noaux i8042.nomux i80
+[    0.485862] PCI: Using configuration type 1 for base access
+[    0.486452] PCI: Using configuration type 1 for extended access
+[    0.573452] PCI: Probing PCI hardware
+[    0.574452] PCI: root bus 00: using default resources
+[    0.575452] PCI: Probing PCI hardware (bus 00)
+[    0.576607] PCI host bridge to bus 0000:00
+[    0.577454] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    0.578452] pci_bus 0000:00: root bus resource [mem 0x00000000-0xffffffffffff]
+[    0.579451] pci_bus 0000:00: No busn resource found for root bus, will use [bus 00-ff]
+[    0.581004] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.583684] pci 0000:00:01.0: [1af4:1042] type 00 class 0x018000 conventional PCI endpoint
+[    0.585503] pci 0000:00:01.0: BAR 0 [mem 0xc0010000-0xc0013fff]
+[    0.587502] pci 0000:00:01.0: BAR 1 [mem 0xc0018000-0xc0018fff]
+[    0.592323] pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
+[    0.593490] PCI: pci_cache_line_size set to 64 bytes
+[    0.658899] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
+[    0.660486] pci_bus 0000:00: resource 5 [mem 0x00000000-0xffffffffffff]
+[    0.662358] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.664102] PCI: CLS 0 bytes, default 64
+[    0.768581] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[    0.779751] virtio-pci 0000:00:01.0: enabling device (0000 -> 0002)
+[    0.870750] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.875144] virtio_blk virtio0: [vda] 131072 512-byte logical blocks (67.1 MB/64.0 MiB)
+ 24:          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 25:          4  PCI-MSIX-0000:00:01.0   1-edge      virtio0-req.0
+
+7. lines under "--- last 40 lines"
+[    1.641983] registered taskstats version 1
+[    1.651112] Key type .fscrypt registered
+[    1.652238] Key type fscrypt-provisioning registered
+[    1.655374] Key type encrypted registered
+[    1.656537] AppArmor: AppArmor sha256 policy hashing enabled
+[    1.658120] ima: No TPM chip found, activating TPM-bypass!
+[    1.659634] ima: Allocated hash algorithm: sha256
+[    1.660933] ima: No architecture policies found
+[    1.662289] evm: Initialising EVM extended attributes:
+[    1.663706] evm: security.selinux (disabled)
+[    1.664896] evm: security.SMACK64 (disabled)
+[    1.666102] evm: security.SMACK64EXEC (disabled)
+[    1.667370] evm: security.SMACK64TRANSMUTE (disabled)
+[    1.668771] evm: security.SMACK64MMAP (disabled)
+[    1.670061] evm: security.apparmor
+[    1.671017] evm: security.ima
+[    1.671876] evm: security.capability
+[    1.672926] evm: HMAC attrs: 0x1
+[    1.674585] clk: Disabling unused clocks
+[    1.678692] Freeing unused kernel image (initmem) memory: 3692K
+[    1.679671] Write protecting the kernel read-only data: 26624k
+[    1.681400] Freeing unused kernel image (rodata/data gap) memory: 1960K
+[    1.682463] Run /.bcontain/init as init process
+[    1.683193]   with arguments:
+[    1.683712]     /.bcontain/init
+[    1.684266]   with environment:
+[    1.684783]     HOME=/
+[    1.685222]     TERM=linux
+[bcontain] container started
+BVMM-DISK-TEST
+0+1 records in
+0+1 records out
+17 bytes (17B) copied, 0.000181 seconds, 91.7KB/s
+SECTORS=131072
+ 24:          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 25:          4  PCI-MSIX-0000:00:01.0   1-edge      virtio0-req.0
+GUEST-DONE
+[bcontain] container exited with code 0
+[    1.710556] reboot: Restarting system
+[    1.711242] reboot: machine restart
+
+DIFFERENCES kvm vs whp in item 6
+- whp has one extra line: "PCI: Using configuration type 1 for extended access"
+- root bus mem resource: kvm [mem 0x00000000-0x3fffffffffff], whp [mem 0x00000000-0xffffffffffff]
+- otherwise identical device set: 00:00.0 [8086:1237] host bridge, 00:01.0 [1af4:1042] virtio-blk, MSI-X vectors 24/25

@@ -1,4 +1,5 @@
-.hwtest/
-results/
-hwtest-*.txt
+# Local scratch from the hardware-test and CI scripts, at the repository root only.
+/.hwtest/
+/results/
+/hwtest-*.txt
 target/
