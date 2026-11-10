@@ -125,6 +125,47 @@ pub fn expand<R: Read, W: Write + Seek>(input: &mut R, output: &mut W) -> Result
     Ok(total)
 }
 
+/// Ask the filesystem to leave unwritten ranges of `file` unallocated.
+///
+/// Linux filesystems do this by themselves. On Windows (NTFS) a file must be
+/// marked sparse first, or every skipped gigabyte is really allocated. If
+/// the request fails the file is simply not sparse: bigger, still correct.
+pub fn allow_holes(file: &std::fs::File) {
+    #[cfg(windows)]
+    {
+        use std::os::windows::io::AsRawHandle;
+        const FSCTL_SET_SPARSE: u32 = 0x0009_00c4;
+        #[link(name = "kernel32")]
+        extern "system" {
+            fn DeviceIoControl(
+                device: *mut core::ffi::c_void,
+                code: u32,
+                input: *const core::ffi::c_void,
+                input_len: u32,
+                output: *mut core::ffi::c_void,
+                output_len: u32,
+                returned: *mut u32,
+                overlapped: *mut core::ffi::c_void,
+            ) -> i32;
+        }
+        let mut returned = 0u32;
+        // SAFETY: a valid file handle, no buffers, and a valid out-pointer.
+        unsafe {
+            DeviceIoControl(
+                file.as_raw_handle() as *mut _,
+                FSCTL_SET_SPARSE,
+                std::ptr::null(),
+                0,
+                std::ptr::null_mut(),
+                0,
+                &mut returned,
+                std::ptr::null_mut(),
+            );
+        }
+    }
+    let _ = file;
+}
+
 /// Expand `input` to `output` as files. The output ends with the right
 /// length even when the image ends in a gap.
 pub fn expand_file(input: &std::path::Path, output: &std::path::Path) -> Result<u64, String> {
@@ -133,6 +174,7 @@ pub fn expand_file(input: &std::path::Path, output: &std::path::Path) -> Result<
     );
     let mut dst =
         std::fs::File::create(output).map_err(|e| format!("creating {}: {e}", output.display()))?;
+    allow_holes(&dst);
     let total = expand(&mut src, &mut dst)?;
     dst.set_len(total)
         .map_err(|e| format!("sizing {}: {e}", output.display()))?;

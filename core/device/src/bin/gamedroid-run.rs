@@ -207,8 +207,11 @@ fn run_script(steps: Vec<Step>, session: Session) {
 
 const USAGE: &str = "\
 usage: gamedroid-run <prepared-dir> [options]
+       gamedroid-run --setup [options]
 
-  <prepared-dir>        made by tools/engine/android_prepare.py
+  <prepared-dir>        a prepared Android image set
+  --setup               use gameDroid's own image set, downloading and
+                        preparing it first if this is the first run
   --cpus <n>            virtual processors (default 2)
   --memory <MiB>        guest memory (default 4096)
   --display <W>x<H>     screen size (default 720x1280)
@@ -221,9 +224,19 @@ usage: gamedroid-run <prepared-dir> [options]
 
 fn main() -> ExitCode {
     let mut args = std::env::args().skip(1);
-    let Some(dir) = args.next().filter(|a| !a.starts_with("--")) else {
-        eprintln!("{USAGE}");
-        return ExitCode::FAILURE;
+    let dir = match args.next() {
+        Some(a) if a == "--setup" => match gamedroid_device::setup::ensure_default() {
+            Ok(dir) => dir,
+            Err(e) => {
+                eprintln!("gamedroid-run: {e}");
+                return ExitCode::FAILURE;
+            }
+        },
+        Some(a) if !a.starts_with("--") => PathBuf::from(a),
+        _ => {
+            eprintln!("{USAGE}");
+            return ExitCode::FAILURE;
+        }
     };
     let mut options = Options::default();
     let mut screenshot: Option<PathBuf> = None;
@@ -275,7 +288,6 @@ fn main() -> ExitCode {
         }
     }
 
-    let dir = PathBuf::from(dir);
     let mut apk_bytes = None;
     if let Some(apk) = &apk {
         let layout = dir.join("apk.layout");

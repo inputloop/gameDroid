@@ -11,6 +11,10 @@ repository.workspace = true
 # The engine. Pinned by Cargo.lock; `cargo update -p bvmm` moves it.
 bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-ramanujan-i2r9yh" }
 
+# For setting up on first run: fetching the Android image and unpacking it.
+ureq = { version = "2", default-features = false, features = ["tls"] }
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
 [[bin]]
 name = "gamedroid-run"
 path = "src/bin/gamedroid-run.rs"

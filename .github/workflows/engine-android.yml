@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Engine track, milestone E5. Boot the stock Android 17 image on bvmm.
-# The image set is prepared by tools/engine/android_prepare.py (which does
-# what Cuttlefish's bootloader would) and started with gamedroid-run, which
-# describes the machine and runs it on the bvmm engine.
-# KVM only for now. Exploratory: it reports how far Android gets.
+# gamedroid-run --setup does everything a user's first run does: download
+# the image from the public build site, unpack it, prepare it (what
+# Cuttlefish's bootloader would do) and boot it on the bvmm engine.
+# Linux (KVM) must pass. Windows (WHP) is exploratory: it reports how far
+# Android gets and does not fail the run.
 name: engine-android
 on:
   workflow_dispatch:
@@ -17,8 +18,6 @@ on:
   push:
     paths:
       - ".github/workflows/engine-android.yml"
-      - "tools/engine/android_prepare.py"
-      - "tools/engine/test_android_prepare.py"
       - "tools/engine/ppm_to_png.py"
       - "tools/engine/fetch_fdroid_apk.py"
       - "tools/ci/publish-logs.sh"
@@ -31,58 +30,64 @@ env:
   RUN_SECONDS: ${{ inputs.seconds || '420' }}
   GAME: ${{ inputs.game || 'com.shatteredpixel.shatteredpixeldungeon' }}
 jobs:
-  kvm:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
+  android:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: engine-android, os: ubuntu-24.04, py: python3, cpus: 2, seconds: 420, required: true }
+          - { name: engine-android-windows, os: windows-latest, py: python, cpus: 1, seconds: 1500, required: false }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      PY: ${{ matrix.py }}
     steps:
       - uses: actions/checkout@v4
-      - name: Tool tests
-        run: python3 -W error tools/engine/test_android_prepare.py
+      - name: Choose the data folder
+        run: echo "GAMEDROID_DATA=$RUNNER_TEMP/gd-data" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
       - name: Build gamedroid-run
         run: |
           cargo build --release -p gamedroid-device --bin gamedroid-run
           grep -A3 'name = "bvmm"' Cargo.lock | grep source
-      - name: Host setup and image fetch
+      - name: Host setup (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
-          sudo curl -fsSL https://us-apt.pkg.dev/doc/repo-signing-key.gpg -o /etc/apt/trusted.gpg.d/artifact-registry.asc
-          echo "deb https://us-apt.pkg.dev/projects/android-cuttlefish-artifacts android-cuttlefish main" | sudo tee /etc/apt/sources.list.d/artifact-registry.list
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq cuttlefish-base cuttlefish-user >/dev/null
-          mkdir -p "$HOME/cf"
-          cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory="$HOME/cf" 2>&1 | tail -2
-          df -h / | tail -1
-      - name: Prepare the image set for bvmm
-        run: |
-          python3 tools/engine/android_prepare.py "$HOME/cf" "$HOME/gd" --memory-mib 4096
-          sed -i 's/$/ ignore_loglevel/' "$HOME/gd/cmdline.txt"
-          echo "--- cmdline"; cat "$HOME/gd/cmdline.txt"
-          echo "--- bootconfig from the image (first 30 lines)"; head -n 30 "$HOME/gd/bootconfig.txt"
-          echo "--- layout"; cat "$HOME/gd/os.layout"
-          ls -la "$HOME/gd"
       - name: Fetch a free-software game from F-Droid
         run: |
-          python3 tools/engine/fetch_fdroid_apk.py "$GAME" "$HOME/game.apk"
-          ls -la "$HOME/game.apk"
-          sed "s/PACKAGE/$GAME/" tools/engine/scripts/install-and-play.script > "$HOME/play.script"
-      - name: Boot Android on bvmm (E5)
+          mkdir -p "$GAMEDROID_DATA/run" && cd "$GAMEDROID_DATA/run"
+          "$PY" "$GITHUB_WORKSPACE/tools/engine/fetch_fdroid_apk.py" "$GAME" game.apk
+          ls -la game.apk
+          sed "s/PACKAGE/$GAME/" "$GITHUB_WORKSPACE/tools/engine/scripts/install-and-play.script" > play.script
+      - name: First run, download, prepare and boot Android on bvmm (E5)
         run: |
           set +e
-          cd "$HOME/gd"
-          timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/target/release/gamedroid-run" . \
-            --cpus 2 --memory 4096 --display 720x1280 --screenshot screen.ppm \
-            --apk "$HOME/game.apk" --script "$HOME/play.script" > android.log 2> bvmm.err
+          cd "$GAMEDROID_DATA/run"
+          df -h . | tail -1
+          SECONDS_ALLOWED="${{ matrix.seconds }}"
+          [ -n "${{ inputs.seconds }}" ] && [ "${{ matrix.required }}" = "true" ] && SECONDS_ALLOWED="${{ inputs.seconds }}"
+          timeout "$SECONDS_ALLOWED" "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+            --cpus ${{ matrix.cpus }} --memory 4096 --display 720x1280 --screenshot screen.ppm \
+            --cmdline ignore_loglevel \
+            --apk game.apk --script play.script > android.log 2> bvmm.err
           echo "EXIT=$? (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)"
           echo "LINES=$(wc -l < android.log)"
-          echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
+          echo "--- setup and runner messages"; grep -v 'downloading,' bvmm.err | cut -c1-300 | head -n 20; cut -c1-300 bvmm.err | tail -n 20
+          P="$GAMEDROID_DATA/images/16644040/prepared"
+          cp "$P/cmdline.txt" "$P/bootconfig.txt" "$P/os.layout" . 2>/dev/null
+          ls -la "$P" "$P/.."
+          df -h . | tail -1
       - name: How far did it get
         if: always()
         run: |
           set +e
-          cd "$HOME/gd"
+          cd "$GAMEDROID_DATA/run"
           exec > >(tee summary.txt) 2>&1
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
@@ -90,7 +95,7 @@ jobs:
             n=$(grep -c -- "$pat" android.log); l=$(grep -m1 -- "$pat" android.log | show)
             echo "[$n] $pat :: $l"
           done
-          if grep -q 'sys.boot_completed=1' android.log; then echo "E5_KVM=PASS (Android reported boot completed)"; else echo "E5_KVM=FAIL"; fi
+          if grep -q 'sys.boot_completed=1' android.log; then echo "E5_${{ runner.os }}=PASS (Android reported boot completed)"; else echo "E5_${{ runner.os }}=FAIL"; fi
           echo "=== first-stage init and mounts (first 60)"
           grep -E 'init: |fs_mgr|avb|dm-|device-mapper|EXT4-fs|F2FS|erofs|super|by-name' android.log | show | head -n 60
           echo "=== errors and failures (first 70, deduplicated by message)"
@@ -103,31 +108,21 @@ jobs:
           ls *.ppm >/dev/null 2>&1 || echo "the guest never presented a frame"
           for f in *.ppm; do
             [ -f "$f" ] || continue
-            echo "$f: $(python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png")"
+            echo "$f: $("$PY" "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png")"
           done
           echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 25
           echo "=== shell and install lines from the console"
           grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: android-on-bvmm-log
-          path: |
-            ~/gd/android.log
-            ~/gd/bvmm.err
-            ~/gd/cmdline.txt
-            ~/gd/bootconfig.txt
-            ~/gd/os.layout
-            ~/gd/screen.png
       - name: Publish the logs to the ci-logs branch
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd "$HOME/gd" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
-          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png
+          cd "$GAMEDROID_DATA/run" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" ${{ matrix.name }} summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png
       - name: Verdict
+        if: matrix.required
         run: |
-          grep -q 'sys.boot_completed=1' "$HOME/gd/android.log"
-          grep -q 'script finished' "$HOME/gd/bvmm.err"
-          ! grep -q 'EXPECT FAILED' "$HOME/gd/bvmm.err"
+          grep -q 'sys.boot_completed=1' "$GAMEDROID_DATA/run/android.log"
+          grep -q 'script finished' "$GAMEDROID_DATA/run/bvmm.err"
+          ! grep -q 'EXPECT FAILED' "$GAMEDROID_DATA/run/bvmm.err"

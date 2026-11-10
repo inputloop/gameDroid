@@ -16,10 +16,14 @@ use gamedroid_input::{Profile, Touch};
 use minifb::{MouseButton, MouseMode, ScaleMode, Window, WindowOptions};
 
 const USAGE: &str = "\
-usage: gamedroid <prepared-dir> [options]
+usage: gamedroid [options]
+       gamedroid <prepared-dir> [options]
        gamedroid --demo [options]
 
-  <prepared-dir>      an Android image set made by tools/engine/android_prepare.py
+  (no folder)         gameDroid's own Android image; the first run downloads
+                      and prepares it (about 1.2 GB down, 8 GB of disk)
+
+  <prepared-dir>      a prepared Android image set to use instead
   --demo              no Android: a test card that shows the touches it receives
   --profile <file>    a game profile (TOML); F1 then switches game mode on and off
   --game-mode         start in game mode (needs --profile)
@@ -220,8 +224,11 @@ fn parse() -> Result<Args, String> {
             dir => a.dir = Some(dir.into()),
         }
     }
-    if a.demo == a.dir.is_some() {
-        return Err("give a prepared image folder, or --demo".into());
+    if a.demo && a.dir.is_some() {
+        return Err("give a prepared image folder or --demo, not both".into());
+    }
+    if !a.demo && a.dir.is_none() {
+        a.dir = Some(gamedroid_device::setup::ensure_default()?);
     }
     if a.game_mode && a.profile.is_none() {
         return Err("--game-mode needs --profile".into());
