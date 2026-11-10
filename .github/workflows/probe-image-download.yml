@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # One-off probe for ADR 0002: how to get the stock Android image without
 # Google's Linux-only fetch tool, so gamedroid can download it itself on any
-# host. Records the addresses the official tool uses, tries them with plain
-# HTTPS from Linux and from Windows, and lists what the archive contains.
+# host. Tries the public build website's own download addresses with plain
+# HTTPS and no API key, and lists what the archive contains. (The older API
+# the first version of this probe tried now answers 403: it has been retired.)
 name: probe-image-download
 on:
   workflow_dispatch:
@@ -12,7 +13,6 @@ on:
 permissions:
   contents: write
 env:
-  API: https://androidbuildinternal.googleapis.com/android/internal/build/v3
   BRANCH: aosp-android-latest-release
   TARGET: aosp_cf_x86_64_only_phone-userdebug
 jobs:
@@ -20,62 +20,42 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Probe
+      - name: Probe the public website's addresses (no API key)
         run: |
           set +e
           mkdir -p out && exec > >(tee out/probe-linux.txt) 2>&1
-          echo "=== latest successful build of the target on the branch"
-          curl -sS "$API/builds?branches=$BRANCH&buildAttemptStatus=complete&buildType=submitted&maxResults=1&successful=true&target=$TARGET" | tee out/builds.json | head -c 1500; echo
-          BUILD=$(python3 -c "import json;print(json.load(open('out/builds.json'))['builds'][0]['buildId'])" 2>/dev/null)
+          SITE=https://ci.android.com/builds
+          echo "=== latest build of the branch, by redirect"
+          curl -sS -o /dev/null -D - "$SITE/latest/branches/$BRANCH/targets/$TARGET/view/BUILD_INFO" | grep -iE '^HTTP|^location' | cut -c1-200
+          LOC=$(curl -sS -o /dev/null -w '%{redirect_url}' "$SITE/latest/branches/$BRANCH/targets/$TARGET/view/BUILD_INFO")
+          echo "redirect: ${LOC:0:160}"
+          BUILD=$(echo "$LOC" | sed -n 's#.*/submitted/\([0-9]*\)/.*#\1#p')
           echo "BUILD=$BUILD"
           [ -n "$BUILD" ] || BUILD=16644040
-          echo "=== artifact list (first page)"
-          curl -sS "$API/builds/$BUILD/$TARGET/attempts/latest/artifacts?maxResults=200" | python3 -c "
-          import json,sys
-          d=json.load(sys.stdin)
-          for a in d.get('artifacts',[]): print(a.get('name'), a.get('size'))
-          print('nextPageToken' in d)" | head -80
           ZIP="aosp_cf_x86_64_only_phone-img-$BUILD.zip"
-          echo "=== signed URL for $ZIP"
-          curl -sS "$API/builds/$BUILD/$TARGET/attempts/latest/artifacts/$ZIP/url" | tee out/url.json | cut -c1-300; echo
-          URL=$(python3 -c "import json;print(json.load(open('out/url.json'))['signedUrl'])" 2>/dev/null)
-          echo "=== download"
-          curl -sS -L -o img.zip -w 'http=%{http_code} bytes=%{size_download} seconds=%{time_total}\n' "$URL"
-          ls -la img.zip
+          for form in "submitted/$BUILD/$TARGET/latest/raw/$ZIP" "submitted/$BUILD/$TARGET/latest/$ZIP" "submitted/$BUILD/$TARGET/latest/view/$ZIP"; do
+            echo "=== $form"
+            curl -sS -o /dev/null -D - "$SITE/$form" | grep -iE '^HTTP|^location|^content-type|^content-length' | sed -E 's/(X-Goog-[A-Za-z]*=)[^&]*/\1.../g' | cut -c1-220
+          done
+          echo "=== download through the raw form, following redirects"
+          curl -sS -L -o img.zip -w 'http=%{http_code} bytes=%{size_download} seconds=%{time_total} type=%{content_type}\n' "$SITE/submitted/$BUILD/$TARGET/latest/raw/$ZIP"
+          ls -la img.zip; head -c 4 img.zip | xxd -p
           echo "=== archive contents"
           unzip -l img.zip | head -40
           mkdir img && cd img && unzip -q ../img.zip
-          echo "=== what each image is"
-          for f in *.img; do printf '%s: ' "$f"; ls -la "$f" | awk '{printf "%s bytes, ", $5}'; head -c 28 "$f" | xxd -p | cut -c1-56; done
-          file super.img userdata.img boot.img 2>/dev/null
-          echo "=== sparse headers (magic 3aff26ed = Android sparse)"
+          echo "=== sparse or plain"
           python3 - <<'PY'
-          import struct,glob
+          import struct,glob,os
           for f in sorted(glob.glob('*.img')):
               h=open(f,'rb').read(28)
               if h[:4]==bytes.fromhex('3aff26ed'):
                   magic,maj,minr,fhs,chs,blk,total_blks,chunks,crc=struct.unpack('<IHHHHIIII',h)
-                  print(f,'SPARSE v%d.%d block=%d blocks=%d chunks=%d -> %d bytes raw'%(maj,minr,blk,total_blks,chunks,blk*total_blks))
+                  print(f,os.path.getsize(f),'bytes SPARSE v%d.%d block=%d blocks=%d chunks=%d -> %d bytes raw'%(maj,minr,blk,total_blks,chunks,blk*total_blks))
               else:
-                  print(f,'not sparse')
+                  print(f,os.path.getsize(f),'bytes, not sparse, starts',h[:8])
           PY
       - name: Publish
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: tools/ci/publish-logs.sh probe-image out/probe-linux.txt
-  windows:
-    runs-on: windows-latest
-    steps:
-      - name: Same addresses from Windows
-        shell: pwsh
-        run: |
-          $b = Invoke-RestMethod "$env:API/builds?branches=$env:BRANCH&buildAttemptStatus=complete&buildType=submitted&maxResults=1&successful=true&target=$env:TARGET"
-          $id = $b.builds[0].buildId
-          "BUILD=$id"
-          $zip = "aosp_cf_x86_64_only_phone-img-$id.zip"
-          $u = Invoke-RestMethod "$env:API/builds/$id/$env:TARGET/attempts/latest/artifacts/$zip/url"
-          "signedUrl host: " + ([uri]$u.signedUrl).Host
-          $sw = [Diagnostics.Stopwatch]::StartNew()
-          curl.exe -sS -L -o img.zip $u.signedUrl
-          "downloaded {0} bytes in {1:n0} s" -f (Get-Item img.zip).Length, $sw.Elapsed.TotalSeconds
