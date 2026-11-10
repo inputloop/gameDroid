@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Engine track, milestone E1. A real Linux kernel on bvmm finds a PCI bus,
+# binds its virtio-blk driver to a disk, reads what the host put there and
+# writes something the host can read back. KVM and WHP.
+name: engine-disk
+on:
+  workflow_dispatch:
+    inputs:
+      bcontain_ref:
+        description: "Branch, tag or commit of inputloop/bcontain to test"
+        default: "claude/gifted-ramanujan-i2r9yh"
+  push:
+    paths:
+      - ".github/workflows/engine-disk.yml"
+permissions:
+  contents: read
+env:
+  BCONTAIN_REF: ${{ inputs.bcontain_ref || 'claude/gifted-ramanujan-i2r9yh' }}
+  BCONTAIN_KERNEL_ARGS: ignore_loglevel
+  GUEST_SCRIPT: "head -c 14 /dev/vda; echo; echo WRITTEN-BY-GUEST | dd of=/dev/vda bs=512 seek=8 conv=notrunc; sync; echo SECTORS=$(cat /sys/block/vda/size); grep -i virtio /proc/interrupts; echo GUEST-DONE"
+jobs:
+  kvm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: inputloop/bcontain
+          ref: ${{ env.BCONTAIN_REF }}
+      - run: git log -1 --format='bcontain %H %s'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Open /dev/kvm to the runner user
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - run: cargo build --release -p bcontain
+      - run: cargo test -p bvmm
+      - run: ./target/release/bcontain kernel fetch
+      - name: Boot with a disk (E1)
+        run: |
+          set +e
+          printf 'BVMM-DISK-TEST' > disk.img && truncate -s 64M disk.img
+          export BCONTAIN_NATIVE_DISKS="$PWD/disk.img"
+          timeout 120 ./target/release/bcontain run --engine native alpine:3.20 -- sh -c "$GUEST_SCRIPT" > boot.log 2>&1
+          echo "EXIT=$?"
+          echo "--- kernel lines about PCI, virtio and the disk"
+          grep -iE 'pci|virtio|vda|msi|blk' boot.log | cut -c1-180 | head -n 60
+          echo "--- last 40 lines"
+          tail -n 40 boot.log | cut -c1-180
+          back="$(dd if=disk.img bs=512 skip=8 count=1 2>/dev/null | head -c 16)"
+          echo "HOST_READS_BACK=$back"
+          ok=1
+          grep -q '^BVMM-DISK-TEST' boot.log || { echo "FAIL: guest did not read the host's bytes"; ok=0; }
+          grep -q '^SECTORS=131072' boot.log || { echo "FAIL: wrong or missing capacity"; ok=0; }
+          [ "$back" = "WRITTEN-BY-GUEST" ] || { echo "FAIL: host does not see the guest's write"; ok=0; }
+          if [ "$ok" = 1 ]; then echo "E1_KVM=PASS"; else echo "E1_KVM=FAIL"; exit 1; fi
+  whp:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: inputloop/bcontain
+          ref: ${{ env.BCONTAIN_REF }}
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release -p bcontain
+      - run: cargo test -p bvmm
+      - run: .\target\release\bcontain.exe kernel fetch
+      - name: Boot with a disk (E1)
+        shell: pwsh
+        timeout-minutes: 4
+        continue-on-error: true
+        run: |
+          $fs = [IO.File]::Create("$PWD\disk.img")
+          $b = [Text.Encoding]::ASCII.GetBytes("BVMM-DISK-TEST")
+          $fs.Write($b, 0, $b.Length); $fs.SetLength(64MB); $fs.Close()
+          $env:BCONTAIN_NATIVE_DISKS = "$PWD\disk.img"
+          & .\target\release\bcontain.exe run --engine native alpine:3.20 -- sh -c $env:GUEST_SCRIPT *> boot.log
+          "EXIT=$LASTEXITCODE"
+          exit 0
+      - name: Check the result
+        shell: pwsh
+        run: |
+          "--- kernel lines about PCI, virtio and the disk"
+          Select-String -Path boot.log -Pattern 'pci|virtio|vda|msi|blk' | Select-Object -First 60 | ForEach-Object { $l = $_.Line; if ($l.Length -gt 180) { $l.Substring(0,180) } else { $l } }
+          "--- last 40 lines"
+          Get-Content boot.log -Tail 40 | ForEach-Object { if ($_.Length -gt 180) { $_.Substring(0,180) } else { $_ } }
+          $bytes = [IO.File]::ReadAllBytes("$PWD\disk.img")
+          $back = [Text.Encoding]::ASCII.GetString($bytes, 8*512, 16)
+          "HOST_READS_BACK=$back"
+          $ok = $true
+          if (-not (Select-String -Path boot.log -Pattern '^BVMM-DISK-TEST' -Quiet)) { "FAIL: guest did not read the host's bytes"; $ok = $false }
+          if (-not (Select-String -Path boot.log -Pattern '^SECTORS=131072' -Quiet)) { "FAIL: wrong or missing capacity"; $ok = $false }
+          if ($back -ne "WRITTEN-BY-GUEST") { "FAIL: host does not see the guest's write"; $ok = $false }
+          if ($ok) { "E1_WHP=PASS"; exit 0 } else { "E1_WHP=FAIL"; exit 1 }
