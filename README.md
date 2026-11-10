@@ -33,12 +33,12 @@ device in CI. More below.*
 | Touch input reaches Android | Working on Linux: swipes sent from the host unlock the screen and open the app drawer |
 | Installing and starting a game | Working in CI on Linux and Windows: an APK is handed over on a second disk, installed from Android's shell, and started. Shattered Pixel Dungeon reaches its title screen |
 | Commands inside Android | Working on Linux, through the image's root shell on the serial port. No adb yet |
-| A window | `gamedroid` opens a window, shows the guest's screen, and turns mouse and keyboard into touches, with a game mode driven by a profile. Checked in demo mode only (a test card); not yet run with Android behind it |
+| A window | Working in CI on Linux and Windows with Android behind it. On Linux a real mouse swipe in the window unlocks Android. Game mode (keys and mouse following a profile) is checked against a test card only, not yet against a real game |
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
 | Android on Windows | Working in CI: boots, unlocks by touch, installs and starts the game. One processor and a coarse clock, so slower than Linux. Not yet run on a real Windows machine with a GPU |
 | GPU acceleration | Not yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
-| One file that downloads Android, sets it up and starts it | First version built in CI: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. With no arguments it downloads Android (1.2 GB), prepares it and boots; setup takes under 20 seconds after the download. The download-prepare-boot path is proven in CI on both hosts with the headless runner; the window opening on Windows is proven in demo mode. **Not yet proven: the window with Android behind it** ([decision](docs/adr/0002-single-file.md)) |
+| One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it downloads Android (1.2 GB), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
@@ -56,6 +56,18 @@ drawer after a second swipe
 | Lock screen | After one swipe | After a second swipe |
 |---|---|---|
 | ![lock screen](docs/screenshots/gamedroid-android17-lock.png) | ![home screen](docs/screenshots/gamedroid-android17-home.png) | ![app drawer](docs/screenshots/gamedroid-android17-apps.png) |
+
+### The single file, on a Windows desktop
+
+`gamedroid.exe`, started with no arguments on a clean Windows machine (a CI
+runner), a little over a minute after the download: Android's lock screen in
+its window.
+
+<img src="docs/screenshots/window-android-windows.png" width="560" alt="gamedroid.exe showing Android on a Windows desktop">
+
+The same on Linux, after a mouse swipe unlocked it:
+
+<img src="docs/screenshots/window-android-linux.png" width="320" alt="The gameDroid window showing Android's home screen on Linux">
 
 ### Android on Windows
 
@@ -170,9 +182,9 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E8 | GPU acceleration | Planned. The hardest item |
 | E9 | Sound | Planned |
 
-gameDroid's own features build on these. What is next, in order: run the
-window with Android behind it in CI; try `gamedroid.exe` on the Windows
-reference laptop; then a proper clock and several processors on Windows.
+gameDroid's own features build on these. What is next, in order: try
+`gamedroid.exe` on the Windows reference laptop; then a proper clock and
+several processors on Windows; then game mode against a real game.
 Performance work needs E8.
 
 ## Things worth knowing before you get excited
@@ -219,8 +231,7 @@ powershell -ExecutionPolicy Bypass -File tools\hwtest\probe.ps1
 Boot Android in a window, on Linux with KVM or on Windows with the Windows
 Hypervisor Platform feature turned on. The first run downloads Android
 (1.2 GB) from Google's public build site and needs about 8 GB of disk. This
-path is new: its parts are proven in CI, the whole is not yet (see the table
-above).
+is proven in CI on both hosts, and not yet on a real machine.
 
 ```bash
 cargo run --release -p gamedroid

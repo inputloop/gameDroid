@@ -294,8 +294,9 @@ fn run() -> Result<(), String> {
 
     let guest_size = guest.size();
     let mut frontend = Frontend::new(guest_size, profile.as_ref());
-    // A window with the guest's shape, small enough for most screens.
-    let scale = 800.0 / guest_size.1.max(1) as f32;
+    // A window with the guest's shape, small enough for a 768-line screen
+    // with its title bar and the taskbar.
+    let scale = 680.0 / guest_size.1.max(1) as f32;
     let window_size = (
         (guest_size.0 as f32 * scale).round().max(160.0) as usize,
         (guest_size.1 as f32 * scale).round().max(160.0) as usize,

@@ -80,3 +80,11 @@ Not yet verified:
   a checksum of the archive.
 - The clock on Windows is still coarse (`refined-jiffies`) and there is one
   processor there.
+
+Later the same day (commit 37e2f2a, run 42925479807): `gamedroid` and
+`gamedroid.exe`, started with no arguments, were live-verified end to end in
+CI on Linux and Windows. Each downloaded Android, set it up, booted it and
+showed it in its window; on Linux a mouse swipe unlocked it. The first item
+under "Not yet verified" is therefore done. The first Windows attempt failed
+because the default asked for two processors; the default now follows what
+the host engine supports.
