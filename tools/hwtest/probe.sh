@@ -62,7 +62,7 @@ kv nested "$(cat /sys/module/kvm_intel/parameters/nested 2>/dev/null || cat /sys
 
 section gpu
 if have lspci; then
-  block pci_display sh -c "lspci -nnk | grep -A3 -Ei 'vga|3d|display'"
+  block pci_display sh -c "lspci -nnk | grep -A3 -Ei 'vga|3d|display' || echo 'none found'"
 else
   kv pci_display "lspci MISSING"
 fi

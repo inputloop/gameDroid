@@ -24,7 +24,8 @@ function Tool([string]$name, [string[]]$verArgs) {
 function Feature([string]$name) {
   try {
     $f = Get-WindowsOptionalFeature -Online -FeatureName $name -ErrorAction Stop
-    return $f.State
+    if ($null -eq $f -or "$($f.State)" -eq "") { return "not offered on this edition" }
+    return "$($f.State)"
   } catch { return "UNKNOWN (needs Administrator, or feature not on this edition)" }
 }
 
@@ -115,3 +116,6 @@ KV "ready_for_boot_spike" $(if ($ok) { "yes" } else { "no" })
 
 $lines | Set-Content -Path $out -Encoding UTF8
 Write-Output $out
+# Probed tools may leave a non-zero exit code behind; the probe itself succeeded.
+$global:LASTEXITCODE = 0
+exit 0

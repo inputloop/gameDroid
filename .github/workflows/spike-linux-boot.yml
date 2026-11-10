@@ -1,0 +1,73 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Phase 0 spike, throwaway. Can a prebuilt Cuttlefish image boot under KVM on a
+# GitHub Linux runner? No GPU here, so this tests the VMM path only, with
+# software rendering. Exploratory: steps log as much as they can and the job
+# keeps going after failures so one run teaches the most.
+name: spike-linux-boot
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/spike-linux-boot.yml"
+permissions:
+  contents: read
+jobs:
+  boot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Open /dev/kvm to the runner user
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls -l /dev/kvm
+          test -r /dev/kvm && test -w /dev/kvm && echo "KVM_ACCESS=ok"
+      - name: Install Cuttlefish host packages from Google's apt repository
+        continue-on-error: true
+        run: |
+          sudo curl -fsSL https://us-apt.pkg.dev/doc/repo-signing-key.gpg -o /etc/apt/trusted.gpg.d/artifact-registry.asc
+          echo "deb https://us-apt.pkg.dev/projects/android-cuttlefish-artifacts android-cuttlefish main" | sudo tee /etc/apt/sources.list.d/artifact-registry.list
+          sudo apt-get update
+          apt-cache policy cuttlefish-base cuttlefish-user
+          sudo apt-get install -y cuttlefish-base cuttlefish-user
+          sudo usermod -aG kvm,cvdnetwork,render "$USER"
+          dpkg -l | grep -i cuttlefish || true
+      - name: Record tool help (launch flags are not confirmed by docs we read)
+        continue-on-error: true
+        run: |
+          which cvd launch_cvd fetch_cvd || true
+          cvd version || true
+          cvd help 2>&1 | head -60 || true
+          cvd fetch --help 2>&1 | grep -iE 'default_build|target_directory|branch' | head -20 || true
+      - name: Fetch prebuilt image
+        continue-on-error: true
+        run: |
+          mkdir -p "$HOME/cf" && cd "$HOME/cf"
+          df -h .
+          sg cvdnetwork -c "cvd fetch --default_build=aosp-android-latest-release/aosp_cf_x86_64_only_phone-userdebug --target_directory=$HOME/cf" 2>&1 | tail -40
+          ls -la "$HOME/cf" | head -60
+          df -h .
+          ls bin 2>/dev/null | head -40
+          ./bin/launch_cvd --help 2>&1 | grep -iE -A2 -- '-(gpu_mode|vm_manager) ' | head -40 || true
+      - name: Boot under crosvm, software GPU
+        continue-on-error: true
+        run: |
+          cd "$HOME/cf"
+          start=$(date +%s)
+          sudo -u "$USER" -g kvm env HOME="$HOME/cf" sg cvdnetwork -c "HOME=$HOME/cf ./bin/launch_cvd --daemon --gpu_mode=guest_swiftshader --report_anonymous_usage_stats=n --cpus=2 --memory_mb=4096" 2>&1 | tail -60
+          echo "LAUNCH_EXIT=$? LAUNCH_SECONDS=$(( $(date +%s) - start ))"
+          ./bin/adb devices || true
+          ./bin/adb shell getprop ro.build.fingerprint || true
+          ./bin/adb shell getprop ro.build.version.release || true
+          ./bin/adb shell getprop sys.boot_completed || true
+          ./bin/adb shell getprop ro.hardware.egl || true
+          ./bin/adb shell getprop ro.boot.hardware.vulkan || true
+          ./bin/adb shell 'dumpsys SurfaceFlinger | grep -i -m3 "GLES"' || true
+          ps aux | grep -E 'crosvm|qemu' | grep -v grep | cut -c1-300 | head -5 || true
+      - name: Logs on failure or success
+        if: always()
+        run: |
+          cd "$HOME/cf" 2>/dev/null || exit 0
+          tail -n 60 cuttlefish/instances/cvd-1/logs/launcher.log 2>/dev/null || tail -n 60 cuttlefish_runtime/launcher.log 2>/dev/null || find . -name 'launcher.log' | head
+          HOME="$HOME/cf" ./bin/stop_cvd 2>&1 | tail -3 || true
