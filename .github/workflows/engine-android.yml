@@ -12,17 +12,18 @@ on:
         default: "claude/gifted-ramanujan-i2r9yh"
       seconds:
         description: "How long to let Android run"
-        default: "240"
+        default: "300"
   push:
     paths:
       - ".github/workflows/engine-android.yml"
       - "tools/engine/android_prepare.py"
       - "tools/engine/test_android_prepare.py"
+      - "tools/engine/ppm_to_png.py"
 permissions:
-  contents: read
+  contents: write  # the last step commits a screenshot, when Android drew one
 env:
   BCONTAIN_REF: ${{ inputs.bcontain_ref || 'claude/gifted-ramanujan-i2r9yh' }}
-  RUN_SECONDS: ${{ inputs.seconds || '240' }}
+  RUN_SECONDS: ${{ inputs.seconds || '300' }}
 jobs:
   kvm:
     runs-on: ubuntu-24.04
@@ -66,17 +67,19 @@ jobs:
           cd "$HOME/gd"
           timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/bcontain/target/release/bvmm" run \
             --kernel kernel --initrd initrd.img --cmdline-file cmdline.txt \
-            --disk os.layout --cpus 2 --memory 4096 > android.log 2> bvmm.err
+            --disk os.layout --cpus 2 --memory 4096 \
+            --display 720x1280 --screenshot screen.ppm > android.log 2> bvmm.err
           echo "EXIT=$? (124 means it was still running when time was up)"
           echo "LINES=$(wc -l < android.log)"
           echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
       - name: How far did it get
         if: always()
         run: |
+          set +e
           cd "$HOME/gd"
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
-          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
+          for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
             n=$(grep -c -- "$pat" android.log); l=$(grep -m1 -- "$pat" android.log | show)
             echo "[$n] $pat :: $l"
           done
@@ -88,6 +91,12 @@ jobs:
           grep -oE "init: starting service '[^']+'" android.log | sort | uniq -c | sort -rn | head -n 20
           echo "=== last 60 lines"
           tail -n 60 android.log | show
+          echo "=== screen"
+          if [ -f screen.ppm ]; then
+            python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" screen.ppm screen.png && ls -la screen.png
+          else
+            echo "the guest never presented a frame"
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -98,3 +107,16 @@ jobs:
             ~/gd/cmdline.txt
             ~/gd/bootconfig.txt
             ~/gd/os.layout
+            ~/gd/screen.png
+      - name: Commit the screenshot, if there is one
+        if: always()
+        run: |
+          [ -f "$HOME/gd/screen.png" ] || exit 0
+          mkdir -p docs/screenshots
+          cp "$HOME/gd/screen.png" docs/screenshots/android17-bvmm-kvm-latest.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/android17-bvmm-kvm-latest.png
+          git commit -m "Screenshot: Android 17 on bvmm under KVM (CI run ${GITHUB_RUN_ID})" || exit 0
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
