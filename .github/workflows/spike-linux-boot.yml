@@ -16,6 +16,10 @@ jobs:
     runs-on: ubuntu-24.04  # cuttlefish-base 1.57.14 does not install on 26.04 (libxml2 dependency)
     timeout-minutes: 45
     steps:
+      - name: Free disk space (run 2 failed 0.2 GB short for userdata)
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h /
       - name: Open /dev/kvm to the runner user
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
