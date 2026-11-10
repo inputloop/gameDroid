@@ -32,9 +32,9 @@ on the laptop for anything involving the GPU or Intel-specific behaviour.
 | E2 | Several vCPUs and big memory | Several vCPUs and more than 4 GiB visible in the guest, memory above the 4 GiB hole | **KVM: done in CI, 2026-11-10** (4 vCPUs, 5 GiB). **WHP: memory done; still one vCPU** (`results/2026-11-10-E2-and-clock.md`) |
 | E3 | ACPI and clean power-off | Guest shuts down and bvmm exits 0, no reset trick | CI |
 | E4 | Network and vsock | virtio-net with user-mode NAT; vsock stream to the host | CI |
-| E5 | Android boots headless | Cuttlefish Android 17 image reaches `sys.boot_completed=1`, adb reachable over vsock | CI on KVM |
-| E6 | A picture | virtio-gpu 2D scanout in a host window; Android home screen visible with guest software rendering | Screenshot in CI (headless capture); eyes on the laptop |
-| E7 | Touch, keys, gamepad | virtio-input devices; taps and keys arrive in Android | CI with injected events |
+| E5 | Android boots | Stock Android 17 image reaches `sys.boot_completed=1` | **KVM: done in CI, 2026-11-10** (`results/2026-11-10-E5-E6-android-boots.md`). Without adb; boot is read from the console |
+| E6 | A picture | virtio-gpu 2D scanout; Android screen visible with guest software rendering | **KVM: done in CI, 2026-11-10**, frames saved to files. A host window is gameDroid's job and not built |
+| E7 | Touch, keys, gamepad | virtio-input devices; taps and keys arrive in Android | **Touch: done in CI on KVM, 2026-11-10** (a swipe unlocks, another opens the app drawer). Keyboard present, untested. No gamepad device yet |
 | E8 | GPU acceleration | gfxstream through rutabaga; guest renderer string names the host GPU | Laptop only |
 | E9 | Sound | virtio-snd playback | Laptop |
 

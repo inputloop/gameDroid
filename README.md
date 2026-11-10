@@ -4,11 +4,17 @@ A free and open source Android emulator for desktop, built for playing games:
 keyboard and mouse maps for touch games, real controller support, per-game
 profiles, and high frame rates. Linux and Windows. GPLv3 or later.
 
-> **Status, 2026-11-10: early. There is no playable emulator yet.**
-> What exists is a design, a chosen engine that boots Linux and Android's own
-> kernel on both hosts with a PCI bus and a disk, and a measured checklist of
-> what Android needs from it. Everything on this page
-> says plainly whether it is working, planned, or a guess.
+> **Status, 2026-11-10: Android boots and responds to touch, on Linux, with
+> no window yet and no GPU acceleration.** There is no playable emulator: no
+> launcher, no window, no key mapping wired to a game, and Windows is behind.
+> Everything on this page says plainly whether it is working, planned, or a
+> guess.
+
+![Android 17 running on gameDroid: lock screen, home screen, app drawer](docs/screenshots/gamedroid-android17-home.png)
+
+*Stock Android 17 on gameDroid's engine, 2026-11-10: the home screen, reached
+by a swipe sent from the host. A real frame read from the engine's display
+device in CI. More below.*
 
 ## Where things stand
 
@@ -21,15 +27,36 @@ profiles, and high frame rates. Linux and Windows. GPLv3 or later.
 | Engine has a PCI bus and a virtio disk | Working in CI on both hosts |
 | Several processors and more than 4 GiB of memory | Working in CI on Linux. On Windows: memory yes, still one processor |
 | Android's own kernel boots on the engine | Working in CI on both hosts; on Windows its clock is still coarse |
-| Engine boots Android | In progress on Linux. Android's kernel and first-stage `init` run and find the disk; it does not reach the home screen yet |
-| Engine devices for a screen and for touch and keys | Written and unit-tested; not yet proven with Android |
-| A picture on screen | Not yet |
-| Touch, keyboard, controller input | Not yet |
+| Stock Android 17 boots to its lock screen | Working in CI on Linux (about 40 seconds on two shared cores) |
+| A picture from Android | Working on Linux: frames are read from the engine's display device. Drawn by the CPU; saved to files, there is no window yet |
+| Touch input reaches Android | Working on Linux: swipes sent from the host unlock the screen and open the app drawer |
+| Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised. No controller device yet |
+| Android on Windows | Not attempted. The engine there has one processor and a coarse clock for Android's kernel |
 | GPU acceleration | Not yet |
-| Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to a running game |
+| Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
+| A window, a launcher, installing games | Not started |
 | Key mapping editor | Not started |
 
 ## What you can see today
+
+### Android 17 running on gameDroid's engine
+
+Unmodified stock Android 17 (Google's `aosp_cf_x86_64_only_phone` image),
+started by `gamedroid-run` on the bvmm engine under KVM. These three frames
+are from one CI run on 2026-11-10: the lock screen about 50 seconds after
+power-on, the home screen after a swipe up sent from the host, and the app
+drawer after a second swipe
+([what it took](docs/engine/results/2026-11-10-E5-E6-android-boots.md)).
+
+| Lock screen | After one swipe | After a second swipe |
+|---|---|---|
+| ![lock screen](docs/screenshots/gamedroid-android17-lock.png) | ![home screen](docs/screenshots/gamedroid-android17-home.png) | ![app drawer](docs/screenshots/gamedroid-android17-apps.png) |
+
+These are real frames, read from the engine's display device and saved by
+the runner; nothing was drawn or edited. Two honest notes: Android draws them
+with the CPU, since there is no GPU acceleration yet, and the runner corrects
+the colour order, because this Android image writes red and blue the other way
+round from what it tells the display.
 
 ### The engine booting Linux, on both hosts
 
@@ -63,22 +90,18 @@ progress, unrelated kernel messages); none were altered. The disk image's two
 command lines at the top and the host read-back line at the bottom are
 annotations describing what the test did.
 
-### The target: stock Android 17 in a virtual machine
+### The reference: the same Android under an existing engine
 
-This is the Android 17 image gameDroid will run, booted in CI on 2026-11-10
-under a different, existing engine (crosvm) to learn what Android expects. It
-is a real screenshot taken from inside the guest with `screencap`. It is not
-gameDroid's engine and not GPU accelerated: the picture was drawn by the CPU.
+Before any of that worked, the same image was booted in CI under crosvm, an
+existing engine, to learn what Android expects from its machine. This
+screenshot was taken from inside the guest on that run.
 
-<img src="docs/screenshots/android17-crosvm-reference.png" alt="Android 17 home screen in the reference VM" width="300">
-
-Getting this same screen out of bvmm, in a window, is milestone E6.
+<img src="docs/screenshots/android17-crosvm-reference.png" alt="Android 17 home screen in the reference VM" width="240">
 
 What that run taught us is written up in
-[docs/engine/reference](docs/engine/reference/README.md). The short version:
-Android needs its virtual devices on PCI (now built), its kernel cannot use
-the Windows timer shortcuts bvmm relies on (confirmed: it boots there with a
-coarse clock, fix in progress), and the stock image has no ARM translator.
+[docs/engine/reference](docs/engine/reference/README.md): Android needs its
+virtual devices on PCI, its kernel cannot use the Windows timer shortcuts the
+engine relied on, and the stock image has no ARM translator.
 
 ## How it is meant to work
 
@@ -120,14 +143,16 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E2 | Several CPUs and large memory | Done in CI on Linux; Windows has the memory, one CPU so far |
 | E3 | ACPI and clean power-off | Planned |
 | E4 | Network and vsock | Planned |
-| E5 | Android boots, no screen | Planned |
-| E6 | A picture | Planned |
-| E7 | Touch, keys, gamepad | Planned |
+| E5 | Android boots | Done in CI on Linux |
+| E6 | A picture | Done in CI on Linux, to a file; a window is still to come |
+| E7 | Touch, keys, gamepad | Touch done in CI on Linux; keyboard untested; no gamepad device yet |
 | E8 | GPU acceleration | Planned. The hardest item |
 | E9 | Sound | Planned |
 
-gameDroid's own features build on these: the playable shell needs E6 and E7,
-the mapping editor needs E7, performance work needs E8.
+gameDroid's own features build on these. With E5 to E7 reached on Linux, the
+next steps are gameDroid's own: a window that shows the frames and takes
+keyboard and mouse input through the input engine, then installing and
+starting a game. Performance work needs E8.
 
 ## Things worth knowing before you get excited
 
@@ -135,6 +160,8 @@ the mapping editor needs E7, performance work needs E8.
   Android's kernel has only a coarse clock there. A first fix for the clock
   made things worse and was withdrawn
   ([what happened](docs/engine/results/2026-11-10-E2-and-clock.md)).
+- **It is slow.** Android draws with the CPU, on however many processors the
+  host lends. Good enough to prove things work; not good enough to play on.
 - **No GPU acceleration until E8.** Leading with our own engine was a choice;
   the faster route through existing engines was set aside. What that route
   would probably have delivered is recorded as numbered guesses in
@@ -161,7 +188,16 @@ tools/hwtest/probe.sh
 powershell -ExecutionPolicy Bypass -File tools\hwtest\probe.ps1
 ```
 
-Run the engine yourself, using a [bContain](https://github.com/inputloop/bContain) build:
+Boot Android yourself on a Linux machine with KVM and about 30 GB free. The
+steps the CI job runs are in
+[.github/workflows/engine-android.yml](.github/workflows/engine-android.yml):
+fetch the stock image, prepare it with `tools/engine/android_prepare.py`, then
+
+```bash
+cargo run --release -p gamedroid-device --bin gamedroid-run -- <prepared-dir> --screenshot screen.ppm
+```
+
+Run the engine on its own, using a [bContain](https://github.com/inputloop/bContain) build:
 
 ```bash
 bcontain hypervisor-test
@@ -185,6 +221,7 @@ bcontain run --engine native alpine:3.20 -- uname -a
 | [docs/phase0/](docs/phase0/) | The first round of experiments with existing engines, now closed |
 | [docs/screenshots/](docs/screenshots/) | Images used on this page, with their source text |
 | [core/input/](core/input/) | gameDroid's input engine (Rust): profiles and the mapping from host controls to touches |
+| [core/device/](core/device/) | The virtual Android device (Rust): the machine Android runs in, on the bvmm engine; `gamedroid-run`, a headless runner with input scripts |
 | [profiles/](profiles/) | Game profiles. One invented example so far |
 | [tools/hwtest/](tools/hwtest/) | Scripts to run on real hardware |
 | [tools/engine/](tools/engine/) | Helpers for engine tests: preparing the stock Android image for bvmm (the bootloader's job), screenshot conversion |

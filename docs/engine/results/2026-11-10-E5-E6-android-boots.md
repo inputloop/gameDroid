@@ -49,10 +49,13 @@ and writes the partition table.
 
 ## Known defects and limits
 
-- **Colours.** In this first frame red and blue were swapped. The guest's
-  composer writes pixels in an order chosen by a boot setting, and the stock
-  launcher's choice assumes its own viewer. Changed to the order the buffer's
-  label says; re-run pending at the time of writing.
+- **Colours needed a host-side correction.** The first frames had red and
+  blue swapped: blue icons came out orange. The image's composer fills its
+  buffer red-first whatever the buffer is labelled, and the image's own
+  setting for this (`display_framebuffer_format`) changed nothing when tried.
+  gameDroid's device crate now corrects the order for this image
+  (`true_colours`). Checked against a screenshot taken inside the guest on
+  the reference boot: icons and wallpaper now match.
 - **One service still crash-loops**: `vendor.threadnetwork_hal` (Thread
   radio), restarting every five seconds. It did not block the boot.
 - **No network**, no sound, no adb. Wi-Fi and mobile data have no device
@@ -74,3 +77,22 @@ virtio-gpu 2D scanout, Android screen visible with guest software rendering".
 Both are met on KVM. E6's "in a host window" part is not: frames are read by a
 headless runner and saved to a file. A window belongs to gameDroid's launcher,
 which does not exist yet.
+
+## E7, added the same day: touch input
+
+Run: https://github.com/inputloop/gameDroid/actions/runs/42917762422
+(gameDroid f0edf99).
+
+`gamedroid-run` waited for boot completed, then ran
+`tools/engine/scripts/unlock.script`: save the screen, swipe up, save, swipe
+up again, save. The three frames are the lock screen, the home screen, and
+the app drawer with twelve apps, which is what those swipes do on a phone. The
+kernel had listed both input devices at boot:
+
+    input: bvmm touchscreen as /devices/pci0000:00/0000:00:03.0/virtio2/input/input0
+    input: bvmm keyboard as /devices/pci0000:00/0000:00:04.0/virtio3/input/input1
+
+So events pushed from a host thread reach Android's input stack through the
+virtio-input device and are understood as touches at the right places. Not
+yet shown: several fingers at once, taps on a specific target, the keyboard,
+or how long an event takes to arrive.
