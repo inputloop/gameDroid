@@ -30,10 +30,21 @@ pub struct Options {
     pub extra_disk: Option<std::path::PathBuf>,
 }
 
+/// How many processors to give Android on a host with `host` logical
+/// processors, when the engine supports at most `engine_max`: half of the
+/// host's, so the host stays responsive, but at least 2 and at most 8.
+pub fn auto_cpus(host: usize, engine_max: u8) -> u8 {
+    ((host / 2).clamp(2, 8) as u8)
+        .min(host.max(1) as u8)
+        .min(engine_max)
+        .max(1)
+}
+
 impl Default for Options {
     fn default() -> Options {
+        let host = std::thread::available_parallelism().map_or(1, |n| n.get());
         Options {
-            cpus: 2.min(bvmm::platform::MAX_CPUS),
+            cpus: auto_cpus(host, bvmm::platform::MAX_CPUS),
             memory_mib: 4096,
             width: 720,
             height: 1280,
@@ -181,12 +192,20 @@ mod tests {
         std::fs::write(dir.join("initrd.img"), b"I").unwrap();
         std::fs::write(dir.join("cmdline.txt"), "console=ttyS0 init=/init\n").unwrap();
         let options = Options {
+            cpus: 1,
             extra_cmdline: " ignore_loglevel ".into(),
             ..Default::default()
         };
         let (config, handles) = machine(&dir, &options).unwrap();
         assert_eq!(config.cmdline, "console=ttyS0 init=/init ignore_loglevel");
-        assert_eq!((config.cpus, config.memory_mib), (2, 4096));
+        assert_eq!((config.cpus, config.memory_mib), (1, 4096));
+        // Processors follow the host, within what the engine can run.
+        assert_eq!(auto_cpus(20, 64), 8);
+        assert_eq!(auto_cpus(8, 64), 4);
+        assert_eq!(auto_cpus(4, 64), 2);
+        assert_eq!(auto_cpus(2, 64), 2);
+        assert_eq!(auto_cpus(1, 64), 1);
+        assert_eq!(auto_cpus(20, 1), 1);
         assert_eq!(config.disks.len(), 1);
         let apk = dir.join("game.apk");
         std::fs::write(&apk, vec![7u8; 1000]).unwrap();

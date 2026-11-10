@@ -212,7 +212,7 @@ usage: gamedroid-run <prepared-dir> [options]
   <prepared-dir>        a prepared Android image set
   --setup               use gameDroid's own image set, downloading and
                         preparing it first if this is the first run
-  --cpus <n>            virtual processors (default 2)
+  --cpus <n>            virtual processors (default: half the host's, 2 to 8)
   --memory <MiB>        guest memory (default 4096)
   --display <W>x<H>     screen size (default 720x1280)
   --screenshot <file>   keep the newest frame here as a PPM, about once a second

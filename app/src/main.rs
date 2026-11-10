@@ -28,7 +28,7 @@ usage: gamedroid [options]
   --demo              no Android: a test card that shows the touches it receives
   --profile <file>    a game profile (TOML); F1 then switches game mode on and off
   --game-mode         start in game mode (needs --profile)
-  --cpus <n>          virtual processors (default 2)
+  --cpus <n>          virtual processors (default: half the host's, 2 to 8)
   --memory <MiB>      guest memory (default 4096)
   --console <file>    write Android's console log here (default: discard)
   --frames <n>        exit after n frames (for tests)
