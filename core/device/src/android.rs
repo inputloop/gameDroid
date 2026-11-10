@@ -33,7 +33,7 @@ pub struct Options {
 impl Default for Options {
     fn default() -> Options {
         Options {
-            cpus: 2,
+            cpus: 2.min(bvmm::platform::MAX_CPUS),
             memory_mib: 4096,
             width: 720,
             height: 1280,
