@@ -12,6 +12,15 @@
 //! key 102
 //! ```
 //!
+//! Three more steps talk to Android's shell on the serial port:
+//!
+//! ```text
+//! shell getprop ro.build.version.release
+//! expect GD_READY 60          # wait up to 60 s for this text on the console
+//! install                     # install the APK the runner was given
+//! start com.example.game      # start an installed app
+//! ```
+//!
 //! Coordinates are screen pixels, durations and waits are milliseconds for
 //! `swipe` and seconds for `wait`, and key numbers are Linux key codes.
 
@@ -32,6 +41,17 @@ pub enum Step {
     },
     Key(u16),
     Screenshot(PathBuf),
+    /// Type a command line at Android's serial shell.
+    Shell(String),
+    /// Wait until the console has shown `text`, or fail after `within`.
+    Expect {
+        text: String,
+        within: Duration,
+    },
+    /// Install the APK the runner was started with.
+    Install,
+    /// Start an installed app by package name.
+    Start(String),
 }
 
 /// Parse a script. Errors name the line.
@@ -92,6 +112,33 @@ pub fn parse(text: &str) -> Result<Vec<Step>, String> {
                 count(1)?;
                 Step::Screenshot(rest[0].into())
             }
+            "shell" => {
+                if rest.is_empty() {
+                    return Err(bad("`shell` needs a command"));
+                }
+                Step::Shell(rest.join(" "))
+            }
+            "expect" => {
+                count(2)?;
+                Step::Expect {
+                    text: rest[0].to_string(),
+                    within: Duration::from_secs(num(1)? as u64),
+                }
+            }
+            "install" => {
+                count(0)?;
+                Step::Install
+            }
+            "start" => {
+                count(1)?;
+                let ok = rest[0]
+                    .chars()
+                    .all(|c| c.is_ascii_alphanumeric() || c == '.' || c == '_');
+                if !ok {
+                    return Err(bad("that is not a package name"));
+                }
+                Step::Start(rest[0].to_string())
+            }
             other => return Err(bad(&format!("unknown step `{other}`"))),
         });
     }
@@ -137,6 +184,18 @@ mod tests {
             ]
         );
         assert!(parse("").unwrap().is_empty());
+        assert_eq!(
+            parse("shell ls -l /data\nexpect GD_OK 30\ninstall\nstart org.example.game_1").unwrap(),
+            [
+                Step::Shell("ls -l /data".into()),
+                Step::Expect {
+                    text: "GD_OK".into(),
+                    within: Duration::from_secs(30)
+                },
+                Step::Install,
+                Step::Start("org.example.game_1".into()),
+            ]
+        );
     }
 
     #[test]
@@ -148,6 +207,10 @@ mod tests {
             ("wait forever", "line 1: expected seconds"),
             ("key 70000", "line 1: key code out of range"),
             ("swipe 1 2 3 4", "line 1: `swipe` takes 5"),
+            ("shell", "line 1: `shell` needs a command"),
+            ("install now", "line 1: `install` takes 0"),
+            ("start com.x;reboot", "line 1: that is not a package name"),
+            ("expect DONE soon", "line 1: expected a non-negative"),
         ] {
             let e = parse(text).unwrap_err();
             assert!(e.contains(want), "{text:?}: {e}");

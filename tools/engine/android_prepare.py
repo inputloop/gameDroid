@@ -241,7 +241,10 @@ def runtime_bootconfig(boot_device, vbmeta_guid, memory_mib, display):
         'androidboot.hypervisor.vm.supported = "0"',
         'androidboot.hypervisor.protected_vm.supported = "0"',
         'androidboot.hypervisor.version = "gamedroid-bvmm"',
-        'androidboot.serialconsole = "0"',
+        # A root shell on the serial port (this is a userdebug image). Until
+        # adb works it is how the host runs commands in Android.
+        'androidboot.serialconsole = "1"',
+        'androidboot.console = "ttyS0"',
         # Services that listen on vsock for a host peer. Nobody connects yet,
         # but they need the address to start.
         'androidboot.vsock_lights_port = "6900"',

@@ -8,15 +8,19 @@ name: engine-android
 on:
   workflow_dispatch:
     inputs:
+      game:
+        description: "F-Droid package to install and start"
+        default: "com.shatteredpixel.shatteredpixeldungeon"
       seconds:
         description: "How long to let Android run"
-        default: "300"
+        default: "420"
   push:
     paths:
       - ".github/workflows/engine-android.yml"
       - "tools/engine/android_prepare.py"
       - "tools/engine/test_android_prepare.py"
       - "tools/engine/ppm_to_png.py"
+      - "tools/engine/fetch_fdroid_apk.py"
       - "tools/ci/publish-logs.sh"
       - "tools/engine/scripts/**"
       - "core/device/**"
@@ -24,7 +28,8 @@ on:
 permissions:
   contents: write  # to publish logs and the screenshot to the ci-logs branch
 env:
-  RUN_SECONDS: ${{ inputs.seconds || '300' }}
+  RUN_SECONDS: ${{ inputs.seconds || '420' }}
+  GAME: ${{ inputs.game || 'com.shatteredpixel.shatteredpixeldungeon' }}
 jobs:
   kvm:
     runs-on: ubuntu-24.04
@@ -58,14 +63,19 @@ jobs:
           echo "--- bootconfig from the image (first 30 lines)"; head -n 30 "$HOME/gd/bootconfig.txt"
           echo "--- layout"; cat "$HOME/gd/os.layout"
           ls -la "$HOME/gd"
+      - name: Fetch a free-software game from F-Droid
+        run: |
+          python3 tools/engine/fetch_fdroid_apk.py "$GAME" "$HOME/game.apk"
+          ls -la "$HOME/game.apk"
+          sed "s/PACKAGE/$GAME/" tools/engine/scripts/install-and-play.script > "$HOME/play.script"
       - name: Boot Android on bvmm (E5)
         run: |
           set +e
           cd "$HOME/gd"
           timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/target/release/gamedroid-run" . \
             --cpus 2 --memory 4096 --display 720x1280 --screenshot screen.ppm \
-            --script "$GITHUB_WORKSPACE/tools/engine/scripts/unlock.script" > android.log 2> bvmm.err
-          echo "EXIT=$? (0: the input script ran to its end; 124: still running when time was up)"
+            --apk "$HOME/game.apk" --script "$HOME/play.script" > android.log 2> bvmm.err
+          echo "EXIT=$? (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)"
           echo "LINES=$(wc -l < android.log)"
           echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
       - name: How far did it get
@@ -95,7 +105,9 @@ jobs:
             [ -f "$f" ] || continue
             echo "$f: $(python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png")"
           done
-          echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 15
+          echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 25
+          echo "=== shell and install lines from the console"
+          grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -113,6 +125,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "$HOME/gd" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
-          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png after-second-swipe.png
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png
       - name: Verdict
-        run: grep -q 'sys.boot_completed=1' "$HOME/gd/android.log"
+        run: |
+          grep -q 'sys.boot_completed=1' "$HOME/gd/android.log"
+          grep -q 'script finished' "$HOME/gd/bvmm.err"
+          ! grep -q 'EXPECT FAILED' "$HOME/gd/bvmm.err"

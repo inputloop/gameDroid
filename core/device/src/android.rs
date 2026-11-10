@@ -25,6 +25,9 @@ pub struct Options {
     pub height: u32,
     /// Extra kernel arguments, for diagnosis.
     pub extra_cmdline: String,
+    /// An extra read-only disk (`/dev/block/vdb` in Android), used to hand
+    /// files such as an APK to the guest.
+    pub extra_disk: Option<std::path::PathBuf>,
 }
 
 impl Default for Options {
@@ -35,8 +38,27 @@ impl Default for Options {
             width: 720,
             height: 1280,
             extra_cmdline: String::new(),
+            extra_disk: None,
         }
     }
+}
+
+/// Write a disk layout that presents `file` as a read-only disk, padded with
+/// zeros to a whole number of sectors. Returns the layout's path and the
+/// file's true length, which the guest needs to cut the padding off again.
+pub fn file_as_disk(file: &Path, layout: &Path) -> Result<u64, String> {
+    let len = std::fs::metadata(file)
+        .map_err(|e| format!("reading {}: {e}", file.display()))?
+        .len();
+    if len == 0 {
+        return Err(format!("{} is empty", file.display()));
+    }
+    let absolute =
+        std::fs::canonicalize(file).map_err(|e| format!("resolving {}: {e}", file.display()))?;
+    let padded = len.div_ceil(512) * 512;
+    let text = format!("bvmm-disk-layout 1\n{padded} ro {}\n", absolute.display());
+    std::fs::write(layout, text).map_err(|e| format!("writing {}: {e}", layout.display()))?;
+    Ok(len)
 }
 
 /// What the host holds on to while the machine runs.
@@ -93,6 +115,16 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
     let display = Display::new(options.width, options.height);
     let (touchscreen, touch) = Input::touchscreen(options.width, options.height);
     let (keys, keyboard) = Input::keyboard();
+    let mut disks = vec![DiskConfig {
+        path: dir.join("os.layout"),
+        read_only: false,
+    }];
+    if let Some(path) = &options.extra_disk {
+        disks.push(DiskConfig {
+            path: path.clone(),
+            read_only: true,
+        });
+    }
     let config = VmConfig {
         memory_mib: options.memory_mib,
         cpus: options.cpus,
@@ -101,10 +133,7 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         cmdline: cmdline.trim().to_string(),
         // The boot configuration names the system disk by its PCI slot, so
         // it must stay the first device.
-        disks: vec![DiskConfig {
-            path: dir.join("os.layout"),
-            read_only: false,
-        }],
+        disks,
         display: Some(display.clone()),
         inputs: vec![touchscreen, keys],
         consoles: consoles(),
@@ -159,6 +188,19 @@ mod tests {
         assert_eq!(config.cmdline, "console=ttyS0 init=/init ignore_loglevel");
         assert_eq!((config.cpus, config.memory_mib), (2, 4096));
         assert_eq!(config.disks.len(), 1);
+        let apk = dir.join("game.apk");
+        std::fs::write(&apk, vec![7u8; 1000]).unwrap();
+        let layout = dir.join("apk.layout");
+        assert_eq!(file_as_disk(&apk, &layout).unwrap(), 1000);
+        let text = std::fs::read_to_string(&layout).unwrap();
+        assert!(text.starts_with("bvmm-disk-layout 1\n1024 ro /"), "{text}");
+        let with_disk = Options {
+            extra_disk: Some(layout),
+            ..Default::default()
+        };
+        let (two, _) = machine(&dir, &with_disk).unwrap();
+        assert_eq!(two.disks.len(), 2);
+        assert!(two.disks[1].read_only && !two.disks[0].read_only);
         assert!(config.disks[0].path.ends_with("os.layout"));
         assert_eq!(config.consoles.len(), 20);
         assert_eq!(config.inputs.len(), 2);

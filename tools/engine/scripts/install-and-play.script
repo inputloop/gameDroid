@@ -1,0 +1,19 @@
+# After boot: unlock, check the shell answers, install the APK the runner was
+# given, start it, and record the screen along the way.
+wait 8
+screenshot lock.ppm
+swipe 360 1150 360 250 350
+wait 4
+screenshot after-swipe.ppm
+# The marker is split so the shell's echo of this line does not match it.
+shell id; getprop ro.build.version.release; echo GD_""SHELL_OK
+expect GD_SHELL_OK 40
+install
+start PACKAGE
+expect GD_START_STATUS=0 60
+wait 30
+screenshot game-1.ppm
+# A tap in the middle of the screen, then look again.
+tap 360 640
+wait 12
+screenshot game-2.ppm
