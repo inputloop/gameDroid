@@ -39,7 +39,10 @@ jobs:
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev >/dev/null
       - run: cargo build --release -p gamedroid
       - name: Drive the window
-        run: xvfb-run -a -s "-screen 0 700x900x24" tools/ci/window-test.sh target/release/gamedroid "$HOME/window" 2>&1 | tee "$HOME/window/result.txt"
+        run: |
+          set -o pipefail
+          mkdir -p "$HOME/window"
+          xvfb-run -a -s "-screen 0 700x900x24" tools/ci/window-test.sh target/release/gamedroid "$HOME/window" 2>&1 | tee "$HOME/window/result.txt"
       - name: Publish screenshots to the ci-logs branch
         if: always()
         env:

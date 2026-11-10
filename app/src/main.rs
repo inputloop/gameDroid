@@ -312,6 +312,13 @@ fn run() -> Result<(), String> {
             ],
             window: window.get_size(),
         };
+        // A key tapped and let go between two frames is not in the held
+        // list any more; count it as held for this one frame so it is seen.
+        for key in window.get_keys_pressed(minifb::KeyRepeat::No) {
+            if !state.keys.contains(&key) {
+                state.keys.push(key);
+            }
+        }
         if std::mem::take(&mut want_game_mode) {
             state.keys.push(minifb::Key::F1);
         }

@@ -42,6 +42,7 @@ xdotool keyup a; sleep 0.2
 
 # Game mode with the example profile: W pushes the stick (finger 0, red),
 # the left button fires (finger 1, blue), moving the mouse looks (finger 2, green).
+# A quick tap, as a person would do it: the window must not miss it.
 xdotool key F1; sleep 0.4
 echo "title now: $(xdotool getwindowname "$win")"
 check [ "$(xdotool getwindowname "$win" | grep -c 'game mode')" = 1 ]
