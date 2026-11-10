@@ -19,6 +19,7 @@ on:
       - "tools/engine/android_prepare.py"
       - "tools/engine/test_android_prepare.py"
       - "tools/engine/ppm_to_png.py"
+      - "tools/ci/publish-logs.sh"
 permissions:
   contents: write  # the last step commits a screenshot, when Android drew one
 env:
@@ -77,6 +78,7 @@ jobs:
         run: |
           set +e
           cd "$HOME/gd"
+          exec > >(tee summary.txt) 2>&1
           show() { cut -c1-230 | sed 's/\r$//'; }
           echo "=== milestones"
           for pat in 'Linux version' 'virtio_blk virtio' 'vda: ' 'virtio_gpu\|virtio-gpu\|\[drm\]' 'Run /init as init process' 'init: init first stage started' 'Switching root' 'init: init second stage started' 'init: starting service .zygote' 'init: starting service .surfaceflinger' 'Boot Animation' 'BOOT_COMPLETED' 'sys.boot_completed'; do
@@ -108,6 +110,13 @@ jobs:
             ~/gd/bootconfig.txt
             ~/gd/os.layout
             ~/gd/screen.png
+      - name: Publish the logs to the ci-logs branch
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "$HOME/gd" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png
       - name: Commit the screenshot, if there is one
         if: always()
         run: |
