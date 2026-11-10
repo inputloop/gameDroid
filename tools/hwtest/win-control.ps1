@@ -116,8 +116,11 @@ $sdkmanager = Join-Path $tools "sdkmanager.bat"
 $avdmanager = Join-Path $tools "avdmanager.bat"
 
 Write-Host "Recording license acceptance ..."
-$yes = ("y`r`n" * 40)
-$yes | & $sdkmanager --licenses --sdk_root=$sdk | Out-Null
+# sdkmanager is a batch file; answers are fed from a file through cmd, which is
+# the only form that reliably reaches it from Windows PowerShell.
+$yesFile = Join-Path $WorkDir "yes.txt"
+(1..60 | ForEach-Object { "y" }) | Set-Content -Path $yesFile -Encoding ASCII
+Run "`"$sdkmanager`" --licenses --sdk_root=`"$sdk`" < `"$yesFile`"" | Out-Null
 
 if (-not $Image) {
   $list = Run "`"$sdkmanager`" --list --sdk_root=`"$sdk`""
@@ -135,7 +138,7 @@ if (-not $Image) { KV "blocker" "no x86_64 system image found in the SDK list"; 
 KV "system_image" $Image
 
 Write-Host "Installing emulator, platform-tools and $Image (a few GB) ..."
-$inst = Run "`"$sdkmanager`" --sdk_root=`"$sdk`" `"platform-tools`" `"emulator`" `"$Image`""
+$inst = Run "`"$sdkmanager`" --sdk_root=`"$sdk`" `"platform-tools`" `"emulator`" `"$Image`" < `"$yesFile`""
 $emulator = Join-Path $sdk "emulator\emulator.exe"
 $adb = Join-Path $sdk "platform-tools\adb.exe"
 if (-not (Test-Path $emulator) -or -not (Test-Path $adb)) {
@@ -145,8 +148,12 @@ if (-not (Test-Path $emulator) -or -not (Test-Path $adb)) {
 KV "emulator_version" (Run "`"$emulator`" -version" | Select-String -Pattern "emulator version" | Select-Object -First 1)
 
 $avd = "gamedroid-control"
-"no" | & $avdmanager create avd -n $avd -k $Image --force | Out-Null
-KV "avd_created" (Test-Path (Join-Path $env:ANDROID_AVD_HOME "$avd.ini"))
+$noFile = Join-Path $WorkDir "no.txt"
+"no" | Set-Content -Path $noFile -Encoding ASCII
+$avdOut = Run "`"$avdmanager`" create avd -n $avd -k `"$Image`" --force < `"$noFile`""
+$avdOk = Test-Path (Join-Path $env:ANDROID_AVD_HOME "$avd.ini")
+KV "avd_created" $avdOk
+if (-not $avdOk) { Block "avdmanager_output_tail" ($avdOut | Select-Object -Last 12); Finish "FAILED (setup)" 4 }
 
 Section "hypervisor"
 $accel = Run "`"$emulator`" -accel-check"
