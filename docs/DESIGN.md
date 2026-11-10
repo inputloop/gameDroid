@@ -244,6 +244,49 @@ Phases 1 and 2 are where a small team should expect to spend most of its time.
 So the realistic target for the competitive tier is: works where the publisher
 permits emulators, clearly marked as unsupported where it does not.
 
+### 8.1 Where shooters stand (searched 2026-11-10)
+
+No publisher policy page was read directly. These come from news and guide
+sites, plus one Garena announcement, and must be re-checked per title before
+we publish a compatibility entry.
+
+| Game | Stance toward emulators | What that means for us |
+|---|---|---|
+| Free Fire / Free Fire MAX | Tolerated on any emulator. Detected players go to a separate emulator pool in ranked Battle Royale and Clash Squad; a squad with one emulator player is matched as emulator. Emulator accounts are excluded from leaderboards | Best first target: the policy is about the platform, not a named vendor |
+| PUBG Mobile | Detects emulators and matches them only with each other. Tencent's Gameloop is the only sanctioned emulator; temporary bans are reported on others | Playable in principle, real account risk until Krafton or Tencent recognizes us |
+| Call of Duty: Mobile | Same model. Activision's wording: no official support outside Gameloop. Bans on BlueStacks were reported in 2021 | Same as PUBG Mobile |
+| Arena Breakout | Offered on Gameloop. No policy found for other emulators | Unknown; treat as at-risk |
+| Standoff 2 | Developer says emulators are unsupported; no express ban found | Unsupported, at the player's risk |
+| Critical Ops, Blood Strike, Farlight 84 | Nothing found | Unknown |
+
+### 8.2 Ways to work with it
+
+1. Be easy to classify. Present one stable, documented, truthful identity
+   (device model, hardware name, build fingerprint) so a game's detection puts
+   gameDroid in its emulator pool. Unknown or shifting identities are what get
+   treated as tampering. Publish the identity so anti-cheat vendors can add it.
+2. Ship a clean release image. No root, no debuggable system, adb off by
+   default, signed builds with verified boot. Limit to state honestly: anyone
+   can rebuild open source with root added, and without hardware-backed
+   attestation a publisher cannot prove a given player runs our signed build.
+3. Fair-play mode, enforced per game. The compatibility database carries a
+   policy per package. For titles marked competitive, the input engine disables
+   macros, recoil scripts, turbo and any automation, leaving only one-to-one
+   mapping. This is the behaviour publishers ask of sanctioned emulators.
+4. Tell the player before they risk an account. First launch of a listed title
+   shows its stance: emulator pool, leaderboard exclusion, or reported bans.
+   For "at-risk" titles, recommend a secondary account.
+5. Approach publishers in order of openness: Garena first, since its pool is
+   vendor-neutral; then the Tencent-published titles, where recognition is
+   currently tied to Gameloop and is a business conversation, not a technical one.
+6. Point to the native PC version when one exists. Several mobile shooters have
+   PC clients; the launcher should say so instead of pretending to be the best route.
+7. Accept Play Integrity as it is. Titles that require a device-integrity
+   verdict will not run, with microG or with Google apps. The database marks
+   them "blocked by integrity" and we do not attempt to change the verdict.
+8. Offline value still counts. Training grounds, bot matches and custom rooms
+   often work where ranked play does not; record that per title.
+
 ## 9. Risks
 
 | Risk | Mitigation |
