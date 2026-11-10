@@ -1,0 +1,102 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# The whole product path (ADR 0002): start `gamedroid` with no folder, as a
+# user would, and look at its window. It must download Android, set it up,
+# boot it and show it. Linux drives the window with a real mouse swipe too.
+name: app-android
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/app-android.yml"
+      - "app/**"
+      - "core/device/src/setup.rs"
+permissions:
+  contents: write  # to publish the screenshots to the ci-logs branch
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Host setup
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev >/dev/null
+          echo "GAMEDROID_DATA=$RUNNER_TEMP/gd-data" >> "$GITHUB_ENV"
+      - run: cargo build --release -p gamedroid
+      - name: Start gamedroid as a user would, and watch its window
+        run: |
+          set +e
+          mkdir -p "$HOME/out" && cd "$HOME/out"
+          cat > drive.sh <<'DRIVE'
+          set +e
+          "$GITHUB_WORKSPACE/target/release/gamedroid" --console android.log --frames 9000 2> app.err &
+          for _ in $(seq 600); do
+            win="$(xdotool search --name '^gameDroid' 2>/dev/null | head -n 1)"; [ -n "$win" ] && break; sleep 0.5
+          done
+          [ -n "$win" ] || { echo "RESULT: no window appeared"; exit 0; }
+          eval "$(xdotool getwindowgeometry --shell "$win")"
+          echo "window ${WIDTH}x${HEIGHT} at ${X},${Y}: $(xdotool getwindowname "$win")"
+          for _ in $(seq 120); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
+          grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
+          sleep 8; import -window root 1-lock.png
+          # Swipe up with the mouse, as a finger, to unlock.
+          xdotool mousemove $((X + WIDTH / 2)) $((Y + HEIGHT * 8 / 10)); sleep 0.2; xdotool mousedown 1
+          for i in $(seq 1 12); do xdotool mousemove $((X + WIDTH / 2)) $((Y + HEIGHT * 8 / 10 - i * HEIGHT / 20)); sleep 0.03; done
+          xdotool mouseup 1; sleep 6; import -window root 2-after-swipe.png
+          echo "lock and after-swipe differ by $(compare -metric AE -fuzz 5% 1-lock.png 2-after-swipe.png null: 2>&1) pixels"
+          pkill gamedroid
+          DRIVE
+          xvfb-run -a -s "-screen 0 700x900x24" bash drive.sh 2>&1 | tee result.txt
+          echo "--- program messages"; grep -v 'downloading,' app.err | cut -c1-200 | tail -n 20 | tee -a result.txt
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" app-android-linux result.txt app.err 1-lock.png 2-after-swipe.png
+      - name: Verdict
+        run: grep -q 'Android booted behind the window' "$HOME/out/result.txt"
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build gamedroid.exe
+        env:
+          RUSTFLAGS: -C target-feature=+crt-static
+        run: cargo build --release -p gamedroid
+      - name: Start gamedroid.exe as a user would, and look at the screen
+        run: |
+          set +e
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data"
+          mkdir -p out && cd out
+          cat > shot.ps1 <<'PS'
+          param($name)
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+          [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+          $bmp.Save("$PWD\$name")
+          "screen $($b.Width)x$($b.Height) saved to $name"
+          PS
+          exec > >(tee result.txt) 2>&1
+          ../target/release/gamedroid.exe --console android.log --frames 18000 2> app.err &
+          for _ in $(seq 240); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
+          grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
+          sleep 10
+          powershell -ExecutionPolicy Bypass -File shot.ps1 1-screen.png
+          taskkill //IM gamedroid.exe //F
+          echo "--- program messages"; grep -v 'downloading,' app.err | cut -c1-200 | tail -n 20
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" app-android-windows result.txt app.err 1-screen.png
+      - name: Verdict
+        run: grep -q 'Android booted behind the window' out/result.txt
