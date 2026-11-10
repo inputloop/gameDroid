@@ -1,0 +1,15 @@
+Fixed MDIO bus.0
+alarmtimer.0.auto
+dummy_hcd.0
+dummy_udc.0
+icc-debugfs-client
+ramoops
+reg-dummy
+regulatory.0
+rtc-test.0
+rtc-test.1
+rtc-test.2
+rtc_cmos
+serial8250
+snd-soc-dummy
+vhci_hcd.0

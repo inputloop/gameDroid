@@ -1,0 +1,400 @@
+[    6.815526] type=1325 audit(1794343511.415:154): table=mangle family=10 entries=21 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.815997] type=1300 audit(1794343511.415:154): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce4a60d7b0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.816357] type=1327 audit(1794343511.415:154): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.816526] type=1320 audit(1794343511.415:154): 
+[    6.816626] type=1325 audit(1794343511.415:155): table=filter family=2 entries=37 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.816790] type=1300 audit(1794343511.415:155): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.817188] type=1327 audit(1794343511.415:155): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.817368] type=1320 audit(1794343511.415:155): 
+[    6.817460] type=1325 audit(1794343511.415:156): table=filter family=10 entries=37 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.817623] type=1300 audit(1794343511.415:156): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76cdca606430 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.817979] type=1327 audit(1794343511.415:156): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.818160] type=1320 audit(1794343511.415:156): 
+[    6.818242] type=1325 audit(1794343511.419:157): table=filter family=2 entries=37 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.818390] type=1300 audit(1794343511.419:157): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.818744] type=1327 audit(1794343511.419:157): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.818941] type=1320 audit(1794343511.419:157): 
+[    6.819021] type=1325 audit(1794343511.419:158): table=nat family=2 entries=11 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.819193] type=1300 audit(1794343511.419:158): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7924578080d0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.819592] type=1327 audit(1794343511.419:158): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.819787] type=1320 audit(1794343511.419:158): 
+[    6.819861] type=1325 audit(1794343511.419:159): table=filter family=10 entries=38 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.820040] type=1300 audit(1794343511.419:159): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76cdca606430 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.820407] type=1327 audit(1794343511.419:159): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.820592] type=1320 audit(1794343511.419:159): 
+[    6.820683] type=1325 audit(1794343511.419:160): table=raw family=10 entries=12 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.820845] type=1300 audit(1794343511.419:160): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce1a612930 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.821238] type=1327 audit(1794343511.419:160): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.821423] type=1320 audit(1794343511.419:160): 
+[    6.821497] type=1325 audit(1794343511.423:161): table=mangle family=2 entries=30 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.821657] type=1300 audit(1794343511.423:161): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.822026] type=1327 audit(1794343511.423:161): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.822194] type=1320 audit(1794343511.423:161): 
+[    6.822281] type=1325 audit(1794343511.423:162): table=filter family=2 entries=38 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.822451] type=1300 audit(1794343511.423:162): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.822882] type=1327 audit(1794343511.423:162): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.823158] type=1320 audit(1794343511.423:162): 
+[    6.823281] type=1325 audit(1794343511.423:163): table=filter family=10 entries=38 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.823539] type=1300 audit(1794343511.423:163): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce0a603da0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.824122] type=1327 audit(1794343511.423:163): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.824309] type=1320 audit(1794343511.423:163): 
+[    6.824394] type=1325 audit(1794343511.423:164): table=filter family=2 entries=40 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.824560] type=1300 audit(1794343511.423:164): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7923d7812640 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.824943] type=1327 audit(1794343511.423:164): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.825143] type=1320 audit(1794343511.423:164): 
+[    6.825235] type=1325 audit(1794343511.423:165): table=raw family=2 entries=12 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.825407] type=1300 audit(1794343511.423:165): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7924578080d0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.825766] type=1327 audit(1794343511.423:165): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.825960] type=1320 audit(1794343511.423:165): 
+[    6.826049] type=1325 audit(1794343511.423:166): table=mangle family=2 entries=31 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.826227] type=1300 audit(1794343511.423:166): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.826585] type=1327 audit(1794343511.423:166): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.826761] type=1320 audit(1794343511.423:166): 
+[    6.826846] type=1325 audit(1794343511.423:167): table=filter family=10 entries=40 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.827029] type=1300 audit(1794343511.423:167): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce0a603da0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.827367] type=1327 audit(1794343511.423:167): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.827576] type=1320 audit(1794343511.423:167): 
+[    6.827676] type=1325 audit(1794343511.423:168): table=raw family=10 entries=12 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.827838] type=1300 audit(1794343511.423:168): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce1a612930 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.828217] type=1327 audit(1794343511.423:168): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.828392] type=1320 audit(1794343511.423:168): 
+[    6.828480] type=1325 audit(1794343511.423:169): table=mangle family=10 entries=30 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.828657] type=1300 audit(1794343511.423:169): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce4a60f380 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.829032] type=1327 audit(1794343511.423:169): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.829207] type=1320 audit(1794343511.423:169): 
+[    6.829292] type=1325 audit(1794343511.423:170): table=filter family=2 entries=50 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.829463] type=1300 audit(1794343511.423:170): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7924b780bb30 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.829834] type=1327 audit(1794343511.423:170): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.830029] type=1320 audit(1794343511.423:170): 
+[    6.830105] type=1325 audit(1794343511.427:171): table=filter family=10 entries=50 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.830279] type=1300 audit(1794343511.427:171): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ceaa60c7a0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.830649] type=1327 audit(1794343511.427:171): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.830849] type=1320 audit(1794343511.427:171): 
+[    6.830948] type=1325 audit(1794343511.427:172): table=filter family=2 entries=58 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.831119] type=1300 audit(1794343511.427:172): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792407812840 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.831472] type=1327 audit(1794343511.427:172): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.832866] type=1320 audit(1794343511.427:172): 
+[    6.833020] type=1325 audit(1794343511.427:173): table=filter family=10 entries=58 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.833279] type=1300 audit(1794343511.427:173): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76cd6a61fe40 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.833646] type=1327 audit(1794343511.427:173): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.833828] type=1320 audit(1794343511.427:173): 
+[    6.833933] type=1325 audit(1794343511.427:174): table=mangle family=2 entries=31 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.834115] type=1300 audit(1794343511.427:174): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.834490] type=1327 audit(1794343511.427:174): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.834683] type=1320 audit(1794343511.427:174): 
+[    6.834774] type=1325 audit(1794343511.427:175): table=mangle family=10 entries=30 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.834958] type=1300 audit(1794343511.427:175): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce4a60f380 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.835333] type=1327 audit(1794343511.427:175): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.835513] type=1320 audit(1794343511.427:175): 
+[    6.835647] type=1325 audit(1794343511.427:176): table=filter family=2 entries=70 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.835814] type=1300 audit(1794343511.427:176): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792407809820 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.836194] type=1327 audit(1794343511.427:176): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.836369] type=1320 audit(1794343511.427:176): 
+[    6.836458] type=1325 audit(1794343511.427:177): table=raw family=2 entries=12 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.836631] type=1300 audit(1794343511.427:177): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7924578080d0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.837016] type=1327 audit(1794343511.427:177): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.837203] type=1320 audit(1794343511.427:177): 
+[    6.837288] type=1325 audit(1794343511.427:178): table=mangle family=2 entries=33 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.837450] type=1300 audit(1794343511.427:178): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.837824] type=1327 audit(1794343511.427:178): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.838022] type=1320 audit(1794343511.427:178): 
+[    6.838111] type=1325 audit(1794343511.427:179): table=filter family=10 entries=70 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.838284] type=1300 audit(1794343511.427:179): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76cd6a60f010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.838669] type=1327 audit(1794343511.427:179): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.838848] type=1320 audit(1794343511.427:179): 
+[    6.838944] type=1325 audit(1794343511.427:180): table=raw family=10 entries=12 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.839114] type=1300 audit(1794343511.427:180): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce1a612930 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.839469] type=1327 audit(1794343511.427:180): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.839710] type=1320 audit(1794343511.427:180): 
+[    6.839800] type=1325 audit(1794343511.427:181): table=mangle family=10 entries=32 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.839980] type=1300 audit(1794343511.427:181): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce4a60f380 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.840359] type=1327 audit(1794343511.427:181): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.840541] type=1320 audit(1794343511.427:181): 
+[    6.840627] type=1325 audit(1794343511.431:182): table=filter family=2 entries=70 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.840781] type=1300 audit(1794343511.431:182): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=7923b780fa20 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.841209] type=1327 audit(1794343511.431:182): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.841376] type=1320 audit(1794343511.431:182): 
+[    6.841471] type=1325 audit(1794343511.431:183): table=raw family=2 entries=12 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.841638] type=1300 audit(1794343511.431:183): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=79236780b030 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.842001] type=1327 audit(1794343511.431:183): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.842183] type=1320 audit(1794343511.431:183): 
+[    6.842265] type=1325 audit(1794343511.431:184): table=mangle family=2 entries=33 op=xt_replace subj=u:r:netd:s0 comm="iptables-restor"
+[    6.842439] type=1300 audit(1794343511.431:184): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=0 a2=40 a3=792537808010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="iptables-restor" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.842814] type=1327 audit(1794343511.431:184): proctitle=2F73797374656D2F62696E2F69707461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.843010] type=1320 audit(1794343511.431:184): 
+[    6.843096] type=1325 audit(1794343511.431:185): table=filter family=10 entries=70 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.843270] type=1300 audit(1794343511.431:185): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ceba610630 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.843673] type=1327 audit(1794343511.431:185): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.843866] type=1320 audit(1794343511.431:185): 
+[    6.843966] type=1325 audit(1794343511.431:186): table=raw family=10 entries=12 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.844132] type=1300 audit(1794343511.431:186): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76cd7a604010 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.844479] type=1327 audit(1794343511.431:186): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.844673] type=1320 audit(1794343511.431:186): 
+[    6.844756] type=1325 audit(1794343511.431:187): table=mangle family=10 entries=32 op=xt_replace subj=u:r:netd:s0 comm="ip6tables-resto"
+[    6.844921] type=1300 audit(1794343511.431:187): arch=c000003e syscall=54 success=yes exit=0 a0=4 a1=29 a2=40 a3=76ce0a603da0 items=0 ppid=593 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="ip6tables-resto" exe="/system/bin/iptables" subj=u:r:netd:s0 key=(null)
+[    6.845287] type=1327 audit(1794343511.431:187): proctitle=2F73797374656D2F62696E2F6970367461626C65732D726573746F7265002D2D6E6F666C757368002D77002D76
+[    6.845469] type=1320 audit(1794343511.431:187): 
+[    6.848798] init: starting service 'audio_parameter_parser_service'...
+[    6.850448] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1041
+[    6.851378] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1041/pid_609
+[    6.852972] init: ... started service 'audio_parameter_parser_service' has pid 609
+[    6.853234] init: starting service 'hidl_memory'...
+[    6.855036] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_612
+[    6.856665] init: ... started service 'hidl_memory' has pid 612
+[    6.856942] init: starting service 'vendor.sensors-hal-multihal'...
+[    6.860164] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_615
+[    6.864378] init: ... started service 'vendor.sensors-hal-multihal' has pid 615
+[    6.864824] servicemanager: Caller(pid=593,uid=0,sid=u:r:netd:s0) Found android.system.net.netd.INetd/default in framework VINTF manifest.
+[    6.865178] init: starting service 'vendor.motioncontext-default'...
+[    6.870788] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1080
+[    6.871854] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1080/pid_617
+[    6.876587] init: ... started service 'vendor.motioncontext-default' has pid 617
+[    6.880876] init: starting service 'vendor.audio-hal-aidl'...
+[    6.881821] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1041/pid_618
+[    6.885218] init: ... started service 'vendor.audio-hal-aidl' has pid 618
+[    6.885435] init: starting service 'vendor.audio-effect-hal-aidl'...
+[    6.895755] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1041/pid_619
+[    6.898645] init: ... started service 'vendor.audio-effect-hal-aidl' has pid 619
+[    6.899142] init: starting service 'vendor.authsecret_default'...
+[    6.900804] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1064
+[    6.901547] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1064/pid_620
+[    6.908317] init: ... started service 'vendor.authsecret_default' has pid 620
+[    6.909327] init: starting service 'vendor.cas-default'...
+[    6.910358] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1013
+[    6.914848] servicemanager: Caller(pid=617,uid=1080,sid=u:r:hal_motioncontext_default:s0) Found android.hardware.motioncontext.IMotionContext/default in device VINTF manifest.
+[    6.923769] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1013/pid_621
+[    6.924946] init: ... started service 'vendor.cas-default' has pid 621
+[    6.926585] servicemanager: Caller(pid=615,uid=1000,sid=u:r:hal_sensors_default:s0) Found android.hardware.sensors.ISensors/default in device VINTF manifest.
+[    6.928578] init: starting service 'vendor.contexthub-default'...
+[    6.929545] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1080/pid_625
+[    6.934698] init: ... started service 'vendor.contexthub-default' has pid 625
+[    6.942581] init: starting service 'vendor.drm-clearkey-service'...
+[    6.947814] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1013/pid_626
+[    6.952976] init: ... started service 'vendor.drm-clearkey-service' has pid 626
+[    6.954106] init: starting service 'vendor.gnss-default'...
+[    6.955130] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_627
+[    6.965838] init: ... started service 'vendor.gnss-default' has pid 627
+[    6.966623] init: starting service 'vendor.hwcomposer-3'...
+[    6.967469] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_629
+[    6.970338] servicemanager: Caller(pid=621,uid=1013,sid=u:r:hal_cas_default:s0) Found android.hardware.cas.IMediaCasService/default in device VINTF manifest.
+[    6.972524] servicemanager: Caller(pid=620,uid=1064,sid=u:r:hal_authsecret_default:s0) Found android.hardware.authsecret.IAuthSecret/default in device VINTF manifest.
+[    6.973761] init: ... started service 'vendor.hwcomposer-3' has pid 629
+[    6.974638] init: starting service 'vendor.inputprocessor-default'...
+[    6.975457] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_630
+[    6.985959] init: ... started service 'vendor.inputprocessor-default' has pid 630
+[    6.987127] init: starting service 'vendor.ir-default'...
+[    6.990205] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_631
+[    7.000191] init: ... started service 'vendor.ir-default' has pid 631
+[    7.002216] init: starting service 'vendor.memtrack-default'...
+[    7.010086] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_632
+[    7.015599] init: ... started service 'vendor.memtrack-default' has pid 632
+[    7.016180] init: starting service 'nlinterceptor'...
+[    7.017409] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_0/pid_633
+[    7.023973] init: ... started service 'nlinterceptor' has pid 633
+[    7.024631] init: starting service 'neuralnetworks_hal_service_aidl_sample_all'...
+[    7.025772] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_634
+[    7.038096] init: ... started service 'neuralnetworks_hal_service_aidl_sample_all' has pid 634
+[    7.038543] init: starting service 'neuralnetworks_hal_service_aidl_sample_limited'...
+[    7.042353] servicemanager: Caller(pid=630,uid=9999,sid=u:r:hal_input_processor_default:s0) Found android.hardware.input.processor.IInputProcessor/default in device VINTF manifest.
+[    7.044636] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_635
+[    7.054668] servicemanager: Caller(pid=626,uid=1013,sid=u:r:hal_drm_clearkey_aidl:s0) Found android.hardware.drm.IDrmFactory/clearkey in device VINTF manifest.
+[    7.059103] init: ... started service 'neuralnetworks_hal_service_aidl_sample_limited' has pid 635
+[    7.059466] init: starting service 'neuralnetworks_hal_service_shim_sample'...
+[    7.063743] servicemanager: Caller(pid=625,uid=1080,sid=u:r:hal_contexthub_default:s0) Found android.hardware.contexthub.IContextHub/default in device VINTF manifest.
+[    7.066682] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_636
+[    7.069419] servicemanager: Caller(pid=632,uid=9999,sid=u:r:hal_memtrack_default:s0) Found android.hardware.memtrack.IMemtrack/default in device VINTF manifest.
+[    7.071362] init: ... started service 'neuralnetworks_hal_service_shim_sample' has pid 636
+[    7.077344] init: starting service 'vendor.power-default'...
+[    7.078596] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_637
+[    7.089422] init: ... started service 'vendor.power-default' has pid 637
+[    7.089787] init: starting service 'vendor.power.stats-default'...
+[    7.099396] servicemanager: Caller(pid=631,uid=1000,sid=u:r:hal_ir_default:s0) Found android.hardware.ir.IConsumerIr/default in device VINTF manifest.
+[    7.104801] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_638
+[    7.113085] init: ... started service 'vendor.power.stats-default' has pid 638
+[    7.118783] init: starting service 'vendor.rebootescrow-default'...
+[    7.124145] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_639
+[    7.127034] servicemanager: Caller(pid=633,uid=0,sid=u:r:hal_nlinterceptor_default:s0) Found android.hardware.net.nlinterceptor.IInterceptor/default in device VINTF manifest.
+[    7.139174] init: ... started service 'vendor.rebootescrow-default' has pid 639
+[    7.149022] init: starting service 'vendor.secure_element'...
+[    7.158729] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_640
+[    7.165591] init: ... started service 'vendor.secure_element' has pid 640
+[    7.168265] init: starting service 'vendor.authgraph'...
+[    7.170027] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_641
+[    7.194817] init: ... started service 'vendor.authgraph' has pid 641
+[    7.197525] init: starting service 'vendor.secretkeeper'...
+[    7.198753] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_643
+[    7.205184] servicemanager: Caller(pid=627,uid=9999,sid=u:r:hal_gnss_default:s0) Found android.hardware.gnss.IGnss/default in device VINTF manifest.
+[    7.208427] servicemanager: Caller(pid=637,uid=9999,sid=u:r:hal_power_default:s0) Found android.hardware.power.IPower/default in device VINTF manifest.
+[    7.209446] servicemanager: Caller(pid=638,uid=1000,sid=u:r:hal_power_stats_default:s0) Found android.hardware.power.stats.IPowerStats/default in device VINTF manifest.
+[    7.212539] servicemanager: Caller(pid=640,uid=9999,sid=u:r:hal_secure_element_default:s0) Found android.hardware.secure_element.ISecureElement/eSE1 in device VINTF manifest.
+[    7.213248] init: ... started service 'vendor.secretkeeper' has pid 643
+[    7.213792] init: starting service 'vendor.tetheroffload-example'...
+[    7.217639] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_644
+[    7.219741] servicemanager: Caller(pid=639,uid=1000,sid=u:r:hal_rebootescrow_default:s0) Found android.hardware.rebootescrow.IRebootEscrow/default in device VINTF manifest.
+[    7.228491] init: ... started service 'vendor.tetheroffload-example' has pid 644
+[    7.231404] init: starting service 'vendor.thermal-example'...
+[    7.237545] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_645
+[    7.248179] init: ... started service 'vendor.thermal-example' has pid 645
+[    7.251282] init: starting service 'vendor.threadnetwork_hal'...
+[    7.252636] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1084
+[    7.253487] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1084/pid_646
+[    7.266267] servicemanager: Caller(pid=629,uid=1000,sid=u:r:hal_graphics_composer_default:s0) Found android.hardware.graphics.composer3.IComposer/default in device VINTF manifest.
+[    7.276391] servicemanager: Caller(pid=635,uid=1000,sid=u:r:hal_neuralnetworks_sample:s0) Found android.hardware.neuralnetworks.IDevice/nnapi-sample_quant in device VINTF manifest.
+[    7.278463] init: ... started service 'vendor.threadnetwork_hal' has pid 646
+[    7.284770] init: starting service 'vendor.usb_default'...
+[    7.286090] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_651
+[    7.287598] servicemanager: Caller(pid=641,uid=9999,sid=u:r:hal_authgraph_default:s0) Found android.hardware.security.authgraph.IAuthGraphKeyExchange/nonsecure in device VINTF manifest.
+[    7.287960] servicemanager: Caller(pid=634,uid=1000,sid=u:r:hal_neuralnetworks_sample:s0) Found android.hardware.neuralnetworks.IDevice/nnapi-sample_all in device VINTF manifest.
+[    7.292304] init: ... started service 'vendor.usb_default' has pid 651
+[    7.293042] servicemanager: Caller(pid=636,uid=1000,sid=u:r:hal_neuralnetworks_sample:s0) Found android.hardware.neuralnetworks.IDevice/nnapi-sample_sl_shim in device VINTF manifest.
+[    7.294333] init: starting service 'vendor.uwb_hal'...
+[    7.295319] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1083
+[    7.299724] servicemanager: Caller(pid=643,uid=9999,sid=u:r:hal_secretkeeper_default:s0) Found android.hardware.security.secretkeeper.ISecretkeeper/nonsecure in device VINTF manifest.
+[    7.302420] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1083/pid_652
+[    7.303468] servicemanager: Caller(pid=644,uid=9999,sid=u:r:hal_tetheroffload_default:s0) Found android.hardware.tetheroffload.IOffload/default in device VINTF manifest.
+[    7.309355] init: ... started service 'vendor.uwb_hal' has pid 652
+[    7.310312] init: starting service 'vendor.vibrator-default'...
+[    7.311201] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_653
+[    7.314362] init: ... started service 'vendor.vibrator-default' has pid 653
+[    7.314970] init: starting service 'vendor.wifi_hal_legacy'...
+[    7.318318] servicemanager: Caller(pid=645,uid=9999,sid=u:r:hal_thermal_default:s0) Found android.hardware.thermal.IThermal/default in device VINTF manifest.
+[    7.319729] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1010
+[    7.320559] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1010/pid_655
+[    7.324093] servicemanager: Caller(pid=646,uid=1084,sid=u:r:hal_threadnetwork_default:s0) Found android.hardware.threadnetwork.IThreadChip/chip0 in device VINTF manifest.
+[    7.326234] init: ... started service 'vendor.wifi_hal_legacy' has pid 655
+[    7.329291] init: starting service 'bt_hci'...
+[    7.330150] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002
+[    7.330965] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_656
+[    7.337133] init: ... started service 'bt_hci' has pid 656
+[    7.337349] init: starting service 'bt_finder'...
+[    7.344878] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_657
+[    7.346927] servicemanager: Caller(pid=618,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.audio.core.IConfig/default in device VINTF manifest.
+[    7.347386] servicemanager: Caller(pid=618,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.audio.core.IModule/default in device VINTF manifest.
+[    7.355797] init: ... started service 'bt_finder' has pid 657
+[    7.356555] servicemanager: Caller(pid=652,uid=1083,sid=u:r:hal_uwb_default:s0) Found android.hardware.uwb.IUwb/default in device VINTF manifest.
+[    7.359682] servicemanager: Caller(pid=618,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.audio.core.IModule/r_submix in device VINTF manifest.
+[    7.360134] servicemanager: Caller(pid=651,uid=1000,sid=u:r:hal_usb_default:s0) Found android.hardware.usb.IUsb/default in device VINTF manifest.
+[    7.360572] init: starting service 'bt_ranging'...
+[    7.361682] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_662
+[    7.367371] servicemanager: Caller(pid=619,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.audio.effect.IFactory/default in device VINTF manifest.
+[    7.368119] servicemanager: Caller(pid=653,uid=9999,sid=u:r:hal_vibrator_default:s0) Found android.hardware.vibrator.IVibrator/default in device VINTF manifest.
+[    7.368836] servicemanager: Caller(pid=653,uid=9999,sid=u:r:hal_vibrator_default:s0) Found android.hardware.vibrator.IVibratorManager/default in device VINTF manifest.
+[    7.369416] servicemanager: Caller(pid=618,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default in device VINTF manifest.
+[    7.372014] servicemanager: Caller(pid=618,uid=1041,sid=u:r:hal_audio_default:s0) Found android.hardware.audio.core.IModule/bluetooth in device VINTF manifest.
+[    7.372650] init: ... started service 'bt_ranging' has pid 662
+[    7.372925] init: starting service 'bt_lmp_event'...
+[    7.374008] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_663
+[    7.387138] init: ... started service 'bt_lmp_event' has pid 663
+[    7.387410] init: starting service 'bt_socket'...
+[    7.391923] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_666
+[    7.395537] init: ... started service 'bt_socket' has pid 666
+[    7.395774] servicemanager: Caller(pid=656,uid=1002,sid=u:r:hal_bluetooth_default:s0) Found android.hardware.bluetooth.IBluetoothHci/default in device VINTF manifest.
+[    7.396041] init: starting service 'bt_socket_lpp'...
+[    7.400284] servicemanager: Caller(pid=655,uid=1010,sid=u:r:hal_wifi_default:s0) Found android.hardware.wifi.IWifi/default in device VINTF manifest.
+[    7.401115] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_667
+[    7.407690] servicemanager: Caller(pid=657,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.finder.IBluetoothFinder/default in device VINTF manifest.
+[    7.408310] servicemanager: Caller(pid=657,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.finder.IBluetoothFinder/default in device VINTF manifest.
+[    7.409028] init: ... started service 'bt_socket_lpp' has pid 667
+[    7.409249] init: starting service 'bt_gatt_lpp'...
+[    7.409865] servicemanager: Caller(pid=662,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.ranging.IBluetoothChannelSounding/default in device VINTF manifest.
+[    7.410255] servicemanager: Caller(pid=662,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.ranging.IBluetoothChannelSounding/default in device VINTF manifest.
+[    7.413341] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1002/pid_669
+[    7.418219] init: ... started service 'bt_gatt_lpp' has pid 669
+[    7.419695] init: starting service 'vendor.graphics.allocator'...
+[    7.420713] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_670
+[    7.420969] servicemanager: Caller(pid=666,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.socket.IBluetoothSocket/default in device VINTF manifest.
+[    7.429783] servicemanager: Caller(pid=669,uid=1002,sid=u:r:hal_bluetooth_lpp_default:s0) Found android.hardware.bluetooth.gatt.IBluetoothGatt/default in device VINTF manifest.
+[    7.432094] init: ... started service 'vendor.graphics.allocator' has pid 670
+[    7.433829] init: starting service 'vendor.health-cuttlefish'...
+[    7.436948] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_671
+[    7.441569] init: ... started service 'vendor.health-cuttlefish' has pid 671
+[    7.444147] init: starting service 'vendor.identity-remote'...
+[    7.445797] servicemanager: Caller(pid=663,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.lmp_event.IBluetoothLmpEvent/default in device VINTF manifest.
+[    7.445821] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_672
+[    7.446409] servicemanager: Caller(pid=663,uid=1002,sid=u:r:hal_bluetooth_btlinux:s0) Found android.hardware.bluetooth.lmp_event.IBluetoothLmpEvent/default in device VINTF manifest.
+[    7.447297] servicemanager: Caller(pid=667,uid=1002,sid=u:r:hal_bluetooth_lpp_default:s0) Found android.hardware.bluetooth.socket.IBluetoothSocket/lpp in device VINTF manifest.
+[    7.456190] init: ... started service 'vendor.identity-remote' has pid 672
+[    7.457757] init: starting service 'vendor.light-cuttlefish'...
+[    7.458915] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_9999/pid_673
+[    7.462750] healthd: Failed to lookup glob /sys/devices/platform/*gcdd/system_dev_stat: -3
+[    7.463194] init: ... started service 'vendor.light-cuttlefish' has pid 673
+[    7.464538] healthd: No battery devices found
+[    7.465192] init: starting service 'nfc_hal_service'...
+[    7.465299] servicemanager: Caller(pid=670,uid=1000,sid=u:r:hal_graphics_allocator_default:s0) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+[    7.465679] servicemanager: Caller(pid=671,uid=1000,sid=u:r:hal_health_default:s0) Found android.hardware.health.IHealth/default in device VINTF manifest.
+[    7.466172] HealthLoop: Successfully attached the BPF filter to the uevent socket
+[    7.466356] healthd: battery none chg=
+[    7.470047] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1027
+[    7.470811] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1027/pid_675
+[    7.479699] init: ... started service 'nfc_hal_service' has pid 675
+[    7.481087] init: starting service 'vendor.oemlock_default'...
+[    7.482152] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1064/pid_676
+[    7.487581] init: ... started service 'vendor.oemlock_default' has pid 676
+[    7.491224] servicemanager: Caller(pid=673,uid=9999,sid=u:r:hal_light_cuttlefish:s0) Found android.hardware.light.ILights/default in device VINTF manifest.
+[    7.491927] init: starting service 'vendor.camera-provider-2-7-google'...
+[    7.493093] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1047
+[    7.493938] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1047/pid_678
+[    7.504583] servicemanager: Caller(pid=676,uid=1064,sid=u:r:hal_oemlock_remote:s0) Found android.hardware.oemlock.IOemLock/default in device VINTF manifest.
+[    7.505032] libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: android.hardware.oemlock.IOemLock/default
+[    7.508407] servicemanager: Caller(pid=675,uid=1027,sid=u:r:hal_nfc_default:s0) Found android.hardware.nfc.INfc/default in device VINTF manifest.
+[    7.510745] init: ... started service 'vendor.camera-provider-2-7-google' has pid 678
+[    7.510917] init: Command 'class_start hal' action=boot (/system/etc/init/hw/init.rc:1219) took 662ms and succeeded
+[    7.511112] init: Service 'hidl_memory' (pid 612) exited with status 0
+[    7.511212] init: Sending SIGKILL to service 'hidl_memory' (pid 612) process group...
+[    7.511466] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_612
+[    7.512442] init: service 'ueventd' requested start, but it is already running (flags: 2084, pid: 103, started 4348ms ago)
+[    7.512817] init: service 'apexd' requested start, but it is already running (flags: 134, pid: 471, started 1989ms ago)
+[    7.513905] init: starting service 'audioserver'...
+[    7.515089] servicemanager: Caller(pid=672,uid=9999,sid=u:r:hal_identity_remote:s0) Found android.hardware.identity.IIdentityCredentialStore/default in device VINTF manifest.
+[    7.515733] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1041/pid_684
+[    7.516763] init: ... started service 'audioserver' has pid 684
+[    7.517094] init: starting service 'credstore'...
+[    7.517994] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1076
+[    7.518721] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1076/pid_685
+[    7.522309] init: ... started service 'credstore' has pid 685
+[    7.522557] init: starting service 'gpu'...
+[    7.523353] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1072
+[    7.528174] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1072/pid_686
+[    7.529237] init: ... started service 'gpu' has pid 686
+[    7.529348] init: service 'lmkd' requested start, but it is already running (flags: 36, pid: 394, started 3618ms ago)
+[    7.529592] init: starting service 'misctrl'...
+[    7.531457] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_0/pid_687
+[    7.539331] init: ... started service 'misctrl' has pid 687
+[    7.539474] init: service 'servicemanager' requested start, but it is already running (flags: 2084, pid: 395, started 3622ms ago)
+[    7.541001] init: starting service 'surfaceflinger'...
+[    7.551700] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_688
+[    7.552953] init: ... started service 'surfaceflinger' has pid 688
+[    7.553090] init: service 'vold' requested start, but it is already running (flags: 2052, pid: 405, started 3563ms ago)
+[    7.553302] init: processing action (ro.debuggable=1 && boot) from (/system/etc/init/hw/init.rc:1223)
+[    7.553772] init: processing action (persist.sys.usb.config=* && boot) from (/system/etc/init/hw/init.usb.rc:104)
+[    7.554745] init: processing action (boot) from (/system/etc/init/dumpstate.rc:1)
+[    7.554949] init: processing action (boot) from (/system/etc/init/gsid.rc:25)
+[    7.555183] init: starting service 'exec 14 (/system/bin/gsid run-startup-tasks)'...
+[    7.559238] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_0/pid_689
+[    7.561961] init: ... started service 'exec 14 (/system/bin/gsid run-startup-tasks)' has pid 689
+[    7.562161] init: processing action (boot) from (/vendor/etc/init/init.cutf_cvm.rc:83)
+[    7.573306] init: starting service 'socket_vsock_proxy'...
+[    7.574277] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_0/pid_690
+[    7.588450] init: ... started service 'socket_vsock_proxy' has pid 690
+[    7.588669] init: Service 'misctrl' (pid 687) exited with status 1 oneshot service took 0.058000 seconds in background
+[    7.588844] init: Sending SIGKILL to service 'misctrl' (pid 687) process group...
+[    7.589156] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_0/pid_687
+[    7.602417] init: processing action (ro.boot.enable_confirmationui=* && boot) from (/apex/com.google.cf.confirmationui/etc/android.hardware.confirmationui-service.cuttlefish.rc:9)
+[    7.606037] init: starting service 'vendor.confirmationui_default'...
+[    7.607142] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_693
+[    7.611233] init: ... started service 'vendor.confirmationui_default' has pid 693
+[    7.615604] init: service 'vendor.confirmationui_default' requested start, but it is already running (flags: 4, pid: 693, started 8ms ago)
+[    7.615832] init: processing action (enable_property_trigger) from (<Builtin Action>:0)
+[    7.616140] init: processing action (bootreceiver.enable=1 && ro.product.cpu.abilist64=*) from (/system/etc/init/hw/init.rc:653)
+[    7.617988] init: Service 'exec 14 (/system/bin/gsid run-startup-tasks)' (pid 689) exited with status 0 oneshot service took 0.058000 seconds in background
+[    7.618235] init: Sending SIGKILL to service 'exec 14 (/system/bin/gsid run-startup-tasks)' (pid 689) process group...
+[    7.618545] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_0/pid_689
+[    7.620261] init: processing action (net.tcp_def_init_rwnd=*) from (/system/etc/init/hw/init.rc:1255)
+[    7.620582] init: processing action (ro.debuggable=1) from (/system/etc/init/hw/init.rc:1295)
+[    7.620803] init: processing action (sys.usb.config=adb && sys.usb.configfs=0) from (/system/etc/init/hw/init.usb.rc:36)
+[    7.622694] type=1400 audit(1794343512.267:188): avc:  denied  { write } for  comm="init" name="error_report_end" dev="tracefs" ino=11407 scontext=u:r:init:s0 tcontext=u:object_r:debugfs_bootreceiver_tracing:s0 tclass=dir permissive=0 bug=b/340399580
+[    7.623214] type=1300 audit(1794343512.267:188): arch=c000003e syscall=257 success=yes exit=20 a0=ffffff9c a1=7fec52237f20 a2=a0241 a3=180 items=1 ppid=0 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="init" exe="/system/bin/init" subj=u:r:init:s0 key=(null)
+[    7.623655] init: starting service 'adbd'...
+[    7.623825] init: Created socket '/dev/socket/adbd', mode 660, user 1000, group 1000
+[    7.623943] type=1307 audit(1794343512.267:188): cwd="/"
+[    7.624484] type=1302 audit(1794343512.267:188): item=0 name="/sys/kernel/tracing/instances/bootreceiver/events/error_report/error_report_end/enable" inode=19680823 dev=00:0c mode=0100640 ouid=0 ogid=3012 rdev=00:00 obj=u:object_r:debugfs_bootreceiver_tracing:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0

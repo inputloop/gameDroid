@@ -1,0 +1,58 @@
+Module                  Size  Used by
+virtio_snd             49152  0 
+virtio_pmem            12288  2 
+virtio_media           53248  0 
+virt_wifi              24576  0 
+vhci_hcd               40960  0 
+v4l2loopback           57344  0 
+v4l2_tpg               73728  0 
+usbip_core             24576  1 vhci_hcd
+test_meminit           20480  0 [permanent]
+system_heap            24576  32 [permanent]
+rtc_test               12288  0 
+pulse8_cec             24576  0 
+mt76x2u                24576  0 
+mt76x2_common          28672  1 mt76x2u
+mt76x0u                20480  0 
+mt76x02_usb            24576  2 mt76x2u,mt76x0u
+mt76x0_common          53248  1 mt76x0u
+mt76x02_lib            98304  5 mt76x2u,mt76x2_common,mt76x0u,mt76x02_usb,mt76x0_common
+mt76_usb               40960  3 mt76x2u,mt76x0u,mt76x02_usb
+mt76                  139264  7 mt76x2u,mt76x2_common,mt76x0u,mt76x02_usb,mt76x0_common,mt76x02_lib,mt76_usb
+hci_vhci               24576  0 
+gs_usb                 28672  0 
+vkms                  126976  0 
+can_dev                49152  1 gs_usb
+goldfish_sync          20480  0 
+goldfish_pipe          20480  0 
+goldfish_battery       12288  0 
+goldfish_address_space    24576  0 
+dummy_hcd              36864  0 
+dummy_cpufreq          12288  0 
+btusb                  65536  0 
+btbcm                  28672  1 btusb
+btrtl                  32768  1 btusb
+btintel                57344  1 btusb
+bluetooth             716800  5 hci_vhci,btusb,btbcm,btrtl,btintel
+zram                   69632  1 
+zsmalloc               32768  1 zram
+rust_binder           421888  136 
+vmw_vsock_virtio_transport    24576  3 
+virtio_pci             40960  0 
+virtio_pci_legacy_dev    16384  1 virtio_pci
+virtio_pci_modern_dev    20480  1 virtio_pci
+virtio_console         45056  0 
+virtio_blk             32768  12 
+mac80211_hwsim         94208  0 
+mac80211             1163264  7 mt76x2u,mt76x0u,mt76x02_usb,mt76x0_common,mt76x02_lib,mt76,mac80211_hwsim
+cfg80211             1220608  8 virt_wifi,mt76x2_common,mt76x02_usb,mt76x0_common,mt76x02_lib,mt76,mac80211_hwsim,mac80211
+rfkill                 32768  2 bluetooth,cfg80211
+libarc4                12288  1 mac80211
+virtio_rng             16384  0 
+virtio_net             98304  0 
+virtio_input           20480  0 
+virtio_gpu             94208  43 
+virtio_dma_buf         12288  1 virtio_gpu
+net_failover           20480  1 virtio_net
+nd_virtio              16384  1 virtio_pmem
+failover               16384  1 net_failover

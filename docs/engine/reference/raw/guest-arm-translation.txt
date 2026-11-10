@@ -1,0 +1,5 @@
+ls: /system/lib64/libndk_translation*: No such file or directory
+ls: /system/lib64/libberberis*: No such file or directory
+ls: /system/lib64/libhoudini*: No such file or directory
+ls: /system/etc/ld.config.arm64.txt: No such file or directory
+ls: /system/bin/arm64: No such file or directory

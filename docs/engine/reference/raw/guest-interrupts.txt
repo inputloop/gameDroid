@@ -1,0 +1,131 @@
+           CPU0       CPU1       
+  5:          0          0   IO-APIC   5-fasteoi   acpi
+  8:          0          0   IO-APIC   8-edge      rtc0
+ 24:          0          1  PCI-MSI-0000:00:02.2   0-edge      PCIe PME, pciehp
+ 25:          0          0  PCI-MSIX-0000:00:01.0   0-edge      virtio0-config
+ 26:          0          0  PCI-MSIX-0000:00:01.0   1-edge      virtio0-input
+ 27:          0      10149  PCI-MSIX-0000:00:01.0   2-edge      virtio0-output
+ 28:          0          0  PCI-MSIX-0000:00:01.1   0-edge      virtio1-config
+ 29:          0          2  PCI-MSIX-0000:00:01.1   1-edge      virtio1-input.0
+ 30:         40          0  PCI-MSIX-0000:00:01.1   2-edge      virtio1-output.0
+ 31:          0          0  PCI-MSIX-0000:00:01.2   0-edge      virtio2-config
+ 32:         20          0  PCI-MSIX-0000:00:01.2   1-edge      virtio2-input.0
+ 33:          0         31  PCI-MSIX-0000:00:01.2   2-edge      virtio2-output.0
+ 34:          0          0  PCI-MSIX-0000:00:01.3   0-edge      virtio3-config
+ 35:          0          0  PCI-MSIX-0000:00:01.3   1-edge      virtio3-tx
+ 36:          0          0  PCI-MSIX-0000:00:01.3   2-edge      virtio3-rx
+ 37:          0          0  PCI-MSIX-0000:00:01.4   0-edge      virtio4-config
+ 38:          0          0  PCI-MSIX-0000:00:01.4   1-edge      virtio4-events
+ 39:          0          0  PCI-MSIX-0000:00:01.4   2-edge      virtio4-status
+ 40:          0          0  PCI-MSIX-0000:00:01.5   0-edge      virtio5-config
+ 41:          0          0  PCI-MSIX-0000:00:01.5   1-edge      virtio5-events
+ 42:          0          0  PCI-MSIX-0000:00:01.5   2-edge      virtio5-status
+ 43:          0          0  PCI-MSIX-0000:00:01.6   0-edge      virtio6-config
+ 44:          0          0  PCI-MSIX-0000:00:01.6   1-edge      virtio6-events
+ 45:          0          1  PCI-MSIX-0000:00:01.6   2-edge      virtio6-status
+ 46:          0          0  PCI-MSIX-0000:00:01.7   0-edge      virtio7-config
+ 47:          0          0  PCI-MSIX-0000:00:01.7   1-edge      virtio7-events
+ 48:          0          0  PCI-MSIX-0000:00:01.7   2-edge      virtio7-status
+ 49:          0          0  PCI-MSIX-0000:00:02.0   0-edge      virtio8-config
+ 50:        607          0  PCI-MSIX-0000:00:02.0   1-edge      virtio8-control
+ 51:          0          0  PCI-MSIX-0000:00:02.0   2-edge      virtio8-cursor
+ 52:          0          0  PCI-MSIX-0000:00:03.0   0-edge      virtio9-config
+ 53:          0          0  PCI-MSIX-0000:00:03.0   1-edge      virtio9-input
+ 54:          0          0  PCI-MSIX-0000:00:03.0   2-edge      virtio9-output
+ 55:          0          0  PCI-MSIX-0000:00:04.0   0-edge      virtio10-config
+ 56:          0          0  PCI-MSIX-0000:00:04.0   1-edge      virtio10-input
+ 57:          0      58014  PCI-MSIX-0000:00:04.0   2-edge      virtio10-output
+ 58:          0          0  PCI-MSIX-0000:00:05.0   0-edge      virtio11-config
+ 59:          0          0  PCI-MSIX-0000:00:05.0   1-edge      virtio11-input
+ 60:          0          0  PCI-MSIX-0000:00:05.0   2-edge      virtio11-output
+ 61:          0          0  PCI-MSIX-0000:00:06.0   0-edge      virtio12-config
+ 62:          0          0  PCI-MSIX-0000:00:06.0   1-edge      virtio12-input
+ 63:          0          0  PCI-MSIX-0000:00:06.0   2-edge      virtio12-output
+ 64:          0          0  PCI-MSIX-0000:00:07.0   0-edge      virtio13-config
+ 65:          0         66  PCI-MSIX-0000:00:07.0   1-edge      virtio13-input
+ 66:         74          0  PCI-MSIX-0000:00:07.0   2-edge      virtio13-output
+ 67:          0          0  PCI-MSIX-0000:00:08.0   0-edge      virtio14-config
+ 68:          0          0  PCI-MSIX-0000:00:08.0   1-edge      virtio14-input
+ 69:          0          0  PCI-MSIX-0000:00:08.0   2-edge      virtio14-output
+ 70:          0          0  PCI-MSIX-0000:00:09.0   0-edge      virtio15-config
+ 71:          0          1  PCI-MSIX-0000:00:09.0   1-edge      virtio15-input
+ 72:          4          0  PCI-MSIX-0000:00:09.0   2-edge      virtio15-output
+ 73:          0          0  PCI-MSIX-0000:00:0a.0   0-edge      virtio16-config
+ 74:          0          0  PCI-MSIX-0000:00:0a.0   1-edge      virtio16-input
+ 75:          0          0  PCI-MSIX-0000:00:0a.0   2-edge      virtio16-output
+ 76:          0          0  PCI-MSIX-0000:00:0b.0   0-edge      virtio17-config
+ 77:          0          6  PCI-MSIX-0000:00:0b.0   1-edge      virtio17-input
+ 78:          1          0  PCI-MSIX-0000:00:0b.0   2-edge      virtio17-output
+ 79:          0          0  PCI-MSIX-0000:00:0c.0   0-edge      virtio18-config
+ 80:          0          0  PCI-MSIX-0000:00:0c.0   1-edge      virtio18-input
+ 81:          0          0  PCI-MSIX-0000:00:0c.0   2-edge      virtio18-output
+ 82:          0          0  PCI-MSIX-0000:00:0d.0   0-edge      virtio19-config
+ 83:          0          0  PCI-MSIX-0000:00:0d.0   1-edge      virtio19-input
+ 84:          0          0  PCI-MSIX-0000:00:0d.0   2-edge      virtio19-output
+ 85:          0          0  PCI-MSIX-0000:00:0e.0   0-edge      virtio20-config
+ 86:         32          0  PCI-MSIX-0000:00:0e.0   1-edge      virtio20-input
+ 87:          0          2  PCI-MSIX-0000:00:0e.0   2-edge      virtio20-output
+ 88:          0          0  PCI-MSIX-0000:00:0f.0   0-edge      virtio21-config
+ 89:          0          0  PCI-MSIX-0000:00:0f.0   1-edge      virtio21-input
+ 90:          0          0  PCI-MSIX-0000:00:0f.0   2-edge      virtio21-output
+ 91:          0          0  PCI-MSIX-0000:00:10.0   0-edge      virtio22-config
+ 92:          0          0  PCI-MSIX-0000:00:10.0   1-edge      virtio22-input
+ 93:          0          0  PCI-MSIX-0000:00:10.0   2-edge      virtio22-output
+ 94:          0          0  PCI-MSIX-0000:00:11.0   0-edge      virtio23-config
+ 95:          0          0  PCI-MSIX-0000:00:11.0   1-edge      virtio23-input
+ 96:          0          0  PCI-MSIX-0000:00:11.0   2-edge      virtio23-output
+ 97:          0          0  PCI-MSIX-0000:00:12.0   0-edge      virtio24-config
+ 98:          0          0  PCI-MSIX-0000:00:12.0   1-edge      virtio24-input
+ 99:          0          0  PCI-MSIX-0000:00:12.0   2-edge      virtio24-output
+100:          0          0  PCI-MSIX-0000:00:13.0   0-edge      virtio25-config
+101:      12729          0  PCI-MSIX-0000:00:13.0   1-edge      virtio25-req.0
+102:          0      14581  PCI-MSIX-0000:00:13.0   2-edge      virtio25-req.1
+103:          0          0  PCI-MSIX-0000:00:14.0   0-edge      virtio26-config
+104:        103          0  PCI-MSIX-0000:00:14.0   1-edge      virtio26-req.0
+105:          0          0  PCI-MSIX-0000:00:14.0   2-edge      virtio26-req.1
+106:          0          0  PCI-MSIX-0000:00:15.0   0-edge      virtio27-config
+107:         65          0  PCI-MSIX-0000:00:15.0   1-edge      virtio27-req.0
+108:          0         40  PCI-MSIX-0000:00:15.0   2-edge      virtio27-req.1
+109:          0          0  PCI-MSIX-0000:00:16.0   0-edge      virtio28-config
+110:          0          0  PCI-MSIX-0000:00:16.0   1-edge      virtio28-input
+111:          0          0  PCI-MSIX-0000:00:16.0   2-edge      virtio28-output
+112:          0          0  PCI-MSIX-0000:00:17.0   0-edge      virtio29-config
+113:          0          1  PCI-MSIX-0000:00:17.0   1-edge      virtio29-input
+114:          9          0  PCI-MSIX-0000:00:17.0   2-edge      virtio29-output
+115:          0          0  PCI-MSIX-0000:00:18.0   0-edge      virtio30-config
+116:         57          0  PCI-MSIX-0000:00:18.0   1-edge      virtio30-input
+117:          0          0  PCI-MSIX-0000:00:18.0   2-edge      virtio30-output
+118:          0          0  PCI-MSIX-0000:00:1b.0   0-edge      virtio33-config
+119:          0         13  PCI-MSIX-0000:00:1b.0   1-edge      virtio33-input
+120:          0          0  PCI-MSIX-0000:00:1e.0   0-edge      virtio36-config
+121:          0          0  PCI-MSIX-0000:00:1e.0   1-edge      virtio36-hiprio
+122:          0          3  PCI-MSIX-0000:00:1e.0   2-edge      virtio36-requests.0
+123:          0          0  PCI-MSIX-0000:00:1d.0   0-edge      virtio35-config
+124:          0        416  PCI-MSIX-0000:00:1d.0   1-edge      virtio35-rx
+125:        489          0  PCI-MSIX-0000:00:1d.0   2-edge      virtio35-tx
+126:          0          0  PCI-MSIX-0000:00:1d.0   3-edge      virtio35-event
+127:          0          0  PCI-MSIX-0000:00:19.0   0-edge      virtio31-config
+128:          0          0  PCI-MSIX-0000:00:19.0   1-edge      virtio31-flush_queue
+129:          0          0  PCI-MSIX-0000:00:1a.0   0-edge      virtio32-config
+130:          0          0  PCI-MSIX-0000:00:1a.0   1-edge      virtio32-flush_queue
+131:          0          0  PCI-MSIX-0000:00:1f.0   0-edge      virtio37-config
+132:          0          2  PCI-MSIX-0000:00:1f.0   1-edge      virtio37-virtsnd-ctl
+133:          0          0  PCI-MSIX-0000:00:1f.0   2-edge      virtio37-virtsnd-event
+134:          0          0  PCI-MSIX-0000:00:1f.0   3-edge      virtio37-virtsnd-tx
+135:          0          0  PCI-MSIX-0000:00:1f.0   4-edge      virtio37-virtsnd-rx
+NMI:          0          0   Non-maskable interrupts
+LOC:      19146      19028   Local timer interrupts
+SPU:          0          0   Spurious interrupts
+PMI:          0          0   Performance monitoring interrupts
+IWI:        108        136   IRQ work interrupts
+RTR:          0          0   APIC ICR read retries
+RES:       1914       1806   Rescheduling interrupts
+CAL:      49869      40426   Function call interrupts
+TLB:       4614       4687   TLB shootdowns
+TRM:          0          0   Thermal event interrupts
+HYP:          1          1   Hypervisor callback interrupts
+ERR:          0
+MIS:          0
+PIN:          0          0   Posted-interrupt notification event
+NPI:          0          0   Nested posted-interrupt event
+PIW:          0          0   Posted-interrupt wakeup event
