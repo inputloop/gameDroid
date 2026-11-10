@@ -10,5 +10,5 @@ size: 3157504 bytes
 	DLL Name: bcryptprimitives.dll
 	DLL Name: ntdll.dll
 --- window smoke test (demo mode, 120 frames)
-gamedroid: 120 frames in 2.1 s
+gamedroid: 120 frames in 2.0 s
 DEMO_EXIT=0
