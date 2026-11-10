@@ -19,6 +19,11 @@ for attempt in 1 2 3; do
   else
     git -C "$work" checkout -q --orphan ci-logs 2>/dev/null || true
   fi
+  # An older run that finishes late must not replace a newer run's logs.
+  last="$(sed -n 's/^run: //p' "$work/$name/RUN.txt" 2>/dev/null || true)"
+  if [ -n "$last" ] && [ "$last" -gt "${GITHUB_RUN_ID}" ]; then
+    echo "publish-logs: ci-logs already holds newer run $last; not publishing"; exit 0
+  fi
   rm -rf "${work:?}/$name"; mkdir -p "$work/$name"
   for f in "$@"; do
     [ -f "$f" ] && cp "$f" "$work/$name/" || echo "publish-logs: no file $f"

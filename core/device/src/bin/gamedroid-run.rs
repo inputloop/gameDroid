@@ -11,7 +11,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
-use gamedroid_device::android::{machine, Handles, Options};
+use gamedroid_device::android::{machine, true_colours, Handles, Options};
 use gamedroid_device::script::{self, Step};
 
 /// What Android's init logs when the system has finished booting.
@@ -74,7 +74,7 @@ fn run_script(steps: Vec<Step>, handles: Handles, booted: Arc<AtomicBool>) {
                     handles.keyboard.key(code, false);
                 }
                 Step::Screenshot(path) => {
-                    let frame = handles.display.frame();
+                    let frame = true_colours(handles.display.frame());
                     match std::fs::write(&path, frame.to_ppm()) {
                         Ok(()) => eprintln!(
                             "gamedroid-run: saved frame {} to {}",
@@ -170,7 +170,7 @@ fn main() -> ExitCode {
                 if display.sequence() == saved {
                     continue;
                 }
-                let frame = display.frame();
+                let frame = true_colours(display.frame());
                 saved = frame.sequence;
                 let tmp = path.with_extension("tmp");
                 if std::fs::write(&tmp, frame.to_ppm()).is_ok() {

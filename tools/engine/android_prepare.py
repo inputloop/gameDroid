@@ -219,11 +219,10 @@ def runtime_bootconfig(boot_device, vbmeta_guid, memory_mib, display):
         # Graphics: the guest draws with the CPU until the host GPU is wired in.
         'androidboot.hardware.hwcomposer = "ranchu"',
         'androidboot.hardware.hwcomposer.display_finder_mode = "drm"',
-        # The guest's composer writes pixels in this byte order into a buffer
-        # the kernel labels as blue-green-red-x. "rgba" (what the stock
-        # launcher sets for its own viewer) shows red and blue swapped on a
-        # host that believes the label, as bvmm does.
-        'androidboot.hardware.hwcomposer.display_framebuffer_format = "bgra"',
+        # The stock value. With this image the guest's composer writes red
+        # first whatever this says and whatever the buffer is labelled; the
+        # host corrects for it (core/device/src/android.rs, true_colours).
+        'androidboot.hardware.hwcomposer.display_framebuffer_format = "rgba"',
         'androidboot.hardware.gralloc = "minigbm"',
         'androidboot.hardware.egl = "angle"',
         'androidboot.hardware.vulkan = "pastel"',

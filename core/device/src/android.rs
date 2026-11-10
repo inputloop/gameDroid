@@ -7,7 +7,7 @@
 use std::path::Path;
 
 use bvmm::virtio::console::Console;
-use bvmm::virtio::gpu::Display;
+use bvmm::virtio::gpu::{Display, Format, Frame};
 use bvmm::virtio::input::{Input, InputSender};
 use bvmm::{DiskConfig, VmConfig};
 
@@ -47,6 +47,23 @@ pub struct Handles {
     pub touch: InputSender,
     /// Push key presses here.
     pub keyboard: InputSender,
+}
+
+/// A frame from the stock Android image with its colours put right.
+///
+/// The image's composer draws into a buffer the guest kernel describes to
+/// the display device as blue-green-red, but fills it red-green-blue. A host
+/// that believes the description shows red and blue swapped: blue icons come
+/// out orange. Seen on 2026-11-10 against a screenshot taken inside the
+/// guest; the image's `display_framebuffer_format` setting did not change it.
+/// So the description is overridden here, for this image.
+pub fn true_colours(mut frame: Frame) -> Frame {
+    frame.format = match frame.format {
+        Format::Bgra | Format::Bgrx => Format::Rgbx,
+        Format::Rgba | Format::Rgbx => Format::Bgrx,
+        other => other,
+    };
+    frame
 }
 
 fn read(path: &Path) -> Result<Vec<u8>, String> {
@@ -108,6 +125,24 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn colours_are_corrected_by_swapping_red_and_blue() {
+        // One pixel the guest meant as pure blue, written red-first: 00 00 ff.
+        let frame = Frame {
+            width: 1,
+            height: 1,
+            format: Format::Bgrx,
+            pixels: vec![0x00, 0x00, 0xff, 0xff],
+            sequence: 1,
+        };
+        assert_eq!(frame.to_rgb(), [0xff, 0x00, 0x00], "as labelled: red");
+        assert_eq!(
+            true_colours(frame).to_rgb(),
+            [0x00, 0x00, 0xff],
+            "corrected: blue"
+        );
+    }
 
     #[test]
     fn the_machine_matches_what_the_image_expects() {
