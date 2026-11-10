@@ -2,11 +2,11 @@ window 450x800 at 125,50: gameDroid - direct (F1: game mode, Example Shooter)
 ok: /home/runner/window/1-direct-drag.png #FFFFFF
 ok: 0 ]
 ok: /home/runner/window/3-typing.png #E0E040
-title now: gameDroid - direct (F1: game mode, Example Shooter)
+title now: gameDroid - game mode: Example Shooter (F1: direct)
 ok: 1 ]
-FAIL: /home/runner/window/4-game-mode.png #FF5C5C
-FAIL: /home/runner/window/4-game-mode.png #5CC8FF
-FAIL: /home/runner/window/4-game-mode.png #7DFF7A
-FAIL: 0 ]
+ok: /home/runner/window/4-game-mode.png #FF5C5C
+ok: /home/runner/window/4-game-mode.png #5CC8FF
+ok: /home/runner/window/4-game-mode.png #7DFF7A
 ok: 0 ]
-WINDOW_TEST=FAIL
+ok: 0 ]
+WINDOW_TEST=PASS
