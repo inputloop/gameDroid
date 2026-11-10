@@ -20,12 +20,12 @@ confirmed on hardware yet. It has no virtio devices.
 
 Each milestone ends in a test that runs without a person where possible. KVM
 tests can run on GitHub's Linux runners, which have KVM. WHP tests may run on
-GitHub's Windows runners (the hypervisor platform is enabled there; whether a
-nested partition actually runs is not yet known) and otherwise on the laptop.
+GitHub's Windows runners (confirmed 2026-11-10: bvmm runs a guest there) and
+on the laptop for anything involving the GPU or Intel-specific behaviour.
 
 | # | Milestone | Done when | Verified by |
 |---|---|---|---|
-| E0 | A real Linux kernel boots on KVM and on WHP | A container prints `uname -a` through `--engine native` | CI on KVM; laptop or CI on WHP |
+| E0 | A real Linux kernel boots on KVM and on WHP | A container prints `uname -a` through `--engine native` | **Done in CI on both, 2026-11-10** (`results/2026-11-10-E0-kernel-boot.md`). Still to repeat on the Intel laptop |
 | E1 | Device transport and a disk | virtio transport plus virtio-blk; a guest mounts a disk image read-write | CI |
 | E2 | Several vCPUs and big memory | 8 vCPUs and 8 GiB visible in the guest, memory above the 4 GiB hole | CI |
 | E3 | ACPI and clean power-off | Guest shuts down and bvmm exits 0, no reset trick | CI |
