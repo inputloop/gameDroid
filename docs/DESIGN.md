@@ -366,15 +366,27 @@ Working rules that follow:
 - CPU: x86_64 with hardware virtualization enabled. On Windows, the Windows
   Hypervisor Platform feature turned on.
 
-## 12. Still open
+## 12. Settled on 2026-11-10
 
-1. Does the owner have a machine for AOSP builds (roughly 400 GB disk, 64 GB
-   RAM, many cores), or do we stay on prebuilt Cuttlefish images plus overlays
-   for the first phases?
-2. Is the 3080 Ti machine dual-boot, or are Linux and Windows separate machines?
-   This sets how fast the hardware test loop can turn.
-3. How compatibility-pack downloads are hosted and described, pending a
-   reading of the actual license texts.
+1. No AOSP build machine. The first phases start from prebuilt Cuttlefish
+   images, with our device changes layered on as overlays (extra partitions,
+   vendor overlays, the agent as an installed app). Limit: changes that need a
+   rebuilt system image, such as new HALs or framework patches, wait until a
+   build machine or a hosted builder exists. Phase 0 must list which of our
+   planned guest changes fall on which side of that line.
+2. The RTX 3080 Ti reference covers Linux and Windows on separate machines.
+   Each hardware test round is therefore two runs of `tools/hwtest`, one per
+   machine, and the two result files are compared side by side.
+3. Compatibility-pack components are offered only as legally available. Each
+   one (microG, Google apps, an ARM translator) is enabled in the fetcher only
+   after its license text has been read and a short note recording the source,
+   the terms, and what we may do is committed under docs/legal/. A component
+   with no clear grant is not offered; the user can still sideload it.
+
+## 12.1 Still open
+
+Nothing blocks phase 0. To be answered by the phase 0 spikes: which VMM, and
+which guest changes can ship as overlays.
 
 ## 13. Sources
 
