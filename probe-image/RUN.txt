@@ -1,4 +1,4 @@
-run: 42921423286
-sha: 6403175d3e71087d8b88d01904c17a7ffea4c6cf
+run: 42922008844
+sha: 6bdbd1a5c1c3d20bc7360c102577eb3b1d5f8b3c
 workflow: probe-image-download
-utc: 2026-11-10T23:12:42Z
+utc: 2026-11-10T23:17:09Z

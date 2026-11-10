@@ -1,58 +1,50 @@
-=== latest successful build of the target on the branch
-{
-  "error": {
-    "code": 403,
-    "message": "Rate limit exceeded for legacy API. You must to migrate to Build API v4: go/build-api-v4-clients-migration-guide",
-    "errors": [
-      {
-        "message": "Rate limit exceeded for legacy API. You must to migrate to Build API v4: go/build-api-v4-clients-migration-guide",
-        "domain": "usageLimits",
-        "reason": "rateLimitExceeded"
-      }
-    ]
-  }
-}
-
+=== latest build of the branch, by redirect
+HTTP/2 403 
+redirect: 
 BUILD=
-=== artifact list (first page)
-Traceback (most recent call last):
-  File "<string>", line 3, in <module>
-  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
-    return loads(fp.read(),
-           ^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
-=== signed URL for aosp_cf_x86_64_only_phone-img-16644040.zip
-<!DOCTYPE html>
-<html lang=en>
-  <meta charset=utf-8>
-  <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
-  <title>Error 404 (Not Found)!!1</title>
-  <style>
-    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin
-  </style>
-  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>
-  <p><b>404.</b> <ins>That’s an error.</ins>
-  <p>The requested URL <code>/android/internal/build/v3/builds/16644040/aosp_cf_x86_64_only_phone-userdebug/attempts/latest/artifacts/aosp_cf_x86_64_only_phone-img-16644040.zip/url</code> was not found on this server.  <ins>That’s all we know.</ins>
-
-=== download
-curl: (3) URL rejected: Malformed input to a URL function
-http=000 bytes=0 seconds=0.000000
-ls: cannot access 'img.zip': No such file or directory
+=== submitted/16644040/aosp_cf_x86_64_only_phone-userdebug/latest/raw/aosp_cf_x86_64_only_phone-img-16644040.zip
+HTTP/2 307 
+content-type: text/html; charset=utf-8
+location: https://storage.googleapis.com/android-build/builds/aosp-android-latest-release-linux-aosp_cf_x86_64_only_phone-userdebug/16644040/ef064bf59bc3ef39877720881db0548219d7441fd7f65fae44b897e2b0b41af5/1/aosp_cf_x86_
+content-length: 750
+=== submitted/16644040/aosp_cf_x86_64_only_phone-userdebug/latest/aosp_cf_x86_64_only_phone-img-16644040.zip
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+content-length: 4351
+=== submitted/16644040/aosp_cf_x86_64_only_phone-userdebug/latest/view/aosp_cf_x86_64_only_phone-img-16644040.zip
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+content-length: 4351
+=== download through the raw form, following redirects
+http=200 bytes=1163636385 seconds=5.971916 type=application/zip
+-rw-r--r-- 1 runner runner 1163636385 Nov 10 23:16 img.zip
+504b0304
 === archive contents
-unzip:  cannot find or open img.zip, img.zip.zip or img.zip.ZIP.
-unzip:  cannot find or open ../img.zip, ../img.zip.zip or ../img.zip.ZIP.
-=== what each image is
-*.img: ls: cannot access '*.img': No such file or directory
-head: cannot open '*.img' for reading: No such file or directory
-super.img:    cannot open `super.img' (No such file or directory)
-userdata.img: cannot open `userdata.img' (No such file or directory)
-boot.img:     cannot open `boot.img' (No such file or directory)
-=== sparse headers (magic 3aff26ed = Android sparse)
+Archive:  img.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+       83  2008-01-01 00:00   android-info.txt
+      252  2008-01-01 00:00   fastboot-info.txt
+ 67108864  2008-01-01 00:00   boot.img
+  1048576  2008-01-01 00:00   cuttlefish_example_custom.img
+  8388608  2008-01-01 00:00   init_boot.img
+  2249012  2008-01-01 00:00   userdata.img
+    12288  2008-01-01 00:00   vbmeta.img
+     4096  2008-01-01 00:00   vbmeta_system.img
+     4096  2008-01-01 00:00   vbmeta_system_dlkm.img
+     4096  2008-01-01 00:00   vbmeta_vendor_dlkm.img
+ 67108864  2008-01-01 00:00   vendor_boot.img
+1806374236  2009-01-01 00:00   super.img
+---------                     -------
+1952303071                     12 files
+=== sparse or plain
+boot.img 67108864 bytes, not sparse, starts b'ANDROID!'
+cuttlefish_example_custom.img 1048576 bytes, not sparse, starts b'\x00\x00\x00\x00\x00\x00\x00\x00'
+init_boot.img 8388608 bytes, not sparse, starts b'ANDROID!'
+super.img 1806374236 bytes SPARSE v1.0 block=4096 blocks=2097152 chunks=393 -> 8589934592 bytes raw
+userdata.img 2249012 bytes SPARSE v1.0 block=4096 blocks=2097152 chunks=22 -> 8589934592 bytes raw
+vbmeta.img 12288 bytes, not sparse, starts b'AVB0\x00\x00\x00\x01'
+vbmeta_system.img 4096 bytes, not sparse, starts b'AVB0\x00\x00\x00\x01'
+vbmeta_system_dlkm.img 4096 bytes, not sparse, starts b'AVB0\x00\x00\x00\x01'
+vbmeta_vendor_dlkm.img 4096 bytes, not sparse, starts b'AVB0\x00\x00\x00\x01'
+vendor_boot.img 67108864 bytes, not sparse, starts b'VNDRBOOT'
