@@ -28,17 +28,17 @@ device in CI. More below.*
 | Engine has a PCI bus and a virtio disk | Working in CI on both hosts |
 | Several processors and more than 4 GiB of memory | Working in CI on Linux. On Windows: memory yes, still one processor |
 | Android's own kernel boots on the engine | Working in CI on both hosts; on Windows its clock is still coarse |
-| Stock Android 17 boots to its lock screen | Working in CI on Linux (about 40 seconds on two shared cores) |
+| Stock Android 17 boots to its lock screen | Working in CI on Linux (about 40 seconds on two shared cores) and on Windows (about 75 seconds on one) |
 | A picture from Android | Working on Linux: frames are read from the engine's display device. Drawn by the CPU; saved to files, there is no window yet |
 | Touch input reaches Android | Working on Linux: swipes sent from the host unlock the screen and open the app drawer |
-| Installing and starting a game | Working in CI on Linux: an APK is handed over on a second disk, installed from Android's shell, and started. Shattered Pixel Dungeon reaches its title screen |
+| Installing and starting a game | Working in CI on Linux and Windows: an APK is handed over on a second disk, installed from Android's shell, and started. Shattered Pixel Dungeon reaches its title screen |
 | Commands inside Android | Working on Linux, through the image's root shell on the serial port. No adb yet |
 | A window | `gamedroid` opens a window, shows the guest's screen, and turns mouse and keyboard into touches, with a game mode driven by a profile. Checked in demo mode only (a test card); not yet run with Android behind it |
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
-| Android on Windows | Not attempted. The engine there has one processor and a coarse clock for Android's kernel |
+| Android on Windows | Working in CI: boots, unlocks by touch, installs and starts the game. One processor and a coarse clock, so slower than Linux. Not yet run on a real Windows machine with a GPU |
 | GPU acceleration | Not yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
-| One file that downloads Android, sets it up and starts it | Not yet. Required for the finished product ([decision](docs/adr/0002-single-file.md)); today it takes three separate tools, two of them Linux-only |
+| One file that downloads Android, sets it up and starts it | First version built in CI: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. With no arguments it downloads Android (1.2 GB), prepares it and boots; setup takes under 20 seconds after the download. The download-prepare-boot path is proven in CI on both hosts with the headless runner; the window opening on Windows is proven in demo mode. **Not yet proven: the window with Android behind it** ([decision](docs/adr/0002-single-file.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
@@ -56,6 +56,14 @@ drawer after a second swipe
 | Lock screen | After one swipe | After a second swipe |
 |---|---|---|
 | ![lock screen](docs/screenshots/gamedroid-android17-lock.png) | ![home screen](docs/screenshots/gamedroid-android17-home.png) | ![app drawer](docs/screenshots/gamedroid-android17-apps.png) |
+
+### Android on Windows
+
+The same image and the same game on a Windows host, through the Windows
+Hypervisor Platform, set up from nothing by `gamedroid-run --setup`
+(CI, one processor, no GPU):
+
+<img src="docs/screenshots/android-windows-lock.png" width="240" alt="Android 17 lock screen on the Windows engine"> <img src="docs/screenshots/android-windows-game.png" width="240" alt="Shattered Pixel Dungeon on the Windows engine">
 
 ### A game
 
@@ -156,15 +164,16 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E2 | Several CPUs and large memory | Done in CI on Linux; Windows has the memory, one CPU so far |
 | E3 | ACPI and clean power-off | Planned |
 | E4 | Network and vsock | Planned |
-| E5 | Android boots | Done in CI on Linux |
-| E6 | A picture | Done in CI on Linux, to a file; a window is still to come |
-| E7 | Touch, keys, gamepad | Touch done in CI on Linux; keyboard untested; no gamepad device yet |
+| E5 | Android boots | Done in CI on Linux and Windows |
+| E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
+| E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
 | E8 | GPU acceleration | Planned. The hardest item |
 | E9 | Sound | Planned |
 
-gameDroid's own features build on these. What is next, in order: make
-`gamedroid` a single program that downloads and prepares Android itself; get
-Android booting on Windows; package it as one file. Performance work needs E8.
+gameDroid's own features build on these. What is next, in order: run the
+window with Android behind it in CI; try `gamedroid.exe` on the Windows
+reference laptop; then a proper clock and several processors on Windows.
+Performance work needs E8.
 
 ## Things worth knowing before you get excited
 
@@ -207,13 +216,25 @@ tools/hwtest/probe.sh
 powershell -ExecutionPolicy Bypass -File tools\hwtest\probe.ps1
 ```
 
-Boot Android yourself on a Linux machine with KVM and about 30 GB free. The
-steps the CI job runs are in
-[.github/workflows/engine-android.yml](.github/workflows/engine-android.yml):
-fetch the stock image, prepare it with `tools/engine/android_prepare.py`, then
+Boot Android in a window, on Linux with KVM or on Windows with the Windows
+Hypervisor Platform feature turned on. The first run downloads Android
+(1.2 GB) from Google's public build site and needs about 8 GB of disk. This
+path is new: its parts are proven in CI, the whole is not yet (see the table
+above).
 
 ```bash
-cargo run --release -p gamedroid-device --bin gamedroid-run -- <prepared-dir> --screenshot screen.ppm
+cargo run --release -p gamedroid
+```
+
+Prebuilt single files (`gamedroid.exe`, and `gamedroid` for Linux) are the
+artifacts of the newest
+[package run](https://github.com/inputloop/gameDroid/actions/workflows/package.yml).
+
+The same without a window, saving the screen to a file, as CI does it
+([workflow](.github/workflows/engine-android.yml)):
+
+```bash
+cargo run --release -p gamedroid-device --bin gamedroid-run -- --setup --screenshot screen.ppm
 ```
 
 Run the engine on its own, using a [bContain](https://github.com/inputloop/bContain) build:
