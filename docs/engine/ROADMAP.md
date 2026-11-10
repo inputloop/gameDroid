@@ -1,0 +1,77 @@
+# Engine track: bvmm to Android
+
+Decided by the owner on 2026-11-10: gameDroid leads with INPUTLOOP's own
+hypervisor, bvmm (`inputloop/bcontain`, `crates/bvmm`), as its engine. The
+crosvm and QEMU track is parked; its expected outcomes are kept as guesses in
+`TRACK1-GUESSES.md`.
+
+Where the work lives: engine code in the bContain repository; gameDroid's
+launcher, input mapping and profiles here. gameDroid depends on bvmm as a
+library (the licenses match, so linking is allowed).
+
+## Starting point (read from the source, 2026-11-10)
+
+bvmm boots a Linux kernel directly on KVM or Windows Hypervisor Platform with
+one vCPU, up to 3 GiB RAM, a serial console, a CMOS clock and an I/O APIC. Its
+WHP self test passed on the reference laptop. A real kernel boot has not been
+confirmed on hardware yet. It has no virtio devices.
+
+## Milestones
+
+Each milestone ends in a test that runs without a person where possible. KVM
+tests can run on GitHub's Linux runners, which have KVM. WHP tests may run on
+GitHub's Windows runners (the hypervisor platform is enabled there; whether a
+nested partition actually runs is not yet known) and otherwise on the laptop.
+
+| # | Milestone | Done when | Verified by |
+|---|---|---|---|
+| E0 | A real Linux kernel boots on KVM and on WHP | A container prints `uname -a` through `--engine native` | CI on KVM; laptop or CI on WHP |
+| E1 | Device transport and a disk | virtio transport plus virtio-blk; a guest mounts a disk image read-write | CI |
+| E2 | Several vCPUs and big memory | 8 vCPUs and 8 GiB visible in the guest, memory above the 4 GiB hole | CI |
+| E3 | ACPI and clean power-off | Guest shuts down and bvmm exits 0, no reset trick | CI |
+| E4 | Network and vsock | virtio-net with user-mode NAT; vsock stream to the host | CI |
+| E5 | Android boots headless | Cuttlefish Android 17 image reaches `sys.boot_completed=1`, adb reachable over vsock | CI on KVM |
+| E6 | A picture | virtio-gpu 2D scanout in a host window; Android home screen visible with guest software rendering | Screenshot in CI (headless capture); eyes on the laptop |
+| E7 | Touch, keys, gamepad | virtio-input devices; taps and keys arrive in Android | CI with injected events |
+| E8 | GPU acceleration | gfxstream through rutabaga; guest renderer string names the host GPU | Laptop only |
+| E9 | Sound | virtio-snd playback | Laptop |
+
+gameDroid's own phases hang off these: the playable shell (phase 1) needs E6
+and E7; the input work (phase 2) can start on its pure-logic parts now and
+needs E7 to be tried against a real game; performance work needs E8.
+
+## Choices to settle early
+
+1. Transport: virtio over PCI or virtio-mmio. bContain's notes plan for MMIO,
+   which is far simpler. The stock Android kernel may only carry the PCI
+   driver built in (guess X5, 70%). E1 starts by checking the Cuttlefish
+   kernel's configuration; if PCI is required, E1 builds a minimal PCI host
+   bridge instead.
+2. How Android is booted. Cuttlefish normally goes through a bootloader. bvmm
+   boots a kernel directly, so E5 must unpack the kernel and ramdisks from the
+   boot images and pass the boot configuration itself. crosvm supports this
+   style, which suggests it is workable.
+3. What to reuse. rust-vmm crates (virtio queues, guest memory, ACPI tables,
+   kernel loader) and rutabaga are permissively licensed and may be linked.
+   Each adoption is a choice between speed and keeping bvmm small; decide per
+   crate, in the bContain repository.
+4. The engine interface gameDroid codes against: create and start a VM from an
+   image set, stop it, get frames or a window surface, attach input devices
+   and push events, open a control stream. Drafted during E5 to E7, when the
+   real shape is visible.
+
+## Honest size of this
+
+E0 to E4 is general VMM work that bContain wants anyway. E5 is the first
+Android-specific step and the first real unknown. E8 is the hardest single
+item: embedding gfxstream on Windows inside a new VMM has, as far as I know,
+no public example to follow. Until E8 is reached, gameDroid has no accelerated
+graphics on either host. That is the cost of leading with this track, accepted
+on 2026-11-10.
+
+## Reference oracle
+
+crosvm on Linux boots the same image today. Whenever bvmm and Android
+disagree, compare with what crosvm presents to the guest (devices, kernel
+command line, boot configuration). Read its behaviour; its code is BSD
+licensed and may also be read and reused with attribution.

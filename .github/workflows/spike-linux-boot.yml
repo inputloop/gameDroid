@@ -5,10 +5,7 @@
 # keeps going after failures so one run teaches the most.
 name: spike-linux-boot
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/spike-linux-boot.yml"
+  workflow_dispatch:  # manual only, to spare Actions minutes
 permissions:
   contents: read
 jobs:

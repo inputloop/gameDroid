@@ -4,11 +4,7 @@
 # offer (KVM, hypervisor) for later CI boot tests.
 name: hwtest-probe
 on:
-  push:
-    paths:
-      - "tools/hwtest/**"
-      - ".github/workflows/hwtest-probe.yml"
-  workflow_dispatch:
+  workflow_dispatch:  # manual only, to spare Actions minutes
 permissions:
   contents: read
 jobs:

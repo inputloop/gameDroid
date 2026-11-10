@@ -8,6 +8,11 @@ Nothing in this phase is product code. Spikes are thrown away; findings are kept
 
 ## Status
 
+Phase 0 closed on 2026-11-10 by decision, not by completing the matrix: the
+owner chose bvmm as the engine (`docs/adr/0001-vmm-choice.md`). Steps marked
+"not started" below are parked. Work continues in `docs/engine/ROADMAP.md`.
+
+
 | Step | State | Evidence |
 |---|---|---|
 | 0.1 Host probe scripts | Done. Both run green on GitHub's Linux and Windows runners | `tools/hwtest/`, workflow `hwtest-probe` run 2 |

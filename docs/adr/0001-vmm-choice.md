@@ -1,6 +1,6 @@
 # ADR 0001: which virtual machine monitor
 
-Status: OPEN. Opened 2026-11-10. No decision yet.
+Status: DECIDED 2026-11-10 by the owner: lead with bvmm (the engine track).
 
 ## Question
 
@@ -93,4 +93,14 @@ See "How the VMM gets chosen" in `docs/phase0/README.md`.
 
 ## Decision
 
-Pending.
+2026-11-10, owner's word: "Lead with 2. Engine Track."
+
+gameDroid's engine is bvmm. The crosvm and QEMU spikes stop where they are.
+What they would probably have shown is recorded as guesses, to be kept, in
+`docs/engine/TRACK1-GUESSES.md`. The plan for bvmm is in
+`docs/engine/ROADMAP.md`.
+
+Consequences accepted with this decision:
+- No GPU-accelerated Android on either host until bvmm reaches milestone E8.
+- crosvm on Linux remains as a reference to compare against, not as a product path.
+- The recommendation above (two tracks, ship track first) was not taken.
