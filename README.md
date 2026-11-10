@@ -21,11 +21,13 @@ profiles, and high frame rates. Linux and Windows. GPLv3 or later.
 | Engine has a PCI bus and a virtio disk | Working in CI on both hosts |
 | Several processors and more than 4 GiB of memory | Working in CI on Linux. On Windows: memory yes, still one processor |
 | Android's own kernel boots on the engine | Working in CI on both hosts; on Windows its clock is still coarse |
-| Engine boots Android | Not yet. Needs several CPUs, more memory, more devices, and Android's boot sequence |
+| Engine boots Android | In progress on Linux. Android's kernel and first-stage `init` run and find the disk; it does not reach the home screen yet |
+| Engine devices for a screen and for touch and keys | Written and unit-tested; not yet proven with Android |
 | A picture on screen | Not yet |
 | Touch, keyboard, controller input | Not yet |
 | GPU acceleration | Not yet |
-| Key mapping editor and game profiles | Not started |
+| Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to a running game |
+| Key mapping editor | Not started |
 
 ## What you can see today
 
@@ -182,9 +184,11 @@ bcontain run --engine native alpine:3.20 -- uname -a
 | [docs/engine/](docs/engine/) | Engine roadmap, results, the Android reference capture, the kept guesses |
 | [docs/phase0/](docs/phase0/) | The first round of experiments with existing engines, now closed |
 | [docs/screenshots/](docs/screenshots/) | Images used on this page, with their source text |
+| [core/input/](core/input/) | gameDroid's input engine (Rust): profiles and the mapping from host controls to touches |
+| [profiles/](profiles/) | Game profiles. One invented example so far |
 | [tools/hwtest/](tools/hwtest/) | Scripts to run on real hardware |
-| [tools/engine/](tools/engine/) | Helpers for engine tests, such as taking the kernel out of an Android boot image |
-| [.github/workflows/](.github/workflows/) | CI: `engine-bvmm` (Linux boot), `engine-disk` (PCI and virtio disk), `engine-gki` (Android's kernel), `engine-android-oracle` (Android reference capture), and parked phase 0 jobs |
+| [tools/engine/](tools/engine/) | Helpers for engine tests: preparing the stock Android image for bvmm (the bootloader's job), screenshot conversion |
+| [.github/workflows/](.github/workflows/) | CI: `engine-bvmm` (Linux boot), `engine-disk` (PCI and virtio disk), `engine-gki` (Android's kernel), `engine-smp-mem` (processors and memory), `engine-android` (stock Android on bvmm), `engine-android-oracle` (Android reference capture), `core` (gameDroid's own code), and parked phase 0 jobs. Logs from `engine-android` are published to the `ci-logs` branch |
 
 ## How this project is built
 
