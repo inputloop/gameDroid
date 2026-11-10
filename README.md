@@ -4,11 +4,12 @@ A free and open source Android emulator for desktop, built for playing games:
 keyboard and mouse maps for touch games, real controller support, per-game
 profiles, and high frame rates. Linux and Windows. GPLv3 or later.
 
-> **Status, 2026-11-10: Android boots and responds to touch, on Linux, with
-> no window yet and no GPU acceleration.** There is no playable emulator: no
-> launcher, no window, no key mapping wired to a game, and Windows is behind.
-> Everything on this page says plainly whether it is working, planned, or a
-> guess.
+> **Status, 2026-11-10: on Linux, Android boots, takes touch, and runs a real
+> game, slowly. It is not yet something you can download and play.** There is
+> a window but it has not been tried with Android behind it; drawing is done by
+> the CPU; and Windows, which is the target for the finished single-file
+> program, cannot boot Android yet. Everything on this page says plainly
+> whether it is working, planned, or a guess.
 
 ![Android 17 running on gameDroid: lock screen, home screen, app drawer](docs/screenshots/gamedroid-android17-home.png)
 
@@ -30,11 +31,15 @@ device in CI. More below.*
 | Stock Android 17 boots to its lock screen | Working in CI on Linux (about 40 seconds on two shared cores) |
 | A picture from Android | Working on Linux: frames are read from the engine's display device. Drawn by the CPU; saved to files, there is no window yet |
 | Touch input reaches Android | Working on Linux: swipes sent from the host unlock the screen and open the app drawer |
-| Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised. No controller device yet |
+| Installing and starting a game | Working in CI on Linux: an APK is handed over on a second disk, installed from Android's shell, and started. Shattered Pixel Dungeon reaches its title screen |
+| Commands inside Android | Working on Linux, through the image's root shell on the serial port. No adb yet |
+| A window | `gamedroid` opens a window, shows the guest's screen, and turns mouse and keyboard into touches, with a game mode driven by a profile. Checked in demo mode only (a test card); not yet run with Android behind it |
+| Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
 | Android on Windows | Not attempted. The engine there has one processor and a coarse clock for Android's kernel |
 | GPU acceleration | Not yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
-| A window, a launcher, installing games | Not started |
+| One file that downloads Android, sets it up and starts it | Not yet. Required for the finished product ([decision](docs/adr/0002-single-file.md)); today it takes three separate tools, two of them Linux-only |
+| A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
 ## What you can see today
@@ -52,7 +57,15 @@ drawer after a second swipe
 |---|---|---|
 | ![lock screen](docs/screenshots/gamedroid-android17-lock.png) | ![home screen](docs/screenshots/gamedroid-android17-home.png) | ![app drawer](docs/screenshots/gamedroid-android17-apps.png) |
 
-These are real frames, read from the engine's display device and saved by
+### A game
+
+Shattered Pixel Dungeon (free software, GPLv3, from F-Droid), installed and
+started by `gamedroid-run` in CI on 2026-11-10. The notice at the top is
+Android's own, shown the first time an app goes full screen.
+
+<img src="docs/screenshots/gamedroid-game-spd.png" alt="Shattered Pixel Dungeon running on gameDroid" width="300">
+
+All of these are real frames, read from the engine's display device and saved by
 the runner; nothing was drawn or edited. Two honest notes: Android draws them
 with the CPU, since there is no GPU acceleration yet, and the runner corrects
 the colour order, because this Android image writes red and blue the other way
@@ -149,10 +162,9 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E8 | GPU acceleration | Planned. The hardest item |
 | E9 | Sound | Planned |
 
-gameDroid's own features build on these. With E5 to E7 reached on Linux, the
-next steps are gameDroid's own: a window that shows the frames and takes
-keyboard and mouse input through the input engine, then installing and
-starting a game. Performance work needs E8.
+gameDroid's own features build on these. What is next, in order: make
+`gamedroid` a single program that downloads and prepares Android itself; get
+Android booting on Windows; package it as one file. Performance work needs E8.
 
 ## Things worth knowing before you get excited
 
@@ -177,6 +189,13 @@ starting a game. Performance work needs E8.
   starts from Google's prebuilt Cuttlefish images.
 
 ## Try what exists
+
+See the window and the input mapping without Android or a hypervisor, on Linux
+or Windows (a test card draws each finger it is sent; F1 switches game mode):
+
+```bash
+cargo run --release -p gamedroid -- --demo --profile profiles/example.shooter.toml
+```
 
 Check whether a machine is ready (read-only, installs nothing):
 
@@ -221,7 +240,8 @@ bcontain run --engine native alpine:3.20 -- uname -a
 | [docs/phase0/](docs/phase0/) | The first round of experiments with existing engines, now closed |
 | [docs/screenshots/](docs/screenshots/) | Images used on this page, with their source text |
 | [core/input/](core/input/) | gameDroid's input engine (Rust): profiles and the mapping from host controls to touches |
-| [core/device/](core/device/) | The virtual Android device (Rust): the machine Android runs in, on the bvmm engine; `gamedroid-run`, a headless runner with input scripts |
+| [app/](app/) | `gamedroid`, the window: shows the guest, sends it mouse and keyboard, game mode from a profile, and a demo mode that needs no Android |
+| [core/device/](core/device/) | The virtual Android device (Rust): the machine Android runs in, on the bvmm engine; `gamedroid-run`, a headless runner with scripts that swipe, run shell commands, install and start apps |
 | [profiles/](profiles/) | Game profiles. One invented example so far |
 | [tools/hwtest/](tools/hwtest/) | Scripts to run on real hardware |
 | [tools/engine/](tools/engine/) | Helpers for engine tests: preparing the stock Android image for bvmm (the bootloader's job), screenshot conversion |

@@ -96,3 +96,32 @@ So events pushed from a host thread reach Android's input stack through the
 virtio-input device and are understood as touches at the right places. Not
 yet shown: several fingers at once, taps on a specific target, the keyboard,
 or how long an event takes to arrive.
+
+## A game, the same day
+
+Run: https://github.com/inputloop/gameDroid/actions/runs/42920307063
+(gameDroid 9718882).
+
+The runner fetched Shattered Pixel Dungeon from F-Droid (30,275,058 bytes; it
+carries x86-64 code, so it needs no ARM translator), presented the file to
+Android as a second read-only disk, and typed commands at the image's shell on
+the serial port:
+
+    uid=2000(shell) gid=2000(shell) ... context=u:r:shell:s0
+    17
+    GD_SHELL_OK
+    Success
+    GD_INSTALL_STATUS=0
+    Starting: Intent { cmp=com.shatteredpixel.shatteredpixeldungeon/.android.AndroidLauncher }
+    GD_START_STATUS=0
+
+The frame saved afterwards shows the game's title screen. The copy off the
+disk is done as root (`su 0`), which this userdebug image allows.
+
+Found on the way: `monkey`, the usual one-line way to start an app, aborts on
+this image (its Java process crashes when started from the shell). Starting
+the launcher activity with `am start` works.
+
+Not shown: playing the game. One tap was sent to the middle of the screen and
+did not land on anything useful. Frame rate was not measured; the game draws
+through OpenGL ES translated to a CPU renderer inside the guest.
