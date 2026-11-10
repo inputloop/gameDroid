@@ -3,6 +3,8 @@
 # Hyper-V support, which bvmm leans on for timers on Windows. This takes the
 # kernel out of the stock Android 17 image and boots it on bvmm with a small
 # container as userspace, on KVM and on WHP, to see whether it gets a clock.
+# Android's kernel has no serial ports unless asked (8250.nr_uarts), so the
+# test asks for one; without it the guest boots silently.
 name: engine-gki
 on:
   workflow_dispatch:
@@ -12,7 +14,7 @@ on:
         default: "claude/gifted-ramanujan-i2r9yh"
       kernel_args:
         description: "Extra kernel arguments"
-        default: "ignore_loglevel"
+        default: "ignore_loglevel 8250.nr_uarts=1 earlycon=uart8250,io,0x3f8"
   push:
     paths:
       - ".github/workflows/engine-gki.yml"
@@ -21,7 +23,7 @@ permissions:
   contents: read
 env:
   BCONTAIN_REF: ${{ inputs.bcontain_ref || 'claude/gifted-ramanujan-i2r9yh' }}
-  BCONTAIN_KERNEL_ARGS: ${{ inputs.kernel_args || 'ignore_loglevel' }}
+  BCONTAIN_KERNEL_ARGS: ${{ inputs.kernel_args || 'ignore_loglevel 8250.nr_uarts=1 earlycon=uart8250,io,0x3f8' }}
 jobs:
   kernel:
     runs-on: ubuntu-24.04
