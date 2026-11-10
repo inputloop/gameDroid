@@ -9,4 +9,5 @@
 
 pub mod android;
 pub mod cuttlefish;
+pub mod prepare;
 pub mod script;
