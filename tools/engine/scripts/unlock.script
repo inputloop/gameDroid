@@ -1,0 +1,10 @@
+# After boot: record the lock screen, swipe up to unlock, record what follows.
+wait 8
+screenshot lock.ppm
+swipe 360 1150 360 250 350
+wait 6
+screenshot after-swipe.ppm
+# Open the app drawer: swipe up from the bottom of the home screen.
+swipe 360 1000 360 300 350
+wait 5
+screenshot after-second-swipe.ppm

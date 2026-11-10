@@ -18,6 +18,7 @@ on:
       - "tools/engine/test_android_prepare.py"
       - "tools/engine/ppm_to_png.py"
       - "tools/ci/publish-logs.sh"
+      - "tools/engine/scripts/**"
       - "core/device/**"
       - "Cargo.lock"
 permissions:
@@ -62,8 +63,9 @@ jobs:
           set +e
           cd "$HOME/gd"
           timeout "$RUN_SECONDS" "$GITHUB_WORKSPACE/target/release/gamedroid-run" . \
-            --cpus 2 --memory 4096 --display 720x1280 --screenshot screen.ppm > android.log 2> bvmm.err
-          echo "EXIT=$? (124 means it was still running when time was up)"
+            --cpus 2 --memory 4096 --display 720x1280 --screenshot screen.ppm \
+            --script "$GITHUB_WORKSPACE/tools/engine/scripts/unlock.script" > android.log 2> bvmm.err
+          echo "EXIT=$? (0: the input script ran to its end; 124: still running when time was up)"
           echo "LINES=$(wc -l < android.log)"
           echo "--- bvmm messages"; cut -c1-300 bvmm.err | tail -n 20
       - name: How far did it get
@@ -88,11 +90,12 @@ jobs:
           echo "=== last 60 lines"
           tail -n 60 android.log | show
           echo "=== screen"
-          if [ -f screen.ppm ]; then
-            python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" screen.ppm screen.png && ls -la screen.png
-          else
-            echo "the guest never presented a frame"
-          fi
+          ls *.ppm >/dev/null 2>&1 || echo "the guest never presented a frame"
+          for f in *.ppm; do
+            [ -f "$f" ] || continue
+            echo "$f: $(python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png")"
+          done
+          echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 15
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -110,6 +113,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "$HOME/gd" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
-          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" engine-android summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png after-second-swipe.png
       - name: Verdict
         run: grep -q 'sys.boot_completed=1' "$HOME/gd/android.log"

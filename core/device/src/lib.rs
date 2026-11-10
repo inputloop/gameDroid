@@ -5,6 +5,8 @@
 //! devices, the ports its services expect) on top of the bvmm engine.
 //! [`cuttlefish`] supplies the host's side of conversations that the stock
 //! Android virtual-device image has with helpers it expects on the host.
+//! [`script`] is a small input-script format for tests and demonstrations.
 
 pub mod android;
 pub mod cuttlefish;
+pub mod script;
