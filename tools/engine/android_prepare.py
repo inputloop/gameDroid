@@ -82,6 +82,37 @@ def read_vendor_boot(path):
     return ramdisk, cmdline, bootconfig
 
 
+def bootconfig_key(line):
+    """The key a bootconfig line sets, or None for blanks and comments."""
+    line = line.strip()
+    if not line or line.startswith("#"):
+        return None
+    for sep in (":=", "+=", "="):
+        if sep in line:
+            return line.split(sep, 1)[0].strip()
+    return line
+
+
+def merge_bootconfig(theirs, ours):
+    """The image's settings, then ours, with ours replacing theirs.
+
+    The kernel refuses a boot configuration that sets a key twice ("Value is
+    redefined") and then ignores all of it, so a plain concatenation is not
+    an option.
+    """
+    mine = {bootconfig_key(l) for l in ours.splitlines()} - {None}
+    kept = [l for l in theirs.splitlines() if bootconfig_key(l) not in mine]
+    seen, out = set(), []
+    for line in kept + ours.splitlines():
+        key = bootconfig_key(line)
+        if key is not None:
+            if key in seen:
+                raise ValueError(f"boot configuration sets {key} twice")
+            seen.add(key)
+        out.append(line)
+    return "\n".join(out) + "\n"
+
+
 def bootconfig_trailer(text, initrd_len):
     """The bytes to append to an initrd of `initrd_len` bytes to carry `text`."""
     body = text.encode()
@@ -251,10 +282,9 @@ def prepare(image_dir, out_dir, boot_device, flat=False, memory_mib=4096,
     def guid(name):
         return uuid.uuid5(NAMESPACE, name)
 
-    bootconfig = vendor_bootconfig
-    if bootconfig and not bootconfig.endswith("\n"):
-        bootconfig += "\n"
-    bootconfig += runtime_bootconfig(boot_device, guid("vbmeta_a"), memory_mib, display)
+    bootconfig = merge_bootconfig(
+        vendor_bootconfig,
+        runtime_bootconfig(boot_device, guid("vbmeta_a"), memory_mib, display))
 
     # The kernel unpacks concatenated ramdisks in order, later files winning.
     initrd = vendor_ramdisk + generic_ramdisk

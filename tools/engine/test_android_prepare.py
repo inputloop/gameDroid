@@ -87,14 +87,28 @@ class PrepareTest(unittest.TestCase):
         self.assertEqual(config, self.read("bootconfig.txt", "r").rstrip("\n") + "\n")
         self.assertIn('kernel.x = "1"', config, "the image's own bootconfig is kept")
         self.assertIn('androidboot.slot_suffix = "_a"', config)
-        # Ours comes last, so it wins over the image's value for the same key.
-        self.assertLess(config.index("from-vendor"), config.index("pci0000:00/0000:00:01.0"))
+        # The image set boot_devices too. The kernel rejects a key set twice,
+        # so only ours may remain.
+        self.assertNotIn("from-vendor", config)
+        self.assertIn("pci0000:00/0000:00:01.0", config)
+        keys = [ap.bootconfig_key(l) for l in config.splitlines()]
+        keys = [k for k in keys if k]
+        self.assertEqual(len(keys), len(set(keys)), "no key is set twice")
         cmdline = self.read("cmdline.txt", "r").split()
         self.assertIn("console=ttyS0", cmdline)
         self.assertNotIn("console=ttynull", cmdline)
         self.assertIn("8250.nr_uarts=1", cmdline)
         self.assertIn("stack_depot_disable=on", cmdline)
         self.assertEqual(cmdline.count("bootconfig"), 1)
+
+    def test_bootconfig_merge(self):
+        merged = ap.merge_bootconfig('a = 1\n# note\nb = "x"\nc := 3\n', 'b = "y"\nd = 4\n')
+        self.assertEqual(merged, 'a = 1\n# note\nc := 3\nb = "y"\nd = 4\n')
+        self.assertEqual(ap.merge_bootconfig("", "a = 1\n"), "a = 1\n")
+        with self.assertRaises(ValueError):
+            ap.merge_bootconfig("", "a = 1\na = 2\n")
+        with self.assertRaises(ValueError):
+            ap.merge_bootconfig("z = 1\nz = 2\n", "a = 1\n")
 
     def test_trailer_layout_matches_the_kernel_format(self):
         for initrd_len in (0, 1, 2, 3, 4097):
