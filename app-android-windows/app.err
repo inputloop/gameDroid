@@ -46,7 +46,7 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 11 s
+gameDroid: setup finished in 14 s
 gameDroid: fetching the Fulguris browser from F-Droid (9 MB)
 gameDroid: Android will draw with the processor: the graphics card cannot be used here (the renderer did not start (often: no graphics driver that offers Vulkan)).
 gameDroid: no sound will be heard: this computer has no sound output
