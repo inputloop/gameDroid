@@ -39,6 +39,7 @@ device in CI. More below.*
 | GPU acceleration | Not yet. Route chosen: gfxstream ([plan](docs/engine/E8-gpu-plan.md)). Step 1 of 6 done: its host library builds in CI on Linux and Windows. Nothing uses it yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
+| Linphone (voice calls) as an app gameDroid offers | Decided. Step 1 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid. Calls need network and sound in the guest, which do not exist yet ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 

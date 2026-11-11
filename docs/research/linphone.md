@@ -67,7 +67,7 @@ What that commits to, in order:
 
 | Step | What | State |
 |---|---|---|
-| L1 | Build the app for x86-64 from its source; see it install and start on gameDroid | In CI (`.github/workflows/linphone.yml`) |
+| L1 | Build the app for x86-64 from its source; see it install and start on gameDroid | **Done in CI, 2026-11-11** (below) |
 | L2 | Network in the guest (roadmap E4) | Not started |
 | L3 | Sound out and microphone in the guest (roadmap E9) | Not started |
 | L4 | A call between two Linphone instances, heard and spoken | Needs L2 and L3 |
@@ -79,3 +79,28 @@ What that commits to, in order:
 - https://github.com/BelledonneCommunications/linphone-android (`app/build.gradle.kts`, `AndroidManifest.xml`)
 - https://gitlab.com/fdroid/fdroiddata/-/raw/master/metadata/org.linphone.yml
 - https://linphone.org/en/liblinphone-voip-sdk
+
+## L1 result, 2026-11-11
+
+Live-verified in CI (gameDroid f15bc01, linphone-android 92318a2 of
+2026-11-09, Linphone SDK 5.6.0-alpha.219).
+
+Changing one line of the app's build file, the list of processor kinds from
+the two ARM ones to `x86_64`, is enough: Belledonne's published SDK already
+contains x86-64 native code, so nothing native had to be built. The
+resulting APK (115 MB, debug build) holds 15 x86-64 libraries, installs on
+gameDroid, starts, and is the front activity, with no crash in the log:
+
+<img src="../screenshots/linphone-welcome.png" width="240" alt="Linphone's welcome screen on gameDroid">
+
+Not tested: anything past the welcome screen. Registering needs a network.
+
+Two things to settle before gameDroid offers this build to anyone (L5):
+
+- **The build picked up Firebase.** The repository ships a
+  `google-services.json`, so this build includes Google's proprietary
+  messaging library. A build gameDroid publishes should leave it out, as
+  F-Droid's does.
+- **It is a debug build, signed with a throwaway key,** from the tip of the
+  development branch. A published build should come from a release tag and
+  carry a key gameDroid keeps.

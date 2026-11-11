@@ -26,8 +26,10 @@ jobs:
         run: |
           set +e
           mkdir -p "$HOME/out" && exec > >(tee "$HOME/out/result.txt") 2>&1
-          git clone -q --depth 1 https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
+          # Pinned to the commit this was first proven with.
+          git clone -q https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
           cd "$HOME/linphone"
+          git checkout -q 92318a248f8fe3ba3b6787b97874c6f2bd9bf616
           echo "linphone-android commit: $(git rev-parse HEAD) ($(git log -1 --format=%cs))"
           # The one change: build for x86-64 instead of the two ARM kinds.
           sed -i 's/abiFilters += listOf("armeabi-v7a", "arm64-v8a")/abiFilters += listOf("x86_64")/' app/build.gradle.kts
