@@ -568,6 +568,39 @@ fn plan() -> Result<Plan, String> {
     Ok(plan)
 }
 
+/// The browser gameDroid installs in Android: Fulguris, this version, from
+/// F-Droid's repository. Android checks the APK's signature when it
+/// installs it.
+pub const BROWSER_VERSION: u32 = 265;
+
+fn browser_url() -> String {
+    format!("https://f-droid.org/repo/net.slions.fulguris.full.fdroid_{BROWSER_VERSION}.apk")
+}
+
+/// The browser's APK in gameDroid's data, fetched if it is not there yet.
+/// `None` if it cannot be had (no internet, say): Android then keeps only
+/// its stock test browser, and this is tried again at the next start.
+pub fn browser_apk() -> Option<PathBuf> {
+    let data = plan().ok()?.data;
+    let apps = data.join("apps");
+    let apk = apps.join(format!("fulguris-{BROWSER_VERSION}.apk"));
+    if apk.exists() {
+        return Some(apk);
+    }
+    std::fs::create_dir_all(&apps).ok()?;
+    eprintln!("gameDroid: fetching the Fulguris browser from F-Droid (9 MB)");
+    match download(&browser_url(), &apk, &mut |_| {}) {
+        Ok(sha256) => {
+            eprintln!("gameDroid: the browser's SHA-256 is {sha256}");
+            Some(apk)
+        }
+        Err(e) => {
+            eprintln!("gameDroid: the browser could not be fetched ({e}); carrying on without it");
+            None
+        }
+    }
+}
+
 /// [`ensure`] in the place the person chose, reporting progress as lines
 /// on standard error. The archive can be supplied with `GAMEDROID_IMAGE_ZIP`.
 pub fn ensure_default() -> Result<PathBuf, String> {

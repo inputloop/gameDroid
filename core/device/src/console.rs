@@ -139,13 +139,74 @@ pub fn open_help_command() -> String {
     )
 }
 
+/// A shell command line that installs the browser from the start of the
+/// second disk (`bytes` long there) unless it is installed already, and
+/// prints a mark when it has finished either way.
+pub fn install_browser_command(bytes: u64) -> String {
+    let apk = "/data/local/tmp/gd-browser.apk";
+    format!(
+        "su 0 sh -c 'pm path {FULGURIS} >/dev/null 2>&1 || {{ head -c {bytes} /dev/block/vdb > {apk}; \
+         chmod 644 {apk}; pm install -r {apk}; rm -f {apk}; }}; echo GD_MARK_BROWSER'"
+    )
+}
+
+/// Set Android up as a games machine once it has booted, on a thread of its
+/// own: the settings, then the browser (if its APK was handed over on the
+/// second disk, `browser_apk` bytes long), then the help page.
+///
+/// The serial line has no flow control, so lines go one at a time with a
+/// pause, and the slow step (installing) is waited for by its mark.
+pub fn after_boot(
+    booted: Arc<AtomicBool>,
+    marks: Marks,
+    shell: Sender<Vec<u8>>,
+    browser_apk: Option<u64>,
+) {
+    use std::time::Duration;
+    std::thread::spawn(move || {
+        let send = |line: &str| shell.send(format!("{line}\n").into_bytes()).is_ok();
+        while !booted.load(Ordering::SeqCst) {
+            std::thread::sleep(Duration::from_millis(500));
+        }
+        std::thread::sleep(Duration::from_secs(5));
+        if !send(GAMING_SETTINGS) {
+            return;
+        }
+        std::thread::sleep(Duration::from_secs(5));
+        if let Some(bytes) = browser_apk {
+            send(&install_browser_command(bytes));
+            for _ in 0..360 {
+                if marks.lock().unwrap().iter().any(|m| m == "GD_MARK_BROWSER") {
+                    break;
+                }
+                std::thread::sleep(Duration::from_millis(500));
+            }
+        }
+        for line in help_page_commands() {
+            if !send(&line) {
+                return;
+            }
+            std::thread::sleep(Duration::from_millis(150));
+        }
+        // Keep the sender: dropping it would close Android's serial line.
+        loop {
+            std::thread::park();
+        }
+    });
+}
+
 /// Passes the console through to `out` and sets `booted` when Android
 /// reports that it has finished booting.
 pub struct BootWatch<W: Write> {
     out: W,
     line: Vec<u8>,
     booted: Arc<AtomicBool>,
+    marks: Marks,
 }
+
+/// Lines Android's shell has printed that begin `GD_MARK_`: how commands
+/// typed there report that they are done.
+pub type Marks = Arc<std::sync::Mutex<Vec<String>>>;
 
 impl<W: Write> BootWatch<W> {
     pub fn new(out: W) -> (BootWatch<W>, Arc<AtomicBool>) {
@@ -154,8 +215,14 @@ impl<W: Write> BootWatch<W> {
             out,
             line: Vec::new(),
             booted: booted.clone(),
+            marks: Marks::default(),
         };
         (watch, booted)
+    }
+
+    /// The marks seen so far, and from now on.
+    pub fn marks(&self) -> Marks {
+        self.marks.clone()
     }
 }
 
@@ -165,6 +232,13 @@ impl<W: Write> Write for BootWatch<W> {
             if *b == b'\n' {
                 if self.line.windows(BOOTED.len()).any(|w| w == BOOTED) {
                     self.booted.store(true, Ordering::SeqCst);
+                }
+                // A mark is a whole line; the shell's echo of the command
+                // that prints it never is.
+                let text = String::from_utf8_lossy(&self.line);
+                let text = text.trim();
+                if text.starts_with("GD_MARK_") && !text.contains(' ') {
+                    self.marks.lock().unwrap().push(text.to_string());
                 }
                 self.line.clear();
             } else if self.line.len() < 4096 {
@@ -227,6 +301,17 @@ mod tests {
         watch.write_all(b"completed=1) from init.rc\n").unwrap();
         assert!(booted.load(Ordering::SeqCst));
         assert!(watch.out.ends_with(b"from init.rc\n") && watch.out.starts_with(b"[ 1.0]"));
+        // A mark is a line of its own; the echo of the command is not one.
+        let marks = watch.marks();
+        watch
+            .write_all(b"console:/ $ su 0 sh -c 'x; echo GD_MARK_BROWSER'\r\nGD_MARK_BROWSER\r\n")
+            .unwrap();
+        assert_eq!(*marks.lock().unwrap(), vec!["GD_MARK_BROWSER"]);
+        let install = install_browser_command(9_359_352);
+        assert!(
+            install.contains("head -c 9359352 /dev/block/vdb")
+                && install.ends_with("echo GD_MARK_BROWSER'")
+        );
     }
 
     #[test]

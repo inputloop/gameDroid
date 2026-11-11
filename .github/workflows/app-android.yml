@@ -32,7 +32,7 @@ jobs:
           mkdir -p "$HOME/out" && cd "$HOME/out"
           cat > drive.sh <<'DRIVE'
           set +e
-          "$GITHUB_WORKSPACE/target/release/gamedroid" --console android.log --frames 9000 2> app.err &
+          "$GITHUB_WORKSPACE/target/release/gamedroid" --console android.log --frames 30000 2> app.err &
           for _ in $(seq 600); do
             win="$(xdotool search --name '^gameDroid' 2>/dev/null | head -n 1)"; [ -n "$win" ] && break; sleep 0.5
           done
@@ -47,6 +47,12 @@ jobs:
           for i in $(seq 1 12); do xdotool mousemove $((X + WIDTH / 2)) $((Y + HEIGHT * 8 / 10 - i * HEIGHT / 20)); sleep 0.03; done
           xdotool mouseup 1; sleep 6; import -window root 2-after-swipe.png
           echo "lock and after-swipe differ by $(compare -metric AE -fuzz 5% 1-lock.png 2-after-swipe.png null: 2>&1) pixels"
+          # gameDroid installs its browser and gives it the help page by
+          # itself; then F3 in the window must bring the page up.
+          for _ in $(seq 200); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
+          grep -qa '^GD_BROWSER_SET' android.log && echo "RESULT: the browser was installed and set up" || echo "RESULT: the browser was not set up in time"
+          sleep 3; xdotool windowfocus "$win" 2>/dev/null; xdotool key F3; sleep 12; import -window root 3-help.png
+          echo "after-swipe and help differ by $(compare -metric AE -fuzz 5% 2-after-swipe.png 3-help.png null: 2>&1) pixels"
           pkill gamedroid
           DRIVE
           xvfb-run -a -s "-screen 0 700x900x24" bash drive.sh 2>&1 | tee result.txt
@@ -55,9 +61,11 @@ jobs:
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" app-android-linux result.txt app.err 1-lock.png 2-after-swipe.png
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" app-android-linux result.txt app.err 1-lock.png 2-after-swipe.png 3-help.png
       - name: Verdict
-        run: grep -q 'Android booted behind the window' "$HOME/out/result.txt"
+        run: |
+          grep -q 'Android booted behind the window' "$HOME/out/result.txt"
+          grep -q 'the browser was installed and set up' "$HOME/out/result.txt"
   windows:
     runs-on: windows-latest
     timeout-minutes: 40
@@ -86,11 +94,13 @@ jobs:
           "screen $($b.Width)x$($b.Height) saved to $name"
           PS
           exec > >(tee result.txt) 2>&1
-          ../target/release/gamedroid.exe --console android.log --frames 18000 2> app.err &
+          ../target/release/gamedroid.exe --console android.log --frames 40000 2> app.err &
           for _ in $(seq 240); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
           grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
           sleep 10
           powershell -ExecutionPolicy Bypass -File shot.ps1 1-screen.png
+          for _ in $(seq 300); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
+          grep -qa '^GD_BROWSER_SET' android.log && echo "RESULT: the browser was installed and set up" || echo "RESULT: the browser was not set up in time"
           taskkill //IM gamedroid.exe //F
           echo "--- program messages"; grep -v 'downloading,' app.err | cut -c1-200 | tail -n 20
       - name: Publish
@@ -99,4 +109,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" app-android-windows result.txt app.err 1-screen.png
       - name: Verdict
-        run: grep -q 'Android booted behind the window' out/result.txt
+        run: |
+          grep -q 'Android booted behind the window' out/result.txt
+          grep -q 'the browser was installed and set up' out/result.txt

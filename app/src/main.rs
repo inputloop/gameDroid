@@ -203,6 +203,9 @@ struct Args {
     options: Options,
     console: Option<PathBuf>,
     frames: Option<u64>,
+    /// Running gameDroid's own image set, which it looks after: it gets
+    /// the browser installed.
+    own_image: bool,
 }
 
 fn parse() -> Result<Args, String> {
@@ -214,6 +217,7 @@ fn parse() -> Result<Args, String> {
         options: Options::default(),
         console: None,
         frames: None,
+        own_image: false,
     };
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -247,6 +251,7 @@ fn parse() -> Result<Args, String> {
     }
     if !a.demo && a.dir.is_none() {
         a.dir = Some(gamedroid_device::setup::ensure_default()?);
+        a.own_image = true;
     }
     if a.game_mode && a.profile.is_none() {
         return Err("--game-mode needs --profile".into());
@@ -274,13 +279,25 @@ fn run() -> Result<(), String> {
     };
     let name = profile.as_ref().map(|p| p.name.clone()).unwrap_or_default();
 
-    let mut settle = None;
     // A line to Android's shell for the Help key, once Android is running.
     let mut help_line: Option<std::sync::mpsc::Sender<Vec<u8>>> = None;
     let mut help_was_down = false;
     let mut guest = match &args.dir {
         Some(dir) => {
-            let (config, handles) = machine(dir, &args.options)?;
+            // The browser's APK rides on a second disk, for Android to
+            // install once it has booted.
+            let mut options = args.options.clone();
+            let mut browser_bytes = None;
+            if args.own_image {
+                if let Some(apk) = gamedroid_device::setup::browser_apk() {
+                    let layout = dir.join("browser.layout");
+                    if let Ok(bytes) = gamedroid_device::android::file_as_disk(&apk, &layout) {
+                        options.extra_disk = Some(layout);
+                        browser_bytes = Some(bytes);
+                    }
+                }
+            }
+            let (config, handles) = machine(dir, &options)?;
             let console: Box<dyn std::io::Write + Send> = match &args.console {
                 Some(path) => Box::new(
                     std::fs::File::create(path)
@@ -293,7 +310,9 @@ fn run() -> Result<(), String> {
             let (console, booted) = gamedroid_device::console::BootWatch::new(console);
             let (shell, keys) = gamedroid_device::console::serial();
             help_line = Some(shell.clone());
-            settle = Some((booted, shell));
+            // Once booted: a games machine's settings, the browser, and
+            // the help page.
+            gamedroid_device::console::after_boot(booted, console.marks(), shell, browser_bytes);
             std::thread::spawn(move || {
                 match bvmm::run_linux(&config, Box::new(console), Some(Box::new(keys))) {
                     Ok(_) => eprintln!("gamedroid: Android stopped"),
@@ -339,34 +358,7 @@ fn run() -> Result<(), String> {
     let mut want_game_mode = args.game_mode;
     let started = Instant::now();
 
-    let mut booted_at: Option<Instant> = None;
     while window.is_open() {
-        // A few seconds after Android has booted: no lock screen, and a
-        // screen that stays on.
-        if let Some((booted, shell)) = &settle {
-            if booted.load(std::sync::atomic::Ordering::SeqCst) {
-                let at = *booted_at.get_or_insert_with(Instant::now);
-                if at.elapsed() > Duration::from_secs(5) {
-                    let line = format!("{}\n", gamedroid_device::console::GAMING_SETTINGS);
-                    let _ = shell.send(line.into_bytes());
-                    // Then the help page, a line at a time: the serial line
-                    // has no flow control. The thread also keeps the
-                    // sender, without which the serial line would close.
-                    let shell = shell.clone();
-                    std::thread::spawn(move || {
-                        std::thread::sleep(Duration::from_secs(4));
-                        for line in gamedroid_device::console::help_page_commands() {
-                            let _ = shell.send(format!("{line}\n").into_bytes());
-                            std::thread::sleep(Duration::from_millis(150));
-                        }
-                        loop {
-                            std::thread::park();
-                        }
-                    });
-                    settle = None;
-                }
-            }
-        }
         let mut state = HostState {
             keys: window.get_keys(),
             mouse: window.get_mouse_pos(MouseMode::Discard),
