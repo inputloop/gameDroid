@@ -105,3 +105,32 @@ means the window is no longer drawn by gameDroid from a copied frame.
 - https://github.com/google/android-cuttlefish (`base/cvd/cuttlefish/host/libs/vm_manager/crosvm_manager.cpp`)
 - https://github.com/google/crosvm
 - https://docs.mesa3d.org/drivers/venus.html
+
+## G1 result, 2026-11-11: done
+
+Live-verified in CI (run of gfxstream-build on gameDroid c5a75d5, gfxstream
+commit b8537e6d):
+
+| Host | Build | Output |
+|---|---|---|
+| Linux | Meson | `libgfxstream_backend.so`, 89 MB unstripped |
+| Linux | CMake + Ninja | `libgfxstream_backend.so`, 103 MB unstripped |
+| Windows | CMake + ClangCL (Visual Studio 2022) | `gfxstream_backend.dll`, 6.7 MB, and a 12.6 MB static library |
+
+The Windows build needed two fixes, both applied by the CI job:
+
+- `WIN32_LEAN_AND_MEAN` defined for the whole build, as gfxstream's Bazel
+  build does and its CMake build does not; without it `windows.h` pulls in
+  the old `winsock.h` and clashes with `WinSock2.h`.
+- A one-line patch to `host/vulkan/vk_common_operations.cpp`: a
+  `std::string` passed to a printf-style log call in Windows-only code.
+  Worth reporting upstream.
+
+The DLL asks Windows only for system libraries and the Visual C++ runtime
+(`MSVCP140.dll`, `VCRUNTIME140.dll`). It loads the GPU's EGL, GLES and
+Vulkan libraries at run time, so those are not in that list. A static
+library also exists, which leaves open linking gfxstream into
+`gamedroid.exe` itself and keeping one file.
+
+Built means compiled and linked. Nothing has loaded or run the library yet.
+Next is G2.
