@@ -11,6 +11,9 @@ expect GD_SHELL_OK 40
 # How big Android made the storage for games and data.
 shell echo GD_""DATA_KB=$(df -k /data | tail -n 1 | tr -s " " | cut -d " " -f 2)
 expect GD_DATA_KB= 20
+# Which clock the kernel settled on, and how many processors it has.
+shell echo GD_""CLOCK=$(cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
+expect GD_CPUS= 20
 install
 start PACKAGE
 expect GD_START_STATUS=0 60

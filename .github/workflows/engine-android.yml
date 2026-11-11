@@ -36,7 +36,7 @@ jobs:
       matrix:
         include:
           - { name: engine-android, os: ubuntu-24.04, py: python3, cpus: 2, seconds: 420, storage: 12, required: true }
-          - { name: engine-android-windows, os: windows-latest, py: python, cpus: 1, seconds: 1500, storage: 20, required: true }
+          - { name: engine-android-windows, os: windows-latest, py: python, cpus: 2, seconds: 1500, storage: 20, required: true }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     defaults:
@@ -114,6 +114,9 @@ jobs:
           echo "=== runner messages"; cat bvmm.err | cut -c1-200 | tail -n 25
           echo "=== storage for games and data (asked for ${GAMEDROID_STORAGE_GB:-the default} GB)"
           grep -m1 -oE 'GD_DATA_KB=[0-9]+' android.log
+          echo "=== clock and processors"
+          grep -m1 -oE 'GD_CLOCK=[a-z0-9-]+ GD_CPUS=[0-9]+' android.log
+          grep -E 'tsc:|TSC|clocksource: Switched|smp: Brought up|unchecked MSR|Hyper-V:' android.log | cut -c1-180 | head -n 14
           grep -iE 'userdata|/data' android.log | grep -iE 'format|mkfs|f2fs|ext4|wipe|mount' | cut -c1-200 | head -n 12
           echo "=== shell and install lines from the console"
           grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30

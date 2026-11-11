@@ -53,7 +53,7 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 [[package]]
 name = "bvmm"
 version = "0.1.0"
-source = "git+https://github.com/inputloop/bcontain?branch=claude%2Fgifted-ramanujan-i2r9yh#8115c98f5645bb30b243e9009ca02f4eb6228bfb"
+source = "git+https://github.com/inputloop/bcontain?branch=claude%2Fgifted-ramanujan-i2r9yh#020c3a78711f7ca1e4388c9d4801db9716d5000c"
 dependencies = [
  "kvm-bindings",
  "kvm-ioctls",

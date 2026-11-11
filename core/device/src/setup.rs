@@ -24,7 +24,8 @@ const TARGET: &str = "aosp_cf_x86_64_only_phone-userdebug";
 const PRODUCT: &str = "aosp_cf_x86_64_only_phone";
 /// The archive's size and SHA-256, checked after the download.
 pub const ARCHIVE_BYTES: u64 = 1_163_636_385;
-pub const ARCHIVE_SHA256: Option<&str> = None;
+pub const ARCHIVE_SHA256: Option<&str> =
+    Some("eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b");
 /// Free room needed to set up, before any game is installed: the archive
 /// (1.2 GB, deleted afterwards) and the system partitions (about 2 GB).
 pub const SPACE_NEEDED: u64 = 5 << 30;
