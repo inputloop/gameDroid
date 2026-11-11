@@ -71,6 +71,12 @@ pub fn help_page_commands() -> Vec<String> {
         "su 0 sh -c 'mkdir -p {dir}/files && base64 -d {tmp} > {HELP_FILE} && \
          chown -R $(stat -c %u:%g {dir}) {dir}/files && restorecon -R {dir}/files; rm -f {tmp}'"
     ));
+    // The browser asks for storage permission before it opens any file on
+    // the phone, its own included. Granted here, it does not stop to ask.
+    lines.push(format!(
+        "su 0 sh -c 'for p in READ_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO; \
+         do pm grant {BROWSER} android.permission.$p 2>/dev/null; done; true'"
+    ));
     lines
 }
 
@@ -193,7 +199,11 @@ mod tests {
         assert!(coded
             .chars()
             .all(|c| c.is_ascii_alphanumeric() || "+/=".contains(c)));
-        let last = lines.last().unwrap();
+        assert!(lines
+            .last()
+            .unwrap()
+            .contains("pm grant org.chromium.webview_shell"));
+        let last = &lines[lines.len() - 2];
         assert!(
             last.contains("base64 -d") && last.contains("restorecon") && last.contains("chown")
         );
