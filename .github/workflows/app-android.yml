@@ -115,7 +115,7 @@ jobs:
           grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
           # This runner has no Vulkan driver: gameDroid must notice, say so,
           # and carry on with the processor.
-          grep -q 'the graphics card cannot be used here' app.err && echo "RESULT: fell back from the graphics card" || echo "RESULT: no fallback message"
+          grep -qE 'the graphics card (cannot|could not) be used here' app.err && echo "RESULT: fell back from the graphics card" || echo "RESULT: no fallback message"
           sleep 10
           powershell -ExecutionPolicy Bypass -File shot.ps1 1-screen.png
           for _ in $(seq 300); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done

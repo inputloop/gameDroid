@@ -178,15 +178,40 @@ pub fn decide(
             ),
         );
     }
+    // A check that failed before is not run again unasked: on a machine
+    // without Vulkan it can take the best part of a minute, every start.
+    let unusable = data.join("gpu").join("unusable");
+    if wish == Wish::Auto {
+        if let Ok(why) = std::fs::read_to_string(&unusable) {
+            return (
+                None,
+                format!(
+                    "{software}: the graphics card could not be used here when last tried ({}). \
+                     To try again, for instance after installing a graphics driver, \
+                     start gameDroid with --gpu on.",
+                    why.trim()
+                ),
+            );
+        }
+    }
     match check(&library) {
-        Ok(()) => (
-            Some(library),
-            "Android will draw with the graphics card.".to_string(),
-        ),
-        Err(why) => (
-            None,
-            format!("{software}: the graphics card cannot be used here ({why})."),
-        ),
+        Ok(()) => {
+            let _ = std::fs::remove_file(&unusable);
+            (
+                Some(library),
+                "Android will draw with the graphics card.".to_string(),
+            )
+        }
+        Err(why) => {
+            if let Some(dir) = unusable.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            let _ = std::fs::write(&unusable, &why);
+            (
+                None,
+                format!("{software}: the graphics card cannot be used here ({why})."),
+            )
+        }
     }
 }
 
@@ -207,10 +232,20 @@ mod tests {
         let lib = Some(PathBuf::from("/somewhere/lib"));
         let works = |_: &Path| Ok(());
         let broken = |_: &Path| Err("no Vulkan".to_string());
+        let never_check = |_: &Path| -> Result<(), String> { panic!("must not be checked") };
         // Found and working: used. Found and not working: not, with the reason.
         assert_eq!(decide(Wish::Auto, &data, lib.clone(), &works).0, lib);
         let (used, why) = decide(Wish::Auto, &data, lib.clone(), &broken);
         assert!(used.is_none() && why.contains("no Vulkan"), "{why}");
+        // The failure is remembered: the next automatic start does not
+        // check again, but asking by name does, and success forgets it.
+        let (used, why) = decide(Wish::Auto, &data, lib.clone(), &never_check);
+        assert!(
+            used.is_none() && why.contains("when last tried (no Vulkan)"),
+            "{why}"
+        );
+        assert_eq!(decide(Wish::On, &data, lib.clone(), &works).0, lib);
+        assert_eq!(decide(Wish::Auto, &data, lib.clone(), &works).0, lib);
         // No library, or asked not to: not, and the check is not even run.
         let never = |_: &Path| -> Result<(), String> { panic!("must not be checked") };
         assert!(decide(Wish::Auto, &data, None, &never)
