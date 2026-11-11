@@ -10,6 +10,8 @@ on:
     paths:
       - ".github/workflows/gfxstream-build.yml"
       - "tools/gpu/**"
+      - "core/device/src/bin/gamedroid-gpu-check.rs"
+      - "Cargo.lock"
 permissions:
   contents: write  # to publish the result to the ci-logs branch
 env:
@@ -55,11 +57,17 @@ jobs:
           cat "$HOME/out/start.txt"
           # The mode gameDroid uses must start here.
           grep -q 'GFXSTREAM_START_VULKAN=PASS' "$HOME/out/start.txt"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Start it from gameDroid's own code
+        run: |
+          set -o pipefail
+          cargo build --release -p gamedroid-device --bin gamedroid-gpu-check 2>&1 | tail -n 1
+          timeout 120 target/release/gamedroid-gpu-check "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" 2>&1 | cut -c1-240 | tee "$HOME/out/engine-start.txt"
       - name: Publish
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt start.txt
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
   windows:
     runs-on: windows-latest
     timeout-minutes: 90

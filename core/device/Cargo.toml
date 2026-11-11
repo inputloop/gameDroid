@@ -22,3 +22,7 @@ libc = "0.2"
 [[bin]]
 name = "gamedroid-run"
 path = "src/bin/gamedroid-run.rs"
+
+[[bin]]
+name = "gamedroid-gpu-check"
+path = "src/bin/gamedroid-gpu-check.rs"
