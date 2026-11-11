@@ -123,7 +123,10 @@ jobs:
           echo "--- a web server's first line (empty means no answer)"
           grep -a -m2 -E '^HTTP/1\.[01] [0-9]+' android.log | cut -c1-80
           echo "--- the Ethernet service, and the image's own interface rules"
-          sed -n '/^GD_ETH_BEGIN/,/^GD_ETH_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 40
+          for part in ETH RC PROP HAND; do
+            echo "--- $part"
+            sed -n "/^GD_${part}_BEGIN/,/^GD_${part}_END/p" android.log | grep -v '^\[' | cut -c1-600 | head -n 45
+          done
           echo "--- Android's own view"
           grep -a -iE 'Active default network|NetworkAgentInfo' android.log | grep -v '^\[' | cut -c1-220 | head -n 4
           echo "=== shell and install lines from the console"
