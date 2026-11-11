@@ -26,8 +26,8 @@ device in CI. More below.*
 | Engine boots a Linux kernel on Linux (KVM) | Working in CI |
 | Engine boots a Linux kernel on Windows (WHP) | Working in CI |
 | Engine has a PCI bus and a virtio disk | Working in CI on both hosts |
-| Several processors and more than 4 GiB of memory | Working in CI on Linux. On Windows: memory yes, still one processor |
-| Android's own kernel boots on the engine | Working in CI on both hosts; on Windows its clock is still coarse |
+| Several processors and more than 4 GiB of memory | Working in CI on both hosts. The number of processors follows the host: half its logical processors, between 2 and 8 |
+| Android's own kernel boots on the engine | Working in CI on both hosts, with a precise clock on both (on Windows since 2026-11-11) |
 | Stock Android 17 boots to its lock screen | Working in CI on Linux (about 40 seconds on two shared cores) and on Windows (about 75 seconds on one) |
 | A picture from Android | Working on Linux: frames are read from the engine's display device. Drawn by the CPU; saved to files, there is no window yet |
 | Touch input reaches Android | Working on Linux: swipes sent from the host unlock the screen and open the app drawer |
@@ -35,8 +35,8 @@ device in CI. More below.*
 | Commands inside Android | Working on Linux, through the image's root shell on the serial port. No adb yet |
 | A window | Working in CI on Linux and Windows with Android behind it. On Linux a real mouse swipe in the window unlocks Android. Game mode (keys and mouse following a profile) is checked against a test card only, not yet against a real game |
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
-| Android on Windows | Working in CI: boots, unlocks by touch, installs and starts the game. One processor and a coarse clock, so slower than Linux. Not yet run on a real Windows machine with a GPU |
-| GPU acceleration | Not yet |
+| Android on Windows | Working in CI: boots on two processors with a precise clock, unlocks by touch, installs and starts the game. Not yet run on a real Windows machine with a GPU |
+| GPU acceleration | Not yet. Route chosen and written down: gfxstream ([plan](docs/engine/E8-gpu-plan.md)). First step in progress: its host library builds in CI on Linux; the Windows build is being fixed |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it downloads Android (1.2 GB), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | A launcher, a game library | Not started |
@@ -73,7 +73,7 @@ The same on Linux, after a mouse swipe unlocked it:
 
 The same image and the same game on a Windows host, through the Windows
 Hypervisor Platform, set up from nothing by `gamedroid-run --setup`
-(CI, one processor, no GPU):
+(CI, no GPU):
 
 <img src="docs/screenshots/android-windows-lock.png" width="240" alt="Android 17 lock screen on the Windows engine"> <img src="docs/screenshots/android-windows-game.png" width="240" alt="Shattered Pixel Dungeon on the Windows engine">
 
@@ -171,15 +171,15 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 |---|---|---|
 | E0 | A real Linux kernel boots on KVM and on WHP | Done in CI. Still to repeat on the Intel reference laptop |
 | E0b | Android's own kernel boots on both hosts | Done in CI |
-| E0c | That kernel gets a precise clock on Windows | Open. A first fix failed and was withdrawn |
+| E0c | That kernel gets a precise clock on Windows | Done in CI: the kernel reports `clocksource tsc`. Clean shutdown with it is not yet checked |
 | E1 | PCI and a virtio disk | Done in CI on both hosts |
-| E2 | Several CPUs and large memory | Done in CI on Linux; Windows has the memory, one CPU so far |
+| E2 | Several CPUs and large memory | Done in CI on both hosts (Windows: two processors tried) |
 | E3 | ACPI and clean power-off | Planned |
 | E4 | Network and vsock | Planned |
 | E5 | Android boots | Done in CI on Linux and Windows |
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
-| E8 | GPU acceleration | Planned. The hardest item |
+| E8 | GPU acceleration | Route chosen ([plan](docs/engine/E8-gpu-plan.md)); step G1 of six in progress. The hardest item |
 | E9 | Sound | Planned |
 
 gameDroid's own features build on these. What is next, in order: try
@@ -189,10 +189,10 @@ Performance work needs E8.
 
 ## Things worth knowing before you get excited
 
-- **Windows is behind Linux.** On Windows the engine runs one processor, and
-  Android's kernel has only a coarse clock there. A first fix for the clock
-  made things worse and was withdrawn
-  ([what happened](docs/engine/results/2026-11-10-E2-and-clock.md)).
+- **Windows has caught up with Linux in the engine**, in CI: several
+  processors and a precise clock. It has still never run on a real Windows
+  machine. How the clock was fixed, and the earlier attempt that failed:
+  [results](docs/engine/results/2026-11-11-windows-smp-clock.md).
 - **It is slow.** Android draws with the CPU, on however many processors the
   host lends. Good enough to prove things work; not good enough to play on.
 - **No GPU acceleration until E8.** Leading with our own engine was a choice;
