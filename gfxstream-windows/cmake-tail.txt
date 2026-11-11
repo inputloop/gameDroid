@@ -1,60 +1,60 @@
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(464,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(216,33): message : expanded from macro 'IPPROTO_UDP' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(465,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(217,33): message : expanded from macro 'IPPROTO_IDP' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(481,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(218,33): message : expanded from macro 'IPPROTO_ND' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(491,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(220,33): message : expanded from macro 'IPPROTO_RAW' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(493,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(221,33): message : expanded from macro 'IPPROTO_MAX' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(644,16): error : redefinition of 'sockaddr_in' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(309,8): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(136,16): error : redefinition of 'fd_set' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(65,16): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(180,8): error : redefinition of 'timeval' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(108,8): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(236,9): error : redefinition of 'hostent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(164,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(249,9): error : redefinition of 'netent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(177,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(256,9): error : redefinition of 'servent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(184,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(268,9): error : redefinition of 'protoent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(196,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
-  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(364,16): error : redefinition of 'WSAData' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(319,16): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
-  fatal error: too many errors emitted, stopping now [-ferror-limit=]
-  gfxstream_host_compressed_textures.vcxproj -> D:\a\_temp\gfxstream\build\host\compressed_textures\Release\gfxstream_host_compressed_textures.lib
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(1473,5): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkPhysicalDeviceFeatures2>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'VkBuffer_T *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-serve
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2176,58): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'VkImage_T *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2177,57): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'gfxstream::host::vk::VkEmulation::ColorBufferInfo *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\b
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2178,66): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
+D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2230,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkMemoryDedicatedAllocateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
+D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2285,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkImportMemoryHostPointerInfoEXT>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
+D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2503,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkExportMemoryAllocateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:32:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/containers/Lookup.h(79,5): warning : 'auto' type specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/containers/Lookup.h(81,16): warning : 'nullptr' is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
+  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
+D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(86,18): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(3203,39): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_make_orphan_copy<VkImageCreateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:41:
+D:\a\_temp\gfxstream\host\vulkan\vk_emulated_physical_device_memory.h(77,22): warning : padding struct 'gfxstream::host::vk::EmulatedPhysicalDeviceMemoryProperties::EmulatedGuestMemoryType' with 3 bytes to align 'memoryType' [-Wpadded] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.
+  GLcommon.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\glestranslator\common\Release\GLcommon.lib
+  Building Custom Rule D:/a/_temp/gfxstream/host/gl/OpenGLESDispatch/CMakeLists.txt
+  gfxstream_openglesdispatch.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\OpenGLESDispatch\Release\gfxstream_openglesdispatch.lib
+  Building Custom Rule D:/a/_temp/gfxstream/host/gl/gles2_dec/CMakeLists.txt
+  gles2_dec.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\gles2_dec\Release\gles2_dec.lib
+  Building Custom Rule D:/a/_temp/gfxstream/host/gl/gles1_dec/CMakeLists.txt
+  gles1_dec.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\gles1_dec\Release\gles1_dec.lib
+  Building Custom Rule D:/a/_temp/gfxstream/host/gl/CMakeLists.txt
+  gfxstream-gl-server.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\Release\gfxstream-gl-server.lib
