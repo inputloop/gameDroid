@@ -23,7 +23,7 @@ pub fn yuyv_to_jpeg(frame: &[u8], width: u32, height: u32) -> Option<Vec<u8>> {
         return None;
     }
     let mut ycbcr = Vec::with_capacity(pixels * 3);
-    for pair in frame[..pixels * 2].chunks_exact(4) {
+    for pair in frame[..pixels * 2].as_chunks::<4>().0 {
         ycbcr.extend_from_slice(&[pair[0], pair[1], pair[3], pair[2], pair[1], pair[3]]);
     }
     encode(&ycbcr, width, height)
@@ -78,7 +78,7 @@ mod tests {
         // Y0 U Y1 V  ->  (Y0, U, V), (Y1, U, V)
         let frame = [10u8, 20, 30, 40];
         let mut ycbcr = Vec::new();
-        for pair in frame.chunks_exact(4) {
+        for pair in frame.as_chunks::<4>().0 {
             ycbcr.extend_from_slice(&[pair[0], pair[1], pair[3], pair[2], pair[1], pair[3]]);
         }
         assert_eq!(ycbcr, [10, 20, 40, 30, 20, 40]);

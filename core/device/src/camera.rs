@@ -31,7 +31,7 @@ impl TestPicture {
     /// Frame number `n` of the picture as RGB bytes.
     pub fn draw(width: usize, height: usize, n: u32) -> Vec<u8> {
         let mut rgb = vec![0u8; width * height * 3];
-        for (i, px) in rgb.chunks_exact_mut(3).enumerate() {
+        for (i, px) in rgb.as_chunks_mut::<3>().0.iter_mut().enumerate() {
             px.copy_from_slice(&BARS[(i % width) * BARS.len() / width]);
         }
         // A white block that crosses the lower third once every 4 seconds.
