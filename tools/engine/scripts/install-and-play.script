@@ -28,6 +28,9 @@ wait 2
 # Which browser the image has, and what opens a web address.
 shell echo GD_""WEB_BEGIN; pm list packages | grep -iE "browser|webview|chrom|search"; cmd package resolve-activity --brief -a android.intent.action.VIEW -d http://example.com | tail -n 1; cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.APP_BROWSER | tail -n 3; echo GD_""WEB_END
 expect GD_WEB_END 40
+# Sound and camera: what this image really has to work with.
+shell echo GD_""AV_BEGIN; cat /proc/asound/cards; su 0 sh -c 'ls /vendor/lib/modules /vendor_dlkm/lib/modules 2>/dev/null | grep -iE "snd|media|v4l2|vivid|uvc" | tr "\n" " "'; echo; su 0 sh -c 'ls /vendor/apex /apex 2>/dev/null | grep -i camera | tr "\n" " "'; echo; getprop | grep -iE "audio.tinyalsa|camera.provider" | head -n 6; ls /dev/video* 2>&1 | head -n 3; echo GD_""AV_END
+expect GD_AV_END 40
 # Who is drawing: Android's Vulkan driver, and the renderer its OpenGL ES
 # reports.
 shell echo GD_""GPU_BEGIN; getprop ro.hardware.vulkan; su 0 dumpsys SurfaceFlinger | grep -m1 "GLES:" | cut -c1-200; echo GD_""GPU_END

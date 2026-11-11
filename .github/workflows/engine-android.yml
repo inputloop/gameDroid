@@ -128,6 +128,8 @@ jobs:
           grep -a 'bvmm net:' bvmm.err | awk '!seen[$0]++' | cut -c1-160 | head -n 40
           echo "--- Android's own view"
           grep -a -iE 'Active default network|NetworkAgentInfo' android.log | grep -v '^\[' | cut -c1-220 | head -n 4
+          echo "=== sound and camera: what the image has"
+          sed -n '/^GD_AV_BEGIN/,/^GD_AV_END/p' android.log | grep -v '^\[' | cut -c1-400 | head -n 24
           echo "=== browsers in the image"
           sed -n '/^GD_WEB_BEGIN/,/^GD_WEB_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 20
           echo "=== shell and install lines from the console"

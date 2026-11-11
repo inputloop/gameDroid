@@ -25,7 +25,7 @@ const PRODUCT: &str = "aosp_cf_x86_64_only_phone";
 /// Raised whenever gameDroid changes the boot files it makes from the
 /// image (kernel arguments, boot settings), so that a set prepared by an
 /// older version is prepared again.
-pub const BOOT_FILES: u32 = 3;
+pub const BOOT_FILES: u32 = 4;
 /// The archive's size and SHA-256, checked after the download.
 pub const ARCHIVE_BYTES: u64 = 1_163_636_385;
 pub const ARCHIVE_SHA256: Option<&str> =
