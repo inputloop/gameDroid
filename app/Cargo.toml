@@ -10,6 +10,7 @@ repository.workspace = true
 [dependencies]
 gamedroid-input = { path = "../core/input" }
 gamedroid-device = { path = "../core/device" }
+gamedroid-webcam = { path = "../core/webcam" }
 bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-ramanujan-i2r9yh" }
 # X11 only on Linux for now: it needs no extra development packages to build.
 minifb = { version = "0.28", default-features = false, features = ["x11"] }

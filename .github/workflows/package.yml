@@ -46,6 +46,8 @@ jobs:
           echo "DEMO_EXIT=$?"
           echo "--- microphones this machine has"
           target/release/gamedroid.exe --list-microphones
+          echo "--- webcams this machine has"
+          target/release/gamedroid.exe --list-cameras
       - uses: actions/upload-artifact@v4
         with:
           name: gamedroid-windows-x86_64

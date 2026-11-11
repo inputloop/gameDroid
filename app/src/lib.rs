@@ -10,6 +10,7 @@
 //!   and key presses for the guest.
 
 pub mod audio;
+pub mod camera;
 pub mod controls;
 pub mod frontend;
 pub mod view;

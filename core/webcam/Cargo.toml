@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[package]
+name = "gamedroid-webcam"
+description = "The computer's webcams, as JPEG frames, for gameDroid's Android camera"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# Cameras that do not send JPEG themselves have their frames encoded here.
+jpeg-encoder = "0.6"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+# Media Foundation. No C libraries.
+nokhwa = { version = "0.10", default-features = false, features = ["input-msmf"] }

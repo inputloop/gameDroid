@@ -43,6 +43,8 @@ pub struct Options {
     pub sound: bool,
     /// A camera. Until a real one is connected it shows a test picture.
     pub camera: bool,
+    /// The camera to use, if not the test picture.
+    pub camera_device: Option<CameraDevice>,
     /// The sound card to use, if not the stand-in.
     pub sound_card: Option<SoundCard>,
 }
@@ -71,6 +73,7 @@ impl Default for Options {
             network: true,
             sound: true,
             camera: true,
+            camera_device: None,
             sound_card: None,
         }
     }
@@ -140,6 +143,16 @@ pub fn true_colours(mut frame: Frame) -> Frame {
         other => other,
     };
     frame
+}
+
+/// A camera made elsewhere (by the app, with the host's webcam behind it).
+#[derive(Clone)]
+pub struct CameraDevice(pub bvmm::virtio::media::Camera);
+
+impl std::fmt::Debug for CameraDevice {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("CameraDevice")
+    }
 }
 
 /// A sound card made elsewhere (by the app, with the host's speakers and
@@ -234,12 +247,14 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
             "initrd.img"
         }))?),
         gfxstream: options.gfxstream.clone(),
-        camera: options.camera.then(|| {
-            bvmm::virtio::media::Camera::new(
+        camera: match (&options.camera_device, options.camera) {
+            (Some(camera), _) => Some(camera.0.clone()),
+            (None, true) => Some(bvmm::virtio::media::Camera::new(
                 "gameDroid camera",
                 Box::new(crate::camera::TestPicture::default()),
-            )
-        }),
+            )),
+            (None, false) => None,
+        },
         sound: match (&options.sound_card, options.sound) {
             (Some(card), _) => Some(card.0.clone()),
             (None, true) => Some(bvmm::virtio::snd::Sound::new(Box::new(Meter::default()))),

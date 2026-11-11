@@ -52,6 +52,10 @@ usage: gamedroid [options]
                       the system's default one). Opened only while Android
                       is recording.
   --list-microphones  print the microphones this computer has, and stop
+  --camera <name>     the webcam Android looks through: part of its name
+                      (default: the first). Opened only while Android's
+                      camera is in use; with none, a test picture
+  --list-cameras      print the webcams this computer has, and stop
   --frames <n>        exit after n frames (for tests)
 
 in the window:
@@ -223,6 +227,8 @@ struct Args {
     frames: Option<u64>,
     /// Whether to draw with the graphics card.
     gpu: gamedroid_device::gpu::Wish,
+    /// Part of the name of the webcam Android should look through.
+    webcam: Option<String>,
     /// Part of the name of the microphone Android should hear.
     microphone: Option<String>,
     /// Running gameDroid's own image set, which it looks after: it gets
@@ -241,6 +247,7 @@ fn parse() -> Result<Args, String> {
         frames: None,
         own_image: false,
         gpu: gamedroid_device::gpu::Wish::Auto,
+        webcam: std::env::var("GAMEDROID_CAMERA").ok(),
         microphone: std::env::var("GAMEDROID_MICROPHONE").ok(),
     };
     let mut args = std::env::args().skip(1);
@@ -259,6 +266,25 @@ fn parse() -> Result<Args, String> {
                     "off" => Wish::Off,
                     _ => return Err("--gpu takes auto, on or off".into()),
                 }
+            }
+            "--camera" => a.webcam = Some(value(&arg)?),
+            "--list-cameras" => {
+                let cameras = gamedroid_webcam::list();
+                if cameras.is_empty() {
+                    println!("This computer has no webcam that gameDroid can see.");
+                }
+                for (i, camera) in cameras.iter().enumerate() {
+                    println!(
+                        "{}{}",
+                        camera.name,
+                        if i == 0 {
+                            "   (used unless another is named)"
+                        } else {
+                            ""
+                        }
+                    );
+                }
+                std::process::exit(0);
             }
             "--microphone" => a.microphone = Some(value(&arg)?),
             "--list-microphones" => {
@@ -346,6 +372,13 @@ fn run() -> Result<(), String> {
                     }
                 }
             }
+            // The host's webcam, behind Android's camera.
+            options.camera_device = Some(gamedroid_device::android::CameraDevice(
+                bvmm::virtio::media::Camera::new(
+                    "gameDroid camera",
+                    Box::new(gamedroid::camera::HostCamera::new(args.webcam.clone())),
+                ),
+            ));
             // The graphics card, if it can be shown to work here.
             let gpu_data = if args.own_image {
                 gamedroid_device::setup::data_folder().unwrap_or_else(|| dir.clone())
