@@ -1,0 +1,56 @@
+RUN_EXIT=0 (0: booted and the script ran; 124: out of time; other: the runner stopped)
+console lines: 4463
+=== the runner and the renderer
+gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
+gameDroid: this downloads about 1.2 GB; games and data may use up to 8 GB.
+gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
+gameDroid: preparing the boot files
+gameDroid: setup finished in 12 s
+gamedroid-run: Android booted; running the script
+gamedroid-run: saved frame 72 to gpu-1.ppm
+gamedroid-run: saw `GD_GPU_END`
+gamedroid-run: saved frame 186 to gpu-2.ppm
+gamedroid-run: script finished
+=== milestones
+[9] virtio_gpu\|\[drm\] :: [    1.801240] [drm] pci: virtio-gpu-pci detected at 0000:00:02.0
+[1] init: starting service .surfaceflinger :: [   11.626960] init: starting service 'surfaceflinger'...
+[17] sys.boot_completed=1 :: [   34.050837] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
+=== the graphics driver in the kernel
+[    1.622272] ashmem: Using Rust implementation.
+[    1.709862] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    1.712947] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    1.801240] [drm] pci: virtio-gpu-pci detected at 0000:00:02.0
+[    1.803018] [drm] Host memory window: 0xa000000000 +0x200000000
+[    1.803892] [drm] features: +virgl -edid +resource_blob +host_visible
+[    1.803894] [drm] features: +context_init
+[    1.807239] [drm] number of scanouts: 1
+[    1.807876] [drm] number of cap sets: 2
+[    1.808576] [drm] cap set 0: id 3, max-version 0, max-size 116
+[    1.809469] [drm] cap set 1: id 9, max-version 0, max-size 16
+[    1.810575] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:02.0 on minor 0
+=== who is drawing, by Android's account
+GD_GPU_BEGIN
+ranchu
+angle
+GLES: Google Inc. (Mesa), ANGLE (Mesa, Vulkan 1.3.275 (Virtio-GPU GFXStream (llvmpipe (LLVM 20.1.2 256 bits)) (0x00000000)), Mesa-26.0.99), OpenGL ES 3.2 (ANGLE 2.1 git hash: 8d8796935e4faeaf19e67ac0a
+GL_AMD_performance_monitor GL_ANDROID_extension_pack_es31a GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_compressed_texture_etc GL_ANGLE_copy_te
+RenderEngine supports protected context: 0
+RenderEngine is in protected context: 0
+RenderEngine shaders cached since last dump/primeCache: 0
+RenderEngine chosen blur algorithm: KawaseDualFilterV2
+RenderEngine LinearEffects (RuntimeEffects): 12
+RenderEngine tracked buffers: 10
+GD_GPU_END
+=== graphics trouble in the console (deduplicated)
+init: Command 'setprop ro.vendor.hwcomposer.mode ${ro.boot.hardware.hwcomposer.mode}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:11) took 0ms and failed: property 'ro.boot.hardware.hwcomposer.mode' doesn't exist w
+init: Command 'setprop debug.angle.feature_overrides_disabled ${ro.boot.hardware.angle_feature_overrides_disabled}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:16) took 0ms and failed: property 'ro.boot.hardware.an
+GL_AMD_performance_monitor GL_ANDROID_extension_pack_es31a GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_compressed_texture_etc GL_ANGLE_copy_texture_3d GL_ANGLE_depth_textur
+=== services that keep restarting
+     11 init: starting service 'vendor.threadnetwork_hal'
+      2 init: starting service 'media.codeclist.generator'
+      1 init: starting service 'zygote'
+      1 init: starting service 'vold'
+      1 init: starting service 'vendor.wifi_hal_legacy'
+      1 init: starting service 'vendor.vibrator-default'
+      1 init: starting service 'vendor.uwb_hal'
+      1 init: starting service 'vendor.usb_default'
