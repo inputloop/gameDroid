@@ -52,6 +52,7 @@ jobs:
           for _ in $(seq 200); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
           grep -qa '^GD_BROWSER_SET' android.log && echo "RESULT: the browser was installed and set up" || echo "RESULT: the browser was not set up in time"
           sleep 3; xdotool windowfocus "$win" 2>/dev/null; xdotool key F3; sleep 12; import -window root 3-help.png
+          grep -qa 'Starting: Intent.*fulguris' android.log && echo "RESULT: F3 opened the browser" || echo "RESULT: F3 did not open the browser"
           echo "after-swipe and help differ by $(compare -metric AE -fuzz 5% 2-after-swipe.png 3-help.png null: 2>&1) pixels"
           pkill gamedroid
           DRIVE
@@ -66,6 +67,7 @@ jobs:
         run: |
           grep -q 'Android booted behind the window' "$HOME/out/result.txt"
           grep -q 'the browser was installed and set up' "$HOME/out/result.txt"
+          grep -q 'F3 opened the browser' "$HOME/out/result.txt"
   windows:
     runs-on: windows-latest
     timeout-minutes: 40

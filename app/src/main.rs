@@ -369,7 +369,15 @@ fn run() -> Result<(), String> {
             ],
             window: window.get_size(),
         };
-        // F3: the help page, in Android's browser.
+        // A key tapped and let go between two frames is not in the held
+        // list any more; count it as held for this one frame so it is seen.
+        for key in tapped.lock().unwrap().drain(..) {
+            if !state.keys.contains(&key) {
+                state.keys.push(key);
+            }
+        }
+        // F3: the help page, in Android's browser. It is gameDroid's key,
+        // not Android's, so Android is not sent it.
         let help_down = state.keys.contains(&minifb::Key::F3);
         if help_down && !help_was_down {
             if let Some(shell) = &help_line {
@@ -378,13 +386,7 @@ fn run() -> Result<(), String> {
             }
         }
         help_was_down = help_down;
-        // A key tapped and let go between two frames is not in the held
-        // list any more; count it as held for this one frame so it is seen.
-        for key in tapped.lock().unwrap().drain(..) {
-            if !state.keys.contains(&key) {
-                state.keys.push(key);
-            }
-        }
+        state.keys.retain(|k| *k != minifb::Key::F3);
         if std::mem::take(&mut want_game_mode) {
             state.keys.push(minifb::Key::F1);
         }

@@ -572,6 +572,8 @@ fn plan() -> Result<Plan, String> {
 /// F-Droid's repository. Android checks the APK's signature when it
 /// installs it.
 pub const BROWSER_VERSION: u32 = 265;
+/// That file's SHA-256, as both CI hosts fetched it on 2026-11-11.
+pub const BROWSER_SHA256: &str = "72a95ef9111837e6a557cefac53744e9a8b4f8413fce199e485e249d04c886cc";
 
 fn browser_url() -> String {
     format!("https://f-droid.org/repo/net.slions.fulguris.full.fdroid_{BROWSER_VERSION}.apk")
@@ -590,9 +592,14 @@ pub fn browser_apk() -> Option<PathBuf> {
     std::fs::create_dir_all(&apps).ok()?;
     eprintln!("gameDroid: fetching the Fulguris browser from F-Droid (9 MB)");
     match download(&browser_url(), &apk, &mut |_| {}) {
+        Ok(sha256) if sha256 == BROWSER_SHA256 => Some(apk),
         Ok(sha256) => {
-            eprintln!("gameDroid: the browser's SHA-256 is {sha256}");
-            Some(apk)
+            let _ = std::fs::remove_file(&apk);
+            eprintln!(
+                "gameDroid: the browser that arrived is not the expected file (SHA-256 {sha256}); \
+                 it was deleted, and Android keeps its stock browser"
+            );
+            None
         }
         Err(e) => {
             eprintln!("gameDroid: the browser could not be fetched ({e}); carrying on without it");
