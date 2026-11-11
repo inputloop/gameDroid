@@ -22,10 +22,14 @@ expect GD_WIFI_ASKED 30
 wait 15
 shell echo GD_""NET_BEGIN; ls /sys/class/net | tr '\n' ' '; echo; ip -o -4 addr; su 0 cmd wifi status | head -n 8; su 0 cmd wifi list-scan-results | head -n 4; echo GD_""NET_END
 expect GD_NET_END 20
-shell for h in example.com www.google.com; do printf 'HEAD / HTTP/1.0\r\nHost: %s\r\n\r\n' $h | toybox nc -w 10 $h 80 | head -n 1; done; echo GD_""HTTP_DONE
+shell printf 'HEAD / HTTP/1.0\r\nHost: example.com\r\n\r\n' | su 0 toybox nc -w 10 example.com 80 | head -n 1; echo GD_""HTTP_DONE
 expect GD_HTTP_DONE 40
 shell dumpsys connectivity | grep -iE "Active default network|NetworkAgentInfo" | cut -c1-300 | head -n 4; echo GD_""CONN_DONE
 expect GD_CONN_DONE 20
+# Android itself must have reached the internet through it: its own check
+# fetches a page from Google's servers and marks the network validated.
+shell dumpsys connectivity | grep -q "Active default network: [0-9]" && dumpsys connectivity | grep -q "EVER_VALIDATED&IS_VALID" && echo GD_""ONLINE
+expect GD_ONLINE 30
 install
 start PACKAGE
 expect GD_START_STATUS=0 60
