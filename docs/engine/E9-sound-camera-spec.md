@@ -1,0 +1,166 @@
+# E9: sound, microphone and camera, the route
+
+Date: 2026-11-11. Status: specification. Nothing here is built yet.
+
+Confidence: read from source by a research pass on 2026-11-11 unless marked
+(inferred). Sources: Linux v6.12 `sound/virtio` and `virtio_snd.h`; mirrors
+of Android 17's `device/google/cuttlefish` and `hardware/interfaces` (not
+the exact stock tag); android-cuttlefish and crosvm host code; the
+virtio-media driver. Nothing has been run.
+
+## Decision
+
+- **Sound out and microphone:** a virtio-snd device in the engine, with the
+  host's default output and input devices behind it through the `cpal`
+  crate (Apache-2.0; WASAPI on Windows with no C libraries, ALSA on Linux).
+- **Camera:** a virtio-media device in the engine presenting one V4L2
+  capture device, with the image booted on its V4L2 camera variant. This is
+  Cuttlefish's own supported path for a host webcam.
+
+Sound comes first: it is smaller, games need it, and Linphone needs both
+directions.
+
+## Sound: what the stock image expects
+
+- Android's audio is the default AIDL audio service, using tinyalsa on
+  **sound card 0, device 0**, for both directions. There is no setting that
+  selects another.
+- With no sound card and no stub settings, opening a stream fails. The stub
+  settings are `androidboot.audio.tinyalsa.ignore_output=true` and
+  `androidboot.audio.tinyalsa.simulate_input=true`. **gameDroid sets neither
+  today, so Android's audio is currently failing to open**; until the device
+  exists these two should be set.
+- `virtio_snd.ko` is among the image's kernel modules. So is `snd-aloop.ko`,
+  which might take card 0 first (inferred): check `/proc/asound/cards`.
+- One playback and one capture stream are opened. 16-bit samples; rates
+  8000, 11025, 16000, 32000, 44100, 48000; mono or stereo.
+- Buffer: 85 ms rounded up, four periods. At 48 kHz stereo: 4096 frames in
+  the buffer, 1024 per period (4096 bytes, 21.3 ms).
+
+## virtio-snd as Linux 6.12 requires it
+
+Device id 25. No feature bits needed. Queues: 0 control, 1 event, 2 tx
+(playback), 3 rx (capture).
+
+Configuration, little-endian u32 each: jacks, streams, chmaps, controls.
+The minimal device: jacks 0, streams 2, chmaps 0 (controls unread).
+
+**Control requests.** The request is device-readable; the answer starts
+with a u32 status, then any data. Status: OK 0x8000, BAD_MSG 0x8001,
+NOT_SUPP 0x8002, IO_ERR 0x8003. The driver waits 1 s for an answer.
+
+| Request | Code | Layout |
+|---|---|---|
+| PCM_INFO | 0x100 | `{code, start_id, count, size}`; answer: status, then `count` records of `size` bytes |
+| PCM_SET_PARAMS | 0x101 | `{code, stream_id, buffer_bytes, period_bytes, features, u8 channels, u8 format, u8 rate, u8 pad}` (24 bytes) |
+| PCM_PREPARE | 0x102 | `{code, stream_id}` |
+| PCM_RELEASE | 0x103 | `{code, stream_id}` |
+| PCM_START | 0x104 | `{code, stream_id}` |
+| PCM_STOP | 0x105 | `{code, stream_id}` |
+
+`pcm_info` (32 bytes): hda_fn_nid u32, features u32, formats u64, rates u64,
+direction u8 (0 output, 1 input), channels_min u8, channels_max u8, pad[5].
+
+Both streams must have `hda_fn_nid` 0: it becomes the ALSA device number,
+and Android opens device 0 for both directions.
+
+Advertise: stream 0 output, stream 1 input; formats `0x20` (S16, bit 5);
+rates `0xEE` (8000 bit 1, 11025 bit 2, 16000 bit 3, 32000 bit 5, 44100
+bit 6, 48000 bit 7); channels 1 to 2; features 0. In SET_PARAMS the format
+and rate are those bit numbers, not masks.
+
+**Playback (tx).** Each buffer: device-readable `{stream_id u32}` then
+exactly one period of samples; device-writable `{status u32, latency_bytes
+u32}`.
+
+**Capture (rx).** Each buffer: device-readable `{stream_id u32}`;
+device-writable one period of samples, then `{status, latency_bytes}` last.
+The used length is the samples plus 8.
+
+**The device is the clock.** The guest's position advances only when a
+buffer is returned. Return one playback buffer per period of real time, as
+the host consumes it, and one capture buffer per period captured. Returning
+at once makes playback run fast.
+
+**On RELEASE, hand back every pending buffer.** The driver waits 1 s for
+them and reports an error otherwise. Capture queues all its buffers before
+START. Events are not needed.
+
+Worth copying from crosvm: the host stream's callback as the clock; silence
+on underrun; an absolute-deadline timer when there is no host device, so
+there is no drift; a ring buffer and resampler between the guest's period
+and the host's callback; a silent stand-in when the host has no device.
+
+## Host sound
+
+`cpal` 0.18: enumerate with `host.input_devices()`, default with
+`default_input_device()`. Streams are callbacks, so a ring buffer sits
+between them and the device. Linux builds need `libasound2-dev`. Resample
+with `rubato` if the host's rate differs.
+
+Several microphones: the guest sees one input stream; which host microphone
+feeds it is a gameDroid setting.
+
+## Camera: what the stock image offers
+
+- Two variants of one camera package are in the image: the default
+  **emulated camera** (a synthetic scene; no way to feed it frames) and a
+  **V4L2 variant** holding Android's reference external-camera provider.
+- Selected with
+  `androidboot.vendor.apex.com.google.emulated.camera.provider.hal =
+  com.google.emulated.camera.provider.hal.v4l2`. Choosing it removes the
+  synthetic cameras.
+- That provider watches `/dev/video*`, needs a capture device, and accepts
+  only **MJPEG** (and a depth format). It uses memory-mapped buffers and the
+  ioctls QUERYCAP, ENUM_FMT, ENUM_FRAMESIZES, ENUM_FRAMEINTERVALS, S_FMT,
+  G_PARM, S_PARM, REQBUFS, QUERYBUF, QBUF, DQBUF, STREAMON, STREAMOFF.
+- The image's kernel modules include `virtio-media.ko` (not in mainline).
+- **To confirm on the image before building:** that the `.v4l2` variant and
+  `virtio-media.ko` are really present in this build (the variant was added
+  to the source in March 2026). Without them no route works short of
+  rebuilding the image.
+- The camera will appear to apps as an *external* camera, which some apps
+  ignore (inferred).
+
+## virtio-media
+
+Device id 48. Queues: 0 command, 1 event. Configuration: device_caps u32,
+device_type u32 (0: video), card[32]. Shared-memory region 0 holds the
+frame buffers (the engine's shared-memory window and Mapper, built for the
+GPU, serve here too).
+
+Commands, header `{cmd u32, reserved u32}`, answer `{status u32 (errno),
+reserved u32}`:
+
+| Command | Code | Layout |
+|---|---|---|
+| OPEN | 1 | answer adds `{session_id, reserved}` |
+| CLOSE | 2 | `{session_id, reserved}` |
+| IOCTL | 3 | `{session_id, code}` (the ioctl's number); the 64-bit V4L2 struct follows the command for a write, the answer for a read, or both |
+| MMAP | 4 | `{session_id, flags, offset}`; answer `{driver_addr u64 (offset in the window), len u64}` |
+| MUNMAP | 5 | `{driver_addr u64}` |
+
+Events, header `{event u32, session_id u32}`: ERROR 0, DQBUF 1 (a
+`v4l2_buffer` and planes), EVENT 2. Finished frames arrive as DQBUF events,
+not as answers to an ioctl.
+
+## Host camera
+
+`nokhwa` (Apache-2.0): Media Foundation on Windows, V4L2 on Linux. Ask the
+camera for MJPEG and pass frames through undecoded where it offers them;
+otherwise encode with `jpeg-encoder` (pure Rust).
+
+## Order of work
+
+| Step | What | Proves |
+|---|---|---|
+| S0 | Set the two stub settings; confirm in CI what `/proc/asound/cards` and the camera package variants really are on this image | The facts above that are inferred |
+| S1 | virtio-snd in the engine with a silent, clocked stand-in behind it; Android plays and records without errors | The protocol and the pacing |
+| S2 | Host output through cpal: sound from a game | Playback |
+| S3 | Host microphone through cpal, with a setting for which one | Capture; Linphone can make a call |
+| C1 | virtio-media in the engine with a test-pattern MJPEG source; Android's camera app shows it | The protocol |
+| C2 | Host webcam through nokhwa, with a setting for which one | The camera |
+
+CI has neither a sound device nor a camera, so S2, S3 and C2 can only be
+proven there with stand-ins. Real devices are first heard and seen on a
+real machine.

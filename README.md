@@ -40,7 +40,7 @@ device in CI. More below.*
 | GPU acceleration | Working in CI on Linux, experimentally: Android draws through gfxstream on the host (Vulkan on the host, OpenGL ES by ANGLE inside Android), boots, and runs the game. CI has no GPU, so this proves the path, not the speed. Not yet run on Windows or on a real GPU, and not yet switchable from the app ([plan and results](docs/engine/E8-gpu-plan.md)) |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
-| A help page on the phone | Working in CI: "How to use this browser and OS" is stored on the phone after boot and opens in the stock browser without the internet. It is not yet the browser's start page: the stock browser (Chromium's WebView test shell) has no such setting and opens blank |
+| A help page, and a real browser | Working in CI. "How to use this browser and OS" is stored on the phone after boot. When the Fulguris browser (free software, fetched from F-Droid) is installed, gameDroid makes that page its home page, skips its first-run screens and makes it Android's default browser. F3 in the window opens the page. Not yet done: gameDroid fetching and installing Fulguris by itself on first run; CI installs it by hand |
 | Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
@@ -74,10 +74,11 @@ The same on Linux, after a mouse swipe unlocked it:
 
 ### The help page, inside Android
 
-"How to use this browser and OS", stored on the phone and shown by the
-stock browser (CI):
+"How to use this browser and OS", stored on the phone. Left: as the home
+page of the Fulguris browser, which gameDroid sets up. Right: in the stock
+image's test browser (CI):
 
-<img src="docs/screenshots/help-page.png" width="240" alt="The gameDroid help page open in Android's browser">
+<img src="docs/screenshots/browser-home.png" width="240" alt="The help page as Fulguris's home page"> <img src="docs/screenshots/help-page.png" width="240" alt="The gameDroid help page open in Android's stock browser">
 
 ### Android on Windows
 
@@ -190,7 +191,7 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
 | E8 | GPU acceleration | The path works in CI on Linux against a software Vulkan ([results](docs/engine/E8-gpu-plan.md)). Windows, a real GPU, and direct presentation are still to do |
-| E9 | Sound | Planned |
+| E9 | Sound, microphone, camera | Route chosen and specified ([spec](docs/engine/E9-sound-camera-spec.md)): virtio-snd and virtio-media in the engine, the host's devices behind them. Not started |
 
 gameDroid's own features build on these. What is next, in order: try
 `gamedroid.exe` on the Windows reference laptop; GPU acceleration, step by
