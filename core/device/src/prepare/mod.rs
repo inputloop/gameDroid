@@ -136,23 +136,33 @@ pub fn prepare(images: &Path, out: &Path, settings: &Settings) -> Result<Prepare
         return Err("boot.img has no kernel".into());
     }
 
+    // The kernel unpacks concatenated ramdisks in order, later files
+    // winning. The boot settings ride at the end, so there is one initrd
+    // per way of drawing: `initrd.img` for Android drawing with the CPU,
+    // `initrd-gpu.img` for the host's GPU.
     let vbmeta = Guid::from_name("vbmeta_a");
-    let ours = bootconfig::runtime(
-        &settings.boot_device,
-        &vbmeta.to_string(),
-        settings.memory_mib,
-        settings.density,
-    );
-    let config = bootconfig::merge(&vendor.bootconfig, &ours)?;
-
-    // The kernel unpacks concatenated ramdisks in order, later files winning.
-    let mut initrd = vendor.ramdisk;
-    initrd.extend_from_slice(&init_boot.ramdisk);
-    let trailer = bootconfig::trailer(&config, initrd.len());
-    initrd.extend_from_slice(&trailer);
+    let mut ramdisks = vendor.ramdisk;
+    ramdisks.extend_from_slice(&init_boot.ramdisk);
+    let mut config = String::new();
+    let mut initrd = Vec::new();
+    for (graphics, file) in [
+        (bootconfig::Graphics::HostGpu, "initrd-gpu.img"),
+        (bootconfig::Graphics::Software, "initrd.img"),
+    ] {
+        let ours = bootconfig::runtime(
+            &settings.boot_device,
+            &vbmeta.to_string(),
+            settings.memory_mib,
+            settings.density,
+            graphics,
+        );
+        config = bootconfig::merge(&vendor.bootconfig, &ours)?;
+        initrd = ramdisks.clone();
+        initrd.extend_from_slice(&bootconfig::trailer(&config, initrd.len()));
+        write(&out.join(file), &initrd)?;
+    }
 
     write(&out.join("kernel"), &boot.kernel)?;
-    write(&out.join("initrd.img"), &initrd)?;
     write(&out.join("bootconfig.txt"), config.as_bytes())?;
     write(
         &out.join("cmdline.txt"),

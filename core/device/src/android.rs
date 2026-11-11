@@ -32,6 +32,9 @@ pub struct Options {
     /// An extra read-only disk (`/dev/block/vdb` in Android), used to hand
     /// files such as an APK to the guest.
     pub extra_disk: Option<std::path::PathBuf>,
+    /// Draw with the host's GPU: the gfxstream library to load. Without
+    /// it Android draws for itself with the CPU.
+    pub gfxstream: Option<std::path::PathBuf>,
     /// A network card with the host's internet behind it.
     pub network: bool,
 }
@@ -56,6 +59,7 @@ impl Default for Options {
             height: 1280,
             extra_cmdline: String::new(),
             extra_disk: None,
+            gfxstream: None,
             network: true,
         }
     }
@@ -147,7 +151,13 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         memory_mib: options.memory_mib,
         cpus: options.cpus,
         kernel: read(&dir.join("kernel"))?,
-        initrd: Some(read(&dir.join("initrd.img"))?),
+        // The boot settings in the initrd say who draws; see prepare.
+        initrd: Some(read(&dir.join(if options.gfxstream.is_some() {
+            "initrd-gpu.img"
+        } else {
+            "initrd.img"
+        }))?),
+        gfxstream: options.gfxstream.clone(),
         cmdline: cmdline.trim().to_string(),
         // The boot configuration names the system disk by its PCI slot, so
         // it must stay the first device.

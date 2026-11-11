@@ -217,6 +217,8 @@ usage: gamedroid-run <prepared-dir> [options]
   --display <W>x<H>     screen size (default 720x1280)
   --screenshot <file>   keep the newest frame here as a PPM, about once a second
   --cmdline <text>      extra kernel arguments
+  --gpu <library>       draw with the host's GPU, through this gfxstream
+                        library (experimental)
   --apk <file>          hand this APK to Android; the script's `install` step installs it
   --script <file>       script to run once Android has booted (see
                         core/device/src/script.rs); the run ends when it does,
@@ -261,6 +263,10 @@ fn main() -> ExitCode {
             }
             "--cmdline" => {
                 options.extra_cmdline = value;
+                true
+            }
+            "--gpu" => {
+                options.gfxstream = Some(value.into());
                 true
             }
             "--apk" => {

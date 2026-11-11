@@ -80,10 +80,45 @@ pub fn read_trailer(blob: &[u8]) -> Option<String> {
 
 /// What a bootloader would add: the virtual hardware Android is running on.
 ///
+/// What draws Android's graphics.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Graphics {
+    /// Android itself, with the CPU.
+    Software,
+    /// The host's GPU, through gfxstream.
+    HostGpu,
+}
+
 /// Taken from a stock boot under crosvm (`docs/engine/reference`), keeping
 /// what describes the device and dropping what named host services that do
 /// not exist here.
-pub fn runtime(boot_device: &str, vbmeta_guid: &str, memory_mib: u64, density: u32) -> String {
+pub fn runtime(
+    boot_device: &str,
+    vbmeta_guid: &str,
+    memory_mib: u64,
+    density: u32,
+    graphics: Graphics,
+) -> String {
+    // Who draws. In both modes OpenGL ES is ANGLE inside Android, on top of
+    // Vulkan; the modes differ in whose Vulkan that is.
+    let drawing: &[(&str, &str)] = match graphics {
+        // Android's own software Vulkan ("pastel", SwiftShader).
+        Graphics::Software => &[
+            ("androidboot.hardware.vulkan", "pastel"),
+            ("androidboot.cpuvulkan.version", "4206592"),
+            (
+                "androidboot.hardware.angle_feature_overrides_disabled",
+                "exposeES32ForTesting",
+            ),
+        ],
+        // The host's GPU, through gfxstream ("ranchu"): Cuttlefish's
+        // "gfxstream_guest_angle" mode.
+        Graphics::HostGpu => &[
+            ("androidboot.hardware.vulkan", "ranchu"),
+            ("androidboot.cpuvulkan.version", "0"),
+            ("androidboot.hardware.gltransport", "virtio-gpu-asg"),
+        ],
+    };
     let fixed = [
         ("androidboot.hardware", "cutf_cvm"),
         ("androidboot.slot_suffix", "_a"),
@@ -104,16 +139,10 @@ pub fn runtime(boot_device: &str, vbmeta_guid: &str, memory_mib: u64, density: u
         ),
         ("androidboot.hardware.gralloc", "minigbm"),
         ("androidboot.hardware.egl", "angle"),
-        ("androidboot.hardware.vulkan", "pastel"),
         (
             "androidboot.hardware.angle_feature_overrides_enabled",
             "mapUnspecifiedColorSpaceToPassThrough",
         ),
-        (
-            "androidboot.hardware.angle_feature_overrides_disabled",
-            "exposeES32ForTesting",
-        ),
-        ("androidboot.cpuvulkan.version", "4206592"),
         ("androidboot.opengles.version", "196609"),
         // Security services that run inside the guest and need no host peer.
         (
@@ -173,7 +202,7 @@ pub fn runtime(boot_device: &str, vbmeta_guid: &str, memory_mib: u64, density: u
         ("androidboot.verifiedbootstate", "orange"),
     ];
     let mut out = String::new();
-    for (k, v) in fixed {
+    for (k, v) in fixed.iter().chain(drawing) {
         out.push_str(&format!("{k} = \"{v}\"\n"));
     }
     out.push_str(&format!("androidboot.boot_devices = \"{boot_device}\"\n"));
@@ -210,7 +239,13 @@ mod tests {
 
     #[test]
     fn the_runtime_settings_never_repeat_a_key() {
-        let text = runtime("pci0000:00/0000:00:01.0", "1234", 4096, 280);
+        let text = runtime(
+            "pci0000:00/0000:00:01.0",
+            "1234",
+            4096,
+            280,
+            Graphics::Software,
+        );
         let keys: Vec<&str> = text.lines().filter_map(key).collect();
         let mut unique = keys.clone();
         unique.sort_unstable();

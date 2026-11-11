@@ -1,0 +1,9 @@
+# With Android drawing through the host's renderer: look at the screen and
+# ask Android who is drawing.
+wait 25
+screenshot gpu-1.ppm
+shell echo GD_""GPU_BEGIN; getprop ro.hardware.vulkan; getprop ro.hardware.egl; su 0 dumpsys SurfaceFlinger | grep -iE "GLES:|vulkan|RenderEngine" | head -n 8; echo GD_""GPU_END
+expect GD_GPU_END 40
+swipe 360 1150 360 250 350
+wait 6
+screenshot gpu-2.ppm

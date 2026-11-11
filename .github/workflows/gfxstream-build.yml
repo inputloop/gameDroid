@@ -12,6 +12,8 @@ on:
       - "tools/gpu/**"
       - "core/device/src/bin/gamedroid-gpu-check.rs"
       - "Cargo.lock"
+      - "core/device/**"
+      - "tools/engine/scripts/gpu-look.script"
 permissions:
   contents: write  # to publish the result to the ci-logs branch
 env:
@@ -63,11 +65,46 @@ jobs:
           set -o pipefail
           cargo build --release -p gamedroid-device --bin gamedroid-gpu-check 2>&1 | tail -n 1
           timeout 120 target/release/gamedroid-gpu-check "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" 2>&1 | cut -c1-240 | tee "$HOME/out/engine-start.txt"
+      - name: Boot Android drawing through the renderer (G3, exploratory)
+        # Reported, never failing: this is the first time the pieces meet.
+        run: |
+          set +e +o pipefail
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 1
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
+          cd "$HOME/out"
+          timeout 330 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+            --gpu "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" \
+            --memory 4096 --display 720x1280 --cmdline ignore_loglevel \
+            --script "$GITHUB_WORKSPACE/tools/engine/scripts/gpu-look.script" > android.log 2> run.err
+          {
+            echo "RUN_EXIT=$? (0: booted and the script ran; 124: out of time; other: the runner stopped)"
+            echo "console lines: $(wc -l < android.log)"
+            echo "=== the runner and the renderer"
+            grep -vE "downloading,|unpacking" run.err | awk '!seen[$0]++' | cut -c1-240 | head -n 40
+            echo "=== milestones"
+            for pat in 'virtio_gpu\|\[drm\]' 'init: starting service .surfaceflinger' 'sys.boot_completed=1'; do
+              echo "[$(grep -c -- "$pat" android.log)] $pat :: $(grep -m1 -- "$pat" android.log | cut -c1-160)"
+            done
+            echo "=== the graphics driver in the kernel"
+            grep -aE 'virtio_gpu|virtio-gpu|\[drm\]|shm|host visible|capset' android.log | cut -c1-200 | head -n 20
+            echo "=== who is drawing, by Android's account"
+            sed -n '/^GD_GPU_BEGIN/,/^GD_GPU_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 14
+            echo "=== graphics trouble in the console (deduplicated)"
+            grep -aiE 'gfxstream|ranchu|vulkan|hwcomposer|surfaceflinger|gralloc|minigbm|angle' android.log | grep -aiE 'fail|error|fatal|abort|crash|died|SIG|unable|cannot|denied' | sed -E 's/^\[ *[0-9.]+\] //' | awk '!seen[$0]++' | cut -c1-230 | head -n 40
+            echo "=== services that keep restarting"
+            grep -oE "init: starting service '[^']+'" android.log | sort | uniq -c | sort -rn | head -n 8
+          } > gpu-boot.txt 2>&1
+          cat gpu-boot.txt
+          for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
+          exit 0
       - name: Publish
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux gpu-boot.txt gpu-1.png gpu-2.png result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
   windows:
     runs-on: windows-latest
     timeout-minutes: 90
