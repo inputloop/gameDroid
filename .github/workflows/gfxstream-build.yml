@@ -58,6 +58,10 @@ jobs:
         run: |
           git clone -q --filter=blob:none https://github.com/google/gfxstream "$RUNNER_TEMP/gfxstream"
           git -C "$RUNNER_TEMP/gfxstream" checkout -q "$GFXSTREAM_COMMIT"
+          # A bug in gfxstream's Windows-only code at this commit: a
+          # std::string handed to a printf-style log call. To report upstream.
+          sed -i 's/mFeatures.VulkanAllocateHostMemory.getReason());/mFeatures.VulkanAllocateHostMemory.getReason().c_str());/' "$RUNNER_TEMP/gfxstream/host/vulkan/vk_common_operations.cpp"
+          grep -c 'getReason().c_str());' "$RUNNER_TEMP/gfxstream/host/vulkan/vk_common_operations.cpp"
       - name: Build with CMake and ClangCL
         run: |
           set +e
@@ -69,6 +73,8 @@ jobs:
           export CFLAGS="-DWIN32_LEAN_AND_MEAN" CXXFLAGS="-DWIN32_LEAN_AND_MEAN"
           { cmake .. -A x64 -T ClangCL && cmake --build . --config Release --target gfxstream_backend -- -m -v:m; } > "$OUT/cmake.log" 2>&1
           echo "CMAKE_EXIT=$?" | tee "$OUT/result.txt"
+          echo "--- libraries the DLL asks Windows for" >> "$OUT/result.txt"
+          find . -iname '*gfxstream_backend*.dll' | head -n 1 | while read -r f; do objdump -p "$f" | grep 'DLL Name' | sort -u >> "$OUT/result.txt"; done
           find . -iname '*gfxstream_backend*.dll' -o -iname '*gfxstream_backend*.lib' | while read -r f; do echo "$(stat -c %s "$f") $f"; done | tee -a "$OUT/result.txt"
           grep -E "error [A-Z0-9]*:|error :|fatal error" "$OUT/cmake.log" | sed -E 's/ \[[^]]*vcxproj\]$//' | awk '!seen[$0]++' | cut -c1-260 | head -n 60 > "$OUT/cmake-errors.txt"
           tail -n 60 "$OUT/cmake.log" | cut -c1-300 > "$OUT/cmake-tail.txt"
