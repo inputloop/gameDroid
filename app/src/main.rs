@@ -40,7 +40,7 @@ in the window:
   mouse        a finger (direct mode)
   keyboard     types into Android (direct mode)
   F1           game mode on or off: keys and mouse follow the profile
-  F3           help: "How to use this browser and OS", in Android's browser
+  F3           help: How to use this browser and OS, in Android's browser
   Esc          Back        F2    Home";
 
 const DEMO_SIZE: (u32, u32) = (720, 1280);
