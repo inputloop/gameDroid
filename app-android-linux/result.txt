@@ -1,6 +1,6 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
-lock and after-swipe differ by 259249 pixels
+lock and after-swipe differ by 259209 pixels
 gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 32 GB.
 gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
@@ -14,4 +14,4 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 18 s
+gameDroid: setup finished in 15 s
