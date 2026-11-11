@@ -1,5 +1,5 @@
 gameDroid: first run. Setting up Android (build 16644040) in D:\a\_temp/gd-data
-gameDroid: this downloads about 1.2 GB and needs about 8 GB of disk.
+gameDroid: this downloads about 1.2 GB; games and data may use up to 23 GB.
 gameDroid: downloading, 32 of 1109 MB
 gameDroid: downloading, 64 of 1109 MB
 gameDroid: downloading, 96 of 1109 MB
@@ -35,6 +35,7 @@ gameDroid: downloading, 1024 of 1109 MB
 gameDroid: downloading, 1056 of 1109 MB
 gameDroid: downloading, 1088 of 1109 MB
 gameDroid: downloading, 1109 of 1109 MB
+gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
 gameDroid: unpacking boot.img
 gameDroid: unpacking init_boot.img
 gameDroid: unpacking vendor_boot.img
@@ -45,4 +46,4 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 19 s
+gameDroid: setup finished in 15 s
