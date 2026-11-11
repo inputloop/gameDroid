@@ -1,11 +1,10 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
 RESULT: graphics card mode was chosen
-lock and after-swipe differ by 258476 pixels
+lock and after-swipe differ by 259177 pixels
 RESULT: the browser was installed and set up
 RESULT: F3 opened the browser
-after-swipe and help differ by 250594 pixels
-gameDroid: unpacking vbmeta.img
+after-swipe and help differ by 250588 pixels
 gameDroid: unpacking vbmeta_system.img
 gameDroid: unpacking vbmeta_vendor_dlkm.img
 gameDroid: unpacking vbmeta_system_dlkm.img
@@ -24,4 +23,5 @@ ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned err
 ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
 ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
 gameDroid: no sound will be heard: The requested device is no longer available. For example, it has been unplugged.
+gfxstream: [vk_decoder_global_state.cpp(4085)] on_vkCreateSampler: Invalid usage with missing custom border color structure.
 gfxstream: [vk_decoder_global_state.cpp(4085)] on_vkCreateSampler: Invalid usage with missing custom border color structure.
