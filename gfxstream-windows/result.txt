@@ -1,1 +1,22 @@
-CMAKE_EXIT=1
+CMAKE_EXIT=0
+--- libraries the DLL asks Windows for
+	DLL Name: ADVAPI32.dll
+	DLL Name: KERNEL32.dll
+	DLL Name: MSVCP140.dll
+	DLL Name: SHLWAPI.dll
+	DLL Name: USER32.dll
+	DLL Name: VCRUNTIME140.dll
+	DLL Name: VCRUNTIME140_1.dll
+	DLL Name: api-ms-win-crt-convert-l1-1-0.dll
+	DLL Name: api-ms-win-crt-environment-l1-1-0.dll
+	DLL Name: api-ms-win-crt-filesystem-l1-1-0.dll
+	DLL Name: api-ms-win-crt-heap-l1-1-0.dll
+	DLL Name: api-ms-win-crt-locale-l1-1-0.dll
+	DLL Name: api-ms-win-crt-math-l1-1-0.dll
+	DLL Name: api-ms-win-crt-runtime-l1-1-0.dll
+	DLL Name: api-ms-win-crt-stdio-l1-1-0.dll
+	DLL Name: api-ms-win-crt-string-l1-1-0.dll
+	DLL Name: api-ms-win-crt-time-l1-1-0.dll
+123930 ./host/Release/gfxstream_backend.lib
+12613890 ./host/Release/gfxstream_backend_static.lib
+6689792 ./Release/gfxstream_backend.dll

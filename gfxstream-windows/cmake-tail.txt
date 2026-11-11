@@ -1,60 +1,60 @@
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(1473,5): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkPhysicalDeviceFeatures2>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'VkBuffer_T *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-serve
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2176,58): message : in instantiation of member function 'gfxstream::base::Optional<VkBuffer_T *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'VkImage_T *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2177,57): message : in instantiation of member function 'gfxstream::base::Optional<VkImage_T *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:38:
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'gfxstream::host::vk::VkEmulation::ColorBufferInfo *const *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\b
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(457,66): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(461,23): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::get' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(408,13): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::destruct' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2178,66): message : in instantiation of member function 'gfxstream::base::Optional<gfxstream::host::vk::VkEmulation::ColorBufferInfo *>::~Optional' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
-D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2230,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkMemoryDedicatedAllocateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
-D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2285,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkImportMemoryHostPointerInfoEXT>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
-D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(107,24): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(2503,9): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_append_struct<VkExportMemoryAllocateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:32:
-D:\a\_temp\gfxstream\common\base\include\gfxstream/containers/Lookup.h(79,5): warning : 'auto' type specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\common\base\include\gfxstream/containers/Lookup.h(81,16): warning : 'nullptr' is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:14:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.h:33:
-  In file included from D:\a\_temp\gfxstream\host\vulkan\compositor_vk.h:38:
-D:\a\_temp\gfxstream\host\vulkan\vk_utils.h(86,18): warning : zero as null pointer constant [-Wzero-as-null-pointer-constant] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\lib\clang\22\include\__stddef_null.h(23,14): message : expanded from macro 'NULL' [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(3203,39): message : in instantiation of function template specialization 'gfxstream::host::vk::vk_make_orphan_copy<VkImageCreateInfo>' requested here [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.vcxproj]
-  In file included from D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp:41:
-D:\a\_temp\gfxstream\host\vulkan\vk_emulated_physical_device_memory.h(77,22): warning : padding struct 'gfxstream::host::vk::EmulatedPhysicalDeviceMemoryProperties::EmulatedGuestMemoryType' with 3 bytes to align 'memoryType' [-Wpadded] [D:\a\_temp\gfxstream\build\host\vulkan\gfxstream-vulkan-server.
-  GLcommon.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\glestranslator\common\Release\GLcommon.lib
-  Building Custom Rule D:/a/_temp/gfxstream/host/gl/OpenGLESDispatch/CMakeLists.txt
-  gfxstream_openglesdispatch.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\OpenGLESDispatch\Release\gfxstream_openglesdispatch.lib
-  Building Custom Rule D:/a/_temp/gfxstream/host/gl/gles2_dec/CMakeLists.txt
-  gles2_dec.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\gles2_dec\Release\gles2_dec.lib
-  Building Custom Rule D:/a/_temp/gfxstream/host/gl/gles1_dec/CMakeLists.txt
-  gles1_dec.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\gles1_dec\Release\gles1_dec.lib
-  Building Custom Rule D:/a/_temp/gfxstream/host/gl/CMakeLists.txt
-  gfxstream-gl-server.vcxproj -> D:\a\_temp\gfxstream\build\host\gl\Release\gfxstream-gl-server.lib
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(97,17): warning : default member initializer for non-static data members is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(99,19): warning : default member initializer for non-static data members is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(100,19): warning : default member initializer for non-static data members is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(131,16): warning : rvalue references are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(150,19): warning : rvalue references are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(201,5): warning : 'constexpr' specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.cpp:14:
+D:\a\_temp\gfxstream\host\vsync_thread.h(35,19): warning : alias declarations are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(36,23): warning : alias declarations are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(58,10): warning : scoped enumerations are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(61,25): warning : commas at the end of enumerator lists are incompatible with C++98 [-Wc++98-compat-pedantic] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(73,24): warning : default member initializer for non-static data members is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(74,21): warning : default member initializer for non-static data members is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.h(66,19): warning : padding struct 'gfxstream::VsyncThread::VsyncThreadCommand' with 4 bytes to align 'task' [-Wpadded] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(21,41): warning : lambda expressions are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.h:21:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(101,18): warning : padding class 'gfxstream::base::MessageChannelBase' with 7 bytes to align 'mLock' [-Wpadded] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(21,33): warning : local type '(lambda at D:\a\_temp\gfxstream\host\vsync_thread.cpp:21:41)' as template argument is incompatible with C++98 [-Wc++98-compat-local-type-template-args] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(21,33): message : while substituting deduced template arguments into function template 'thread' [with _Fn = (lambda at D:\a\_temp\gfxstream\host\vsync_thread.cpp:21:41), _Args = <>, $2 = (no value)] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(28,19): warning : generalized initializer lists are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(28,21): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(32,19): warning : generalized initializer lists are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(32,21): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(32,48): warning : constructor call from initializer list is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(36,19): warning : generalized initializer lists are incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(36,21): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(36,39): warning : constructor call from initializer list is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(42,28): warning : 'long long' is incompatible with C++98 [-Wc++98-compat-pedantic] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(47,41): warning : 'long long' is incompatible with C++98 [-Wc++98-compat-pedantic] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(50,28): warning : 'long long' is incompatible with C++98 [-Wc++98-compat-pedantic] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(64,22): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(66,22): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(69,22): warning : enumeration type in nested name specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(70,17): warning : default label in switch which covers all enumeration values [-Wcovered-switch-default] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(79,26): warning : no newline at end of file [-Wnewline-eof] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.h:21:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(182,15): warning : 'auto' type specifier is incompatible with C++98 [-Wc++98-compat] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.h:21:
+  In file included from D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h:17:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(451,17): warning : dereference of type 'const unsigned long long *' that was reinterpret_cast from type 'const std::byte (*)[8]' has undefined behavior [-Wundefined-reinterpret-cast] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_stat
+D:\a\_temp\gfxstream\common\base\include\gfxstream/Optional.h(390,16): message : in instantiation of member function 'gfxstream::base::Optional<unsigned long long>::get' requested here [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(184,37): message : in instantiation of member function 'gfxstream::base::Optional<unsigned long long>::operator*' requested here [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\host\vsync_thread.cpp(62,25): message : in instantiation of member function 'gfxstream::base::MessageChannel<gfxstream::VsyncThread::VsyncThreadCommand, 128>::tryReceive' requested here [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.cpp:14:
+  In file included from D:\a\_temp\gfxstream\host\vsync_thread.h:21:
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(135,13): warning : unsafe buffer access [-Wunsafe-buffer-usage] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+D:\a\_temp\gfxstream\common\base\include\gfxstream/synchronization/MessageChannel.h(184,30): warning : unsafe buffer access [-Wunsafe-buffer-usage] [D:\a\_temp\gfxstream\build\host\gfxstream_backend_static.vcxproj]
+  gfxstream_backend_static.vcxproj -> D:\a\_temp\gfxstream\build\host\Release\gfxstream_backend_static.lib
+  Building Custom Rule D:/a/_temp/gfxstream/host/CMakeLists.txt
+  In file included from D:\a\_temp\gfxstream\host\render_api.cpp:16:
+D:\a\_temp\gfxstream\host\include\render-utils/render_api.h(41,1): warning : 'initLibrary' has C-linkage specified, but returns incomplete type 'gfxstream::RenderLibPtr' (aka 'std::unique_ptr<RenderLib>') which could be incompatible with C [-Wreturn-type-c-linkage] [D:\a\_temp\gfxstream\build\host\g
+D:\a\_temp\gfxstream\host\include\render-utils/render_api_functions.h(23,65): message : expanded from macro 'LIST_RENDER_API_FUNCTIONS' [D:\a\_temp\gfxstream\build\host\gfxstream_backend.vcxproj]
+  In file included from D:\a\_temp\gfxstream\host\virtio_gpu_gfxstream_renderer.cpp:24:
+  In file included from D:\a\_temp\gfxstream\host\frame_buffer.h:45:
+D:\a\_temp\gfxstream\host\include\render-utils/render_api.h(41,1): warning : 'initLibrary' has C-linkage specified, but returns incomplete type 'gfxstream::RenderLibPtr' (aka 'std::unique_ptr<RenderLib>') which could be incompatible with C [-Wreturn-type-c-linkage] [D:\a\_temp\gfxstream\build\host\g
+D:\a\_temp\gfxstream\host\include\render-utils/render_api_functions.h(23,65): message : expanded from macro 'LIST_RENDER_API_FUNCTIONS' [D:\a\_temp\gfxstream\build\host\gfxstream_backend.vcxproj]
+  gfxstream_backend.vcxproj -> D:\a\_temp\gfxstream\build\Release\gfxstream_backend.dll

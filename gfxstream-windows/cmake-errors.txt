@@ -1,1 +1,0 @@
-D:\a\_temp\gfxstream\host\vulkan\vk_common_operations.cpp(1938,63): error : cannot pass object of non-trivial type 'const std::string' (aka 'const basic_string<char, char_traits<char>, allocator<char>>') through variadic function; call will abort at runtime [-
