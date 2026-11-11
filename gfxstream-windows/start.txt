@@ -1,20 +1,5 @@
-=== starting gfxstream (Windows runner: no GPU, no OpenGL ES libraries installed)
+=== starting gfxstream (Windows runner: no GPU, no Vulkan driver)
 library: D:\a\_temp/gfxstream/build/Release/gfxstream_backend.dll
---- gles
-  renderer error: [egl_os_api_egl.cpp(211)] (anonymous namespace)::EglOsGlLibrary::EglOsGlLibrary: Could not open GL library libGLESv2.dll [The specified module could not be found.]
-  renderer error: [egl_os_api_egl.cpp(168)] (anonymous namespace)::EglOsEglDispatcher::EglOsEglDispatcher: Could not open EGL library libEGL.dll [The specified module could not be found.]
-Traceback (most recent call last):
-  File "D:\a\gameDroid\gameDroid\tools\gpu\probe_gfxstream.py", line 112, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "D:\a\gameDroid\gameDroid\tools\gpu\probe_gfxstream.py", line 92, in main
-    return start(sys.argv[2], sys.argv[3:])
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\a\gameDroid\gameDroid\tools\gpu\probe_gfxstream.py", line 71, in start
-    rc = lib.stream_renderer_init(params, ctypes.c_uint64(len(params)))
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-OSError: exception: access violation reading 0x0000000000000000
-GFXSTREAM_START_GLES=FAIL (1)
 --- vulkan
   renderer error: [vk_common_operations.cpp(943)] Failed to create Vulkan instance. Error VK_ERROR_INCOMPATIBLE_DRIVER.
   renderer error: [frame_buffer.cpp(1288)] Failed to initialize global Vulkan emulation requested. Try updating your GPU drivers, using software rendering or disabling Vulkan feature support.
@@ -22,10 +7,3 @@ GFXSTREAM_START_GLES=FAIL (1)
   renderer error: [renderer_impl.cpp(86)] Could not initialize emulated framebuffer
   renderer error: [virtio_gpu_gfxstream_renderer.cpp(234)] Failed to initialize renderer.
 GFXSTREAM_START_VULKAN=FAIL (timed out)
---- gles+vulkan
-  renderer error: [vk_common_operations.cpp(943)] Failed to create Vulkan instance. Error VK_ERROR_INCOMPATIBLE_DRIVER.
-  renderer error: [frame_buffer.cpp(1288)] Failed to initialize global Vulkan emulation requested. Try updating your GPU drivers, using software rendering or disabling Vulkan feature support.
-  renderer error: [frame_buffer.cpp(4670)] Failed to initialize FrameBuffer().
-  renderer error: [renderer_impl.cpp(86)] Could not initialize emulated framebuffer
-  renderer error: [virtio_gpu_gfxstream_renderer.cpp(234)] Failed to initialize renderer.
-GFXSTREAM_START_GLES_VULKAN=FAIL (timed out)
