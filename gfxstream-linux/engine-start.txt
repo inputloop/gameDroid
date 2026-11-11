@@ -1,0 +1,5 @@
+capability set 3 gfxstream-vulkan: offered (version 0, 116 bytes, 21 non-zero)
+capability set 8 gfxstream-gles: offered (version 0, 16 bytes, 4 non-zero)
+capability set 9 gfxstream-composer: offered (version 0, 16 bytes, 4 non-zero)
+a Vulkan context: created
+GPU_CHECK=PASS
