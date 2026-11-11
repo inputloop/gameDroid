@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# GPU track, step G1 (docs/engine/E8-gpu-plan.md): can gfxstream's host
+# library be built on its own, at a pinned commit, on both hosts?
+# Exploratory: each job reports what happened and publishes the tail of its
+# build log; a failed build does not fail the run.
+name: gfxstream-build
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/gfxstream-build.yml"
+permissions:
+  contents: write  # to publish the result to the ci-logs branch
+env:
+  GFXSTREAM_COMMIT: b8537e6d4db20caaa581d769a8543bddb377a30b
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get gfxstream
+        run: |
+          git clone -q --filter=blob:none https://github.com/google/gfxstream "$HOME/gfxstream"
+          git -C "$HOME/gfxstream" checkout -q "$GFXSTREAM_COMMIT"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq meson ninja-build cmake pkg-config libdrm-dev libegl-dev libgles-dev libvulkan-dev libx11-dev libx11-xcb-dev libxcb1-dev >/dev/null
+      - name: Build with Meson
+        run: |
+          set +e
+          mkdir -p "$HOME/out" && cd "$HOME/gfxstream"
+          { meson setup -Ddefault_library=shared -Dgfxstream-build=host build-meson && meson compile -C build-meson; } > "$HOME/out/meson.log" 2>&1
+          echo "MESON_EXIT=$?" | tee "$HOME/out/result.txt"
+          find build-meson -name 'libgfxstream*' -type f -printf '%s %p\n' 2>/dev/null | tee -a "$HOME/out/result.txt"
+          tail -n 60 "$HOME/out/meson.log" | cut -c1-300 > "$HOME/out/meson-tail.txt"
+      - name: Build with CMake
+        run: |
+          set +e
+          cd "$HOME/gfxstream" && mkdir -p build-cmake && cd build-cmake
+          { cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release && ninja gfxstream_backend; } > "$HOME/out/cmake.log" 2>&1
+          echo "CMAKE_EXIT=$?" | tee -a "$HOME/out/result.txt"
+          find . -name 'libgfxstream*' -type f -printf '%s %p\n' 2>/dev/null | tee -a "$HOME/out/result.txt"
+          tail -n 60 "$HOME/out/cmake.log" | cut -c1-300 > "$HOME/out/cmake-tail.txt"
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get gfxstream
+        run: |
+          git clone -q --filter=blob:none https://github.com/google/gfxstream "$RUNNER_TEMP/gfxstream"
+          git -C "$RUNNER_TEMP/gfxstream" checkout -q "$GFXSTREAM_COMMIT"
+      - name: Build with CMake and ClangCL
+        run: |
+          set +e
+          mkdir -p out
+          OUT="$PWD/out"
+          cd "$RUNNER_TEMP/gfxstream" && mkdir -p build && cd build
+          { cmake .. -A x64 -T ClangCL && cmake --build . --config Release --target gfxstream_backend -- -m; } > "$OUT/cmake.log" 2>&1
+          echo "CMAKE_EXIT=$?" | tee "$OUT/result.txt"
+          find . -iname '*gfxstream_backend*.dll' -o -iname '*gfxstream_backend*.lib' | while read -r f; do echo "$(stat -c %s "$f") $f"; done | tee -a "$OUT/result.txt"
+          grep -E "error|Error" "$OUT/cmake.log" | cut -c1-300 | head -n 40 > "$OUT/cmake-errors.txt"
+          tail -n 60 "$OUT/cmake.log" | cut -c1-300 > "$OUT/cmake-tail.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gfxstream-windows
+          if-no-files-found: ignore
+          path: ${{ runner.temp }}/gfxstream/build/**/*gfxstream_backend*.dll
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-windows result.txt cmake-errors.txt cmake-tail.txt
