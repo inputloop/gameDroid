@@ -1,5 +1,5 @@
 gameDroid: first run. Setting up Android (build 16644040) in D:\a\_temp/gd-data
-gameDroid: this downloads about 1.2 GB; games and data may use up to 22 GB.
+gameDroid: this downloads about 1.2 GB; games and data may use up to 23 GB.
 gameDroid: downloading, 32 of 1109 MB
 gameDroid: downloading, 64 of 1109 MB
 gameDroid: downloading, 96 of 1109 MB
@@ -46,6 +46,6 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 18 s
+gameDroid: setup finished in 22 s
 gameDroid: fetching the Fulguris browser from F-Droid (9 MB)
-gameDroid: no sound will be heard: this computer has no sound output
+gamedroid: 32 PCI devices asked for; the bus holds 31
