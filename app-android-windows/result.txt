@@ -2,7 +2,7 @@ RESULT: Android booted behind the window
 RESULT: fell back from the graphics card
 screen 1024x768 saved to 1-screen.png
 RESULT: the browser was installed and set up
-SUCCESS: The process "gamedroid.exe" with PID 1080 has been terminated.
+SUCCESS: The process "gamedroid.exe" with PID 7640 has been terminated.
 --- program messages
 gameDroid: first run. Setting up Android (build 16644040) in D:\a\_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 25 GB.
