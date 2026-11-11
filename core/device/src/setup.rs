@@ -800,6 +800,85 @@ mod tests {
         assert_eq!(run(&[]).0.data, places[0]);
     }
 
+    /// A one-request-at-a-time web server for `body` that honours `Range`.
+    /// Returns its address and a list of the Range headers it was sent.
+    fn serve(body: Vec<u8>, requests: usize) -> (String, std::sync::mpsc::Receiver<String>) {
+        use std::io::{BufRead, BufReader};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let url = format!("http://{}/image.zip", listener.local_addr().unwrap());
+        let (tx, rx) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            for _ in 0..requests {
+                let (mut stream, _) = listener.accept().unwrap();
+                let mut range = String::new();
+                for line in BufReader::new(stream.try_clone().unwrap()).lines() {
+                    let line = line.unwrap();
+                    if line.is_empty() {
+                        break;
+                    }
+                    if let Some(v) = line.to_ascii_lowercase().strip_prefix("range: bytes=") {
+                        range = v.to_string();
+                    }
+                }
+                let from: usize = range.trim_end_matches('-').parse().unwrap_or(0);
+                tx.send(range).unwrap();
+                let head = if from >= body.len() && from > 0 {
+                    "HTTP/1.1 416 Range Not Satisfiable\r\nContent-Length: 0\r\n\r\n".to_string()
+                } else if from > 0 {
+                    format!(
+                        "HTTP/1.1 206 Partial Content\r\nContent-Length: {}\r\n\r\n",
+                        body.len() - from
+                    )
+                } else {
+                    format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n", body.len())
+                };
+                stream.write_all(head.as_bytes()).unwrap();
+                if from < body.len() {
+                    stream.write_all(&body[from..]).unwrap();
+                }
+            }
+        });
+        (url, rx)
+    }
+
+    #[test]
+    fn an_interrupted_download_is_continued_and_hashed_whole() {
+        use sha2::Digest;
+        let dir = std::env::temp_dir().join(format!("gd-setup-resume-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        let body: Vec<u8> = (0..300_000u32).map(|i| (i * 7 + i / 251) as u8).collect();
+        let want = hex(&sha2::Sha256::digest(&body));
+        let to = dir.join("image.zip");
+
+        // From nothing.
+        let (url, ranges) = serve(body.clone(), 1);
+        assert_eq!(download(&url, &to, &mut |_| {}).unwrap(), want);
+        assert_eq!(std::fs::read(&to).unwrap(), body);
+        assert_eq!(ranges.recv().unwrap(), "", "no Range on a fresh download");
+
+        // From a part left by an earlier attempt: only the rest is asked for.
+        std::fs::remove_file(&to).unwrap();
+        std::fs::write(dir.join("image.part"), &body[..100_000]).unwrap();
+        let (url, ranges) = serve(body.clone(), 1);
+        assert_eq!(download(&url, &to, &mut |_| {}).unwrap(), want);
+        assert_eq!(std::fs::read(&to).unwrap(), body);
+        assert_eq!(ranges.recv().unwrap(), "100000-");
+        assert!(!dir.join("image.part").exists());
+
+        // A part that is not the start of this file is thrown away.
+        std::fs::remove_file(&to).unwrap();
+        std::fs::write(dir.join("image.part"), vec![0u8; 400_000]).unwrap();
+        let (url, ranges) = serve(body.clone(), 2);
+        assert_eq!(download(&url, &to, &mut |_| {}).unwrap(), want);
+        assert_eq!(std::fs::read(&to).unwrap(), body);
+        assert_eq!(
+            (ranges.recv().unwrap(), ranges.recv().unwrap()),
+            ("400000-".into(), "".into())
+        );
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
     #[test]
     fn the_plan_survives_being_saved() {
         let plan = Plan {
