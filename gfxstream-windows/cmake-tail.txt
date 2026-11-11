@@ -1,0 +1,60 @@
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(464,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(216,33): message : expanded from macro 'IPPROTO_UDP' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(465,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(217,33): message : expanded from macro 'IPPROTO_IDP' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(481,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(218,33): message : expanded from macro 'IPPROTO_ND' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(491,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(220,33): message : expanded from macro 'IPPROTO_RAW' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(493,5): error : expected identifier [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(221,33): message : expanded from macro 'IPPROTO_MAX' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+  In file included from C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h:116:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\ws2def.h(644,16): error : redefinition of 'sockaddr_in' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(309,8): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(136,16): error : redefinition of 'fd_set' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(65,16): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(180,8): error : redefinition of 'timeval' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(108,8): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(236,9): error : redefinition of 'hostent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(164,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(249,9): error : redefinition of 'netent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(177,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(256,9): error : redefinition of 'servent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(184,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(268,9): error : redefinition of 'protoent' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(196,9): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  In file included from D:\a\_temp\gfxstream\common\base\windows\src\time.cpp:16:
+  In file included from D:\a\_temp\gfxstream\common\base\windows\includes\sys/time.h:20:
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\WinSock2.h(364,16): error : redefinition of 'WSAData' [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\winsock.h(319,16): message : previous definition is here [D:\a\_temp\gfxstream\build\common\base\windows\gfxstream_common_base_windows_compat.vcxproj]
+  fatal error: too many errors emitted, stopping now [-ferror-limit=]
+  gfxstream_host_compressed_textures.vcxproj -> D:\a\_temp\gfxstream\build\host\compressed_textures\Release\gfxstream_host_compressed_textures.lib
