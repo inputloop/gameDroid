@@ -29,7 +29,7 @@ wait 2
 shell echo GD_""WEB_BEGIN; pm list packages | grep -iE "browser|webview|chrom|search"; cmd package resolve-activity --brief -a android.intent.action.VIEW -d http://example.com | tail -n 1; cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.APP_BROWSER | tail -n 3; echo GD_""WEB_END
 expect GD_WEB_END 40
 # Sound and camera: what this image really has to work with.
-shell echo GD_""AV_BEGIN; cat /proc/asound/cards; su 0 sh -c 'ls /vendor/lib/modules /vendor_dlkm/lib/modules 2>/dev/null | grep -iE "snd|media|v4l2|vivid|uvc" | tr "\n" " "'; echo; su 0 sh -c 'ls /vendor/apex /apex 2>/dev/null | grep -i camera | tr "\n" " "'; echo; getprop | grep -iE "audio.tinyalsa|camera.provider" | head -n 6; ls /dev/video* 2>&1 | head -n 3; echo GD_""AV_END
+shell echo GD_""AV_BEGIN; su 0 cat /proc/asound/cards; su 0 cat /proc/asound/pcm; su 0 dumpsys media.audio_flinger | grep -iE "^Output thread|^Input thread|Standby:|Sample rate:|HAL format" | head -n 8; su 0 ls -l /dev/video0; su 0 sh -c 'ls /vendor/lib/modules /vendor_dlkm/lib/modules 2>/dev/null | grep -iE "snd|media|v4l2|vivid|uvc" | tr "\n" " "'; echo; su 0 sh -c 'ls /vendor/apex /apex 2>/dev/null | grep -i camera | tr "\n" " "'; echo; getprop | grep -iE "audio.tinyalsa|camera.provider" | head -n 6; ls /dev/video* 2>&1 | head -n 3; echo GD_""AV_END
 expect GD_AV_END 40
 # Who is drawing: Android's Vulkan driver, and the renderer its OpenGL ES
 # reports.

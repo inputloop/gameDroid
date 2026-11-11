@@ -37,6 +37,9 @@ pub struct Options {
     pub gfxstream: Option<std::path::PathBuf>,
     /// A network card with the host's internet behind it.
     pub network: bool,
+    /// A sound card. Nothing on the host is connected to it yet: what
+    /// Android plays is counted and dropped, and it records silence.
+    pub sound: bool,
 }
 
 /// How many processors to give Android on a host with `host` logical
@@ -61,6 +64,7 @@ impl Default for Options {
             extra_disk: None,
             gfxstream: None,
             network: true,
+            sound: true,
         }
     }
 }
@@ -131,6 +135,39 @@ pub fn true_colours(mut frame: Frame) -> Frame {
     frame
 }
 
+/// A stand-in for the host's speakers and microphone, until they are
+/// connected: it says on standard error when Android starts and stops
+/// playing or recording and how much was played, and records silence.
+#[derive(Default)]
+struct Meter {
+    played: u64,
+}
+
+impl bvmm::virtio::snd::SoundBackend for Meter {
+    fn playback_started(&mut self, rate: u32, channels: u8) {
+        self.played = 0;
+        eprintln!("gameDroid: Android is playing sound ({rate} Hz, {channels} channel(s))");
+    }
+    fn play(&mut self, samples: &[u8]) {
+        self.played += samples.len() as u64;
+    }
+    fn playback_stopped(&mut self) {
+        eprintln!(
+            "gameDroid: Android stopped playing ({} bytes of sound)",
+            self.played
+        );
+    }
+    fn capture_started(&mut self, rate: u32, channels: u8) {
+        eprintln!("gameDroid: Android is recording ({rate} Hz, {channels} channel(s))");
+    }
+    fn record(&mut self, out: &mut [u8]) {
+        out.fill(0);
+    }
+    fn capture_stopped(&mut self) {
+        eprintln!("gameDroid: Android stopped recording");
+    }
+}
+
 fn read(path: &Path) -> Result<Vec<u8>, String> {
     std::fs::read(path).map_err(|e| format!("reading {}: {e}", path.display()))
 }
@@ -179,6 +216,9 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
             "initrd.img"
         }))?),
         gfxstream: options.gfxstream.clone(),
+        sound: options
+            .sound
+            .then(|| bvmm::virtio::snd::Sound::new(Box::new(Meter::default()))),
         cmdline: cmdline.trim().to_string(),
         // The boot configuration names the system disk by its PCI slot, so
         // it must stay the first device.

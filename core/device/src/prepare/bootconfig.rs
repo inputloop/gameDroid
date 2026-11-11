@@ -189,11 +189,6 @@ pub fn runtime(
         // Wi-Fi made from a plain network card (the third one; see the
         // machine's network cards in android.rs). Without this setting the
         // image starts no Wi-Fi at all.
-        // No sound card exists yet. Without these two, Android's audio
-        // service fails to open its streams; with them it plays into
-        // nothing and records silence. To go when the sound device comes.
-        ("androidboot.audio.tinyalsa.ignore_output", "true"),
-        ("androidboot.audio.tinyalsa.simulate_input", "true"),
         ("androidboot.wifi_impl", "virt_wifi"),
         // The image's Wi-Fi helper makes the card's address from this
         // number, and aborts if it is absent.
