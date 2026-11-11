@@ -1,4 +1,4 @@
-size: 11207680 bytes
+size: 11207168 bytes
 --- libraries the file asks Windows for
 	DLL Name: ADVAPI32.dll
 	DLL Name: GDI32.dll
