@@ -8,6 +8,7 @@
 //! [`script`] is a small input-script format for tests and demonstrations.
 
 pub mod android;
+pub mod console;
 pub mod cuttlefish;
 pub mod prepare;
 pub mod script;

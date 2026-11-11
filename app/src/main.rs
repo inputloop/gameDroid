@@ -273,6 +273,7 @@ fn run() -> Result<(), String> {
     };
     let name = profile.as_ref().map(|p| p.name.clone()).unwrap_or_default();
 
+    let mut settle = None;
     let mut guest = match &args.dir {
         Some(dir) => {
             let (config, handles) = machine(dir, &args.options)?;
@@ -283,8 +284,13 @@ fn run() -> Result<(), String> {
                 ),
                 None => Box::new(std::io::sink()),
             };
+            // Watch for the end of booting, and keep a line to Android's
+            // shell for the settings a games machine wants.
+            let (console, booted) = gamedroid_device::console::BootWatch::new(console);
+            let (shell, keys) = gamedroid_device::console::serial();
+            settle = Some((booted, shell));
             std::thread::spawn(move || {
-                match bvmm::run_linux(&config, console, None) {
+                match bvmm::run_linux(&config, Box::new(console), Some(Box::new(keys))) {
                     Ok(_) => eprintln!("gamedroid: Android stopped"),
                     Err(e) => eprintln!("gamedroid: {e}"),
                 }
@@ -328,7 +334,21 @@ fn run() -> Result<(), String> {
     let mut want_game_mode = args.game_mode;
     let started = Instant::now();
 
+    let mut booted_at: Option<Instant> = None;
     while window.is_open() {
+        // A few seconds after Android has booted: no lock screen, and a
+        // screen that stays on.
+        if let Some((booted, shell)) = &settle {
+            if booted.load(std::sync::atomic::Ordering::SeqCst) {
+                let at = *booted_at.get_or_insert_with(Instant::now);
+                if at.elapsed() > Duration::from_secs(5) {
+                    let line = format!("{}\n", gamedroid_device::console::GAMING_SETTINGS);
+                    let _ = shell.send(line.into_bytes());
+                    // Keep the sender: dropping it would close the serial line.
+                    std::mem::forget(settle.take());
+                }
+            }
+        }
         let mut state = HostState {
             keys: window.get_keys(),
             mouse: window.get_mouse_pos(MouseMode::Discard),

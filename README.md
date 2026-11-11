@@ -38,7 +38,7 @@ device in CI. More below.*
 | Android on Windows | Working in CI: boots on two processors with a precise clock, unlocks by touch, installs and starts the game. Not yet run on a real Windows machine with a GPU |
 | GPU acceleration | Not yet. Route chosen and written down: gfxstream ([plan](docs/engine/E8-gpu-plan.md)). First step in progress: its host library builds in CI on Linux; the Windows build is being fixed |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
-| One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it downloads Android (1.2 GB), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
+| One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
@@ -183,8 +183,10 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E9 | Sound | Planned |
 
 gameDroid's own features build on these. What is next, in order: try
-`gamedroid.exe` on the Windows reference laptop; then a proper clock and
-several processors on Windows; then game mode against a real game.
+`gamedroid.exe` on the Windows reference laptop; GPU acceleration, step by
+step ([plan](docs/engine/E8-gpu-plan.md)); network and sound in the guest,
+which online games and voice chat ([Linphone research](docs/research/linphone.md))
+both need; then game mode against a real game.
 Performance work needs E8.
 
 ## Things worth knowing before you get excited

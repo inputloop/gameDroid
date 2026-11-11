@@ -88,3 +88,29 @@ showed it in its window; on Linux a mouse swipe unlocked it. The first item
 under "Not yet verified" is therefore done. The first Windows attempt failed
 because the default asked for two processors; the default now follows what
 the host engine supports.
+
+## Progress, 2026-11-11: setup
+
+Live-verified in CI unless marked (runs 42927730377, 42928416616,
+42928586313):
+
+- **Where and how much.** The first run asks where to keep Android, offering
+  gameDroid's own folder and a `gameDroid` folder on every other fixed drive
+  with the free space of each, then how many GB games and their data may
+  use. The answers are saved in `settings.txt` in gameDroid's own folder;
+  deleting that file asks again. `GAMEDROID_DATA` and `GAMEDROID_STORAGE_GB`
+  override them. With nobody at the keyboard it takes the defaults.
+  The storage limit is honoured: asked for 20 GB on Windows, Android reports
+  a 20 GB data partition (12 GB asked and seen on Linux). The questions
+  themselves are unit-tested, not exercised by a person in CI.
+- **The limit is not a reservation.** The partition file is sparse, so disk
+  is used as Android fills it. Android formats it on first boot.
+- **Free space** is checked before the download (5 GB needed to set up).
+  Unit-tested only.
+- **Interrupted downloads continue** from where they stopped. Tested against
+  a local web server, not against a real dropped connection.
+- **The archive is checked**: its size and SHA-256 are pinned. Both hosts
+  downloaded the same bytes.
+
+Not done: choosing a different place after setup (the data would need
+moving); showing any of this in a window, not a console.
