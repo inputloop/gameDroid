@@ -1,17 +1,17 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
 RESULT: graphics card mode was chosen
-lock and after-swipe differ by 259177 pixels
+lock and after-swipe differ by 259188 pixels
 RESULT: the browser was installed and set up
 RESULT: F3 opened the browser
-after-swipe and help differ by 250588 pixels
+after-swipe and help differ by 250136 pixels
 gameDroid: unpacking vbmeta_system.img
 gameDroid: unpacking vbmeta_vendor_dlkm.img
 gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 12 s
+gameDroid: setup finished in 9 s
 gameDroid: fetching the Fulguris browser from F-Droid (9 MB)
 gameDroid: Android will draw with the graphics card.
 ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
