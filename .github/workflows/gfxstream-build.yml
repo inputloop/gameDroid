@@ -64,10 +64,13 @@ jobs:
           mkdir -p out
           OUT="$PWD/out"
           cd "$RUNNER_TEMP/gfxstream" && mkdir -p build && cd build
-          { cmake .. -A x64 -T ClangCL && cmake --build . --config Release --target gfxstream_backend -- -m; } > "$OUT/cmake.log" 2>&1
+          # windows.h must not pull in the old winsock.h ahead of WinSock2.h;
+          # gfxstream's Bazel build defines this, its CMake build does not.
+          export CFLAGS="-DWIN32_LEAN_AND_MEAN" CXXFLAGS="-DWIN32_LEAN_AND_MEAN"
+          { cmake .. -A x64 -T ClangCL && cmake --build . --config Release --target gfxstream_backend -- -m -v:m; } > "$OUT/cmake.log" 2>&1
           echo "CMAKE_EXIT=$?" | tee "$OUT/result.txt"
           find . -iname '*gfxstream_backend*.dll' -o -iname '*gfxstream_backend*.lib' | while read -r f; do echo "$(stat -c %s "$f") $f"; done | tee -a "$OUT/result.txt"
-          grep -E "error|Error" "$OUT/cmake.log" | cut -c1-300 | head -n 40 > "$OUT/cmake-errors.txt"
+          grep -E "error [A-Z0-9]*:|error :|fatal error" "$OUT/cmake.log" | sed -E 's/ \[[^]]*vcxproj\]$//' | awk '!seen[$0]++' | cut -c1-260 | head -n 60 > "$OUT/cmake-errors.txt"
           tail -n 60 "$OUT/cmake.log" | cut -c1-300 > "$OUT/cmake-tail.txt"
       - uses: actions/upload-artifact@v4
         if: always()
