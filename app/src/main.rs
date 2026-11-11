@@ -40,6 +40,7 @@ in the window:
   mouse        a finger (direct mode)
   keyboard     types into Android (direct mode)
   F1           game mode on or off: keys and mouse follow the profile
+  F3           help: "How to use this browser and OS", in Android's browser
   Esc          Back        F2    Home";
 
 const DEMO_SIZE: (u32, u32) = (720, 1280);
@@ -274,6 +275,9 @@ fn run() -> Result<(), String> {
     let name = profile.as_ref().map(|p| p.name.clone()).unwrap_or_default();
 
     let mut settle = None;
+    // A line to Android's shell for the Help key, once Android is running.
+    let mut help_line: Option<std::sync::mpsc::Sender<Vec<u8>>> = None;
+    let mut help_was_down = false;
     let mut guest = match &args.dir {
         Some(dir) => {
             let (config, handles) = machine(dir, &args.options)?;
@@ -288,6 +292,7 @@ fn run() -> Result<(), String> {
             // shell for the settings a games machine wants.
             let (console, booted) = gamedroid_device::console::BootWatch::new(console);
             let (shell, keys) = gamedroid_device::console::serial();
+            help_line = Some(shell.clone());
             settle = Some((booted, shell));
             std::thread::spawn(move || {
                 match bvmm::run_linux(&config, Box::new(console), Some(Box::new(keys))) {
@@ -372,6 +377,15 @@ fn run() -> Result<(), String> {
             ],
             window: window.get_size(),
         };
+        // F3: the help page, in Android's browser.
+        let help_down = state.keys.contains(&minifb::Key::F3);
+        if help_down && !help_was_down {
+            if let Some(shell) = &help_line {
+                let line = format!("{}\n", gamedroid_device::console::open_help_command());
+                let _ = shell.send(line.into_bytes());
+            }
+        }
+        help_was_down = help_down;
         // A key tapped and let go between two frames is not in the held
         // list any more; count it as held for this one frame so it is seen.
         for key in tapped.lock().unwrap().drain(..) {
