@@ -1,0 +1,27 @@
+=== starting gfxstream (Linux, software renderers)
+	deviceName         = llvmpipe (LLVM 20.1.2, 256 bits)
+	driverName         = llvmpipe
+--- gles
+  renderer error: [emulation_gl.cpp(163)] Failed to find exactly 1 GLES 2.x config: found 0.
+  renderer error: [emulation_gl.cpp(423)] Failed to validate creating GLES 2.x context.
+  renderer error: [frame_buffer.cpp(1343)] Failed to initialize GL emulation.
+  renderer error: [frame_buffer.cpp(4670)] Failed to initialize FrameBuffer().
+  renderer error: [renderer_impl.cpp(86)] Could not initialize emulated framebuffer
+  renderer error: [virtio_gpu_gfxstream_renderer.cpp(234)] Failed to initialize renderer.
+GFXSTREAM_START_GLES=FAIL (timed out)
+--- vulkan
+  stream_renderer_init returned 0
+  capability set 3 GFXSTREAM_VULKAN: offered (version 0, 116 bytes)
+  capability set 8 GFXSTREAM_GLES: offered (version 0, 16 bytes)
+  capability set 9 GFXSTREAM_COMPOSER: offered (version 0, 16 bytes)
+  context_create returned 0
+  teardown done
+GFXSTREAM_START_VULKAN=PASS
+--- gles+vulkan
+  renderer error: [emulation_gl.cpp(163)] Failed to find exactly 1 GLES 2.x config: found 0.
+  renderer error: [emulation_gl.cpp(423)] Failed to validate creating GLES 2.x context.
+  renderer error: [frame_buffer.cpp(1343)] Failed to initialize GL emulation.
+  renderer error: [frame_buffer.cpp(4670)] Failed to initialize FrameBuffer().
+  renderer error: [renderer_impl.cpp(86)] Could not initialize emulated framebuffer
+  renderer error: [virtio_gpu_gfxstream_renderer.cpp(234)] Failed to initialize renderer.
+GFXSTREAM_START_GLES_VULKAN=FAIL (timed out)
