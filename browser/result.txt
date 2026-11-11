@@ -5,22 +5,21 @@ gamedroid-run: Android booted; running the script
 gamedroid-run: saw `GD_UNLOCKED`
 gamedroid-run: APK installed (9359352 bytes)
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 428 to browser.ppm
+gamedroid-run: saved frame 319 to browser.ppm
 gamedroid-run: saw `GD_BROWSER_FRONT`
 gamedroid-run: saw `GD_RESTARTED`
-gamedroid-run: saved frame 638 to browser-again.ppm
+gamedroid-run: saved frame 492 to browser-again.ppm
 gamedroid-run: script finished
 --- the default browser, and the files written
 GD_ROLE=net.slions.fulguris.full.fdroid
-SELinux: Loaded file context from:if pm path net.slions.fulguris.full.fdroid >/dev/null 2>&1; then am start -n $(cmd package resolve-activity --brief -c android
 console:/ $ if pm path net.slions.fulguris.full.fdroid >/dev/null 2>&1; then at.slions.fulguris.full.fdroid >/dev/null 2>&1; then a                         <
--rw------- 1 u0_a122 u0_a122 6484 2026-11-11 04:12 gamedroid-help.html
--rw-rw---- 1 u0_a122 u0_a122 405 2026-11-11 04:12 net.slions.fulguris.full.fdroid_preferences.xml
+-rw------- 1 u0_a122 u0_a122 6833 2026-11-11 04:55 gamedroid-help.html
+-rw-rw---- 1 u0_a122 u0_a122 405 2026-11-11 04:55 net.slions.fulguris.full.fdroid_preferences.xml
 --- trouble
-[    3.032950] init: Command 'write /dev/blkio/blkio.weight 1000' action=init (/system/etc/init/hw/init.rc:218) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.weight': open() failed: Permission denied
-[    3.035941] init: Command 'write /dev/blkio/background/blkio.weight 200' action=init (/system/etc/init/hw/init.rc:219) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.weight': open() failed: 
-[    3.038441] init: Command 'write /dev/blkio/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:221) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.group_idle': open() failed: Permission denie
-[    3.041473] init: Command 'write /dev/blkio/background/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:222) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.group_idle': open() fa
-[   13.444524] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ArtTest.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
-[   13.486250] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ProcessManagement.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
-[   13.506510] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/DisruptiveApp.o (uprobe_bind_service_locked) returned fd: -1 (Permission denied)
+[    3.066672] init: Command 'write /dev/blkio/blkio.weight 1000' action=init (/system/etc/init/hw/init.rc:218) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.weight': open() failed: Permission denied
+[    3.068912] init: Command 'write /dev/blkio/background/blkio.weight 200' action=init (/system/etc/init/hw/init.rc:219) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.weight': open() failed: 
+[    3.072185] init: Command 'write /dev/blkio/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:221) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.group_idle': open() failed: Permission denie
+[    3.075334] init: Command 'write /dev/blkio/background/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:222) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.group_idle': open() fa
+[   11.739384] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ArtTest.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[   11.787227] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ProcessManagement.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[   11.810166] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/DisruptiveApp.o (uprobe_bind_service_locked) returned fd: -1 (Permission denied)
