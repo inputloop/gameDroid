@@ -1,6 +1,8 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
-lock and after-swipe differ by 259528 pixels
+lock and after-swipe differ by 259518 pixels
+RESULT: the browser was installed and set up
+after-swipe and help differ by 34487 pixels
 gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 32 GB.
 gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
@@ -14,4 +16,6 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 12 s
+gameDroid: setup finished in 11 s
+gameDroid: fetching the Fulguris browser from F-Droid (9 MB)
+gameDroid: the browser's SHA-256 is 72a95ef9111837e6a557cefac53744e9a8b4f8413fce199e485e249d04c886cc
