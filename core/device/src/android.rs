@@ -222,7 +222,13 @@ mod tests {
         let layout = dir.join("apk.layout");
         assert_eq!(file_as_disk(&apk, &layout).unwrap(), 1000);
         let text = std::fs::read_to_string(&layout).unwrap();
-        assert!(text.starts_with("bvmm-disk-layout 1\n1024 ro /"), "{text}");
+        // An absolute path, however this system writes one.
+        let line = text.lines().nth(1).unwrap_or_default();
+        let path = line
+            .strip_prefix("1024 ro ")
+            .unwrap_or_else(|| panic!("{text}"));
+        assert!(text.starts_with("bvmm-disk-layout 1\n"), "{text}");
+        assert!(std::path::Path::new(path).is_absolute(), "{text}");
         let with_disk = Options {
             extra_disk: Some(layout),
             ..Default::default()

@@ -784,11 +784,13 @@ mod tests {
         );
         assert_eq!(run(&["2", "128 GB"]).0.storage_gib, 128);
         // Nonsense is refused and asked again.
-        let (plan, said) = run(&["7", "games", "/srv/x", "2", "lots", "64"]);
+        // A full path, as this system writes one.
+        let typed = if cfg!(windows) { "E:\\x" } else { "/srv/x" };
+        let (plan, said) = run(&["7", "games", typed, "2", "lots", "64"]);
         assert_eq!(
             plan,
             Plan {
-                data: PathBuf::from("/srv/x"),
+                data: PathBuf::from(typed),
                 storage_gib: 64
             }
         );
