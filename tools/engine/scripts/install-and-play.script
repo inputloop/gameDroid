@@ -21,6 +21,8 @@ shell echo GD_""NET_BEGIN; ls /sys/class/net; ip -o -4 addr; ip route; echo GD_"
 expect GD_NET_END 20
 shell printf 'HEAD / HTTP/1.0\r\nHost: example.com\r\n\r\n' | toybox nc -w 10 example.com 80 | head -n 1; echo GD_""HTTP_DONE
 expect GD_HTTP_DONE 40
+shell echo GD_""ETH_BEGIN; su 0 dumpsys ethernet | head -n 25; su 0 grep -rhE "buried_eth|rename_netiface|eth[0-9]" /vendor/etc/init /system/etc/init | head -n 12; echo GD_""ETH_END
+expect GD_ETH_END 20
 shell dumpsys connectivity | grep -iE "Active default network|NetworkAgentInfo.*(VALIDATED|ETHERNET)" | head -n 4; echo GD_""CONN_DONE
 expect GD_CONN_DONE 20
 install

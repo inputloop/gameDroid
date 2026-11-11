@@ -17,6 +17,7 @@ use crate::cuttlefish::{SensorsControl, CONSOLE_PORTS, PHONE_SENSORS, SENSORS_CO
 const GUEST_CID: u64 = 3;
 /// The network card's hardware address (locally administered).
 const GUEST_MAC: [u8; 6] = [0x02, 0x67, 0x64, 0x00, 0x00, 0x15];
+const MODEM_MAC: [u8; 6] = [0x02, 0x67, 0x64, 0x00, 0x00, 0x01];
 
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -155,8 +156,14 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         consoles: consoles(),
         vsock_cid: Some(GUEST_CID),
         rng: true,
+        // The stock image gives its network cards roles by position: the
+        // first is renamed `buried_eth0` and reserved for the mobile-data
+        // modem, which gameDroid does not emulate. The second stays `eth1`,
+        // which Android treats as plain Ethernet. So the first card here is
+        // connected to nothing, and the second has the internet behind it.
         nets: if options.network {
-            vec![bvmm::net::user_nat(GUEST_MAC)]
+            let (unplugged, _) = bvmm::virtio::net::Net::new(MODEM_MAC, |_| {});
+            vec![unplugged, bvmm::net::user_nat(GUEST_MAC)]
         } else {
             Vec::new()
         },
