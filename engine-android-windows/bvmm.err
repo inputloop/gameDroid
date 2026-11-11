@@ -46,41 +46,37 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 13 s
+gameDroid: setup finished in 15 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 102 to lock.ppm
-gamedroid-run: saved frame 102 to after-swipe.ppm
+gamedroid-run: saved frame 88 to lock.ppm
+gamedroid-run: saved frame 206 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: saw `GD_WIFI_ASKED`
 bvmm net: tcp 10.0.2.3:853 refused
-bvmm net: lookup connectivitycheck.gstatic.com type 1
 bvmm net: lookup www.google.com type 1
-bvmm net: www.google.com is [142.251.154.119, 142.251.150.119, 142.251.156.119, 142.251.153.119, 142.251.151.119, 142.251.152.119, 142.251.157.119, 142.251.155.119]
-bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
+bvmm net: lookup connectivitycheck.gstatic.com type 1
+bvmm net: connectivitycheck.gstatic.com is [64.233.179.94]
+bvmm net: www.google.com is [142.251.152.119, 142.251.151.119, 142.251.157.119, 142.251.155.119, 142.251.150.119, 142.251.153.119, 142.251.154.119, 142.251.156.119]
 bvmm net: lookup time.android.com type 1
-bvmm net: time.android.com is [216.239.35.4, 216.239.35.0, 216.239.35.8, 216.239.35.12]
-bvmm net: tcp 142.251.150.119:443 opening
-bvmm net: tcp 142.251.150.120:80 opening
+bvmm net: time.android.com is [216.239.35.0, 216.239.35.4, 216.239.35.12, 216.239.35.8]
+bvmm net: tcp 64.233.179.94:80 opening
+bvmm net: tcp 142.251.152.119:443 opening
 bvmm net: tcp 10.0.2.3:853 refused
 bvmm net: lookup www.gstatic.com type 1
-bvmm net: www.gstatic.com is [142.251.150.120, 142.251.155.120, 142.251.156.120, 142.251.154.120, 142.251.153.120, 142.251.151.120, 142.251.152.120, 142.251.157.120]
-bvmm net: tcp 142.251.150.120:443 opening
-bvmm net: lookup preprod-remoteprovisioning.googleapis.com type 1
+bvmm net: www.gstatic.com is [142.251.157.120, 142.251.156.120, 142.251.151.120, 142.251.150.120, 142.251.155.120, 142.251.153.120, 142.251.152.120, 142.251.154.120]
+bvmm net: tcp 142.251.157.120:443 opening
 bvmm net: lookup g.co type 1
-bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.112.4, 172.217.117.4, 172.217.113.4, 172.217.118.4, 172.217.115.4, 172.217.114.4, 172.217.119.4, 172.217.116.4]
-bvmm net: tcp 172.217.112.4:443 opening
-bvmm net: g.co is [172.253.115.139, 172.253.115.102, 172.253.115.100, 172.253.115.113, 172.253.115.101, 172.253.115.138]
-bvmm net: tcp 172.253.115.139:443 opening
-bvmm net: tcp 142.251.150.120:443 opening
-bvmm net: tcp 142.251.150.120:443 opening
-bvmm net: tcp 142.251.150.120:443 opening
-bvmm net: tcp 142.251.150.120:443 opening
-bvmm net: lookup 634753-android-ds.metric.gstatic.com type 1
-bvmm net: tcp 8.8.8.8:853 opening
-bvmm net: tcp 10.0.2.3:853 refused
-bvmm net: 634753-android-ds.metric.gstatic.com is [172.253.122.94]
+bvmm net: g.co is [108.177.121.139, 108.177.121.100, 108.177.121.138, 108.177.121.102, 108.177.121.113, 108.177.121.101]
+bvmm net: tcp 108.177.121.139:443 opening
+bvmm net: lookup preprod-remoteprovisioning.googleapis.com type 1
+bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.117.4, 172.217.113.4, 172.217.114.4, 172.217.112.4, 172.217.115.4, 172.217.119.4, 172.217.118.4, 172.217.116.4]
+bvmm net: tcp 172.217.117.4:443 opening
+bvmm net: tcp 142.251.157.120:443 opening
+bvmm net: tcp 142.251.157.120:443 opening
+bvmm net: tcp 142.251.157.120:443 opening
+bvmm net: tcp 142.251.157.120:443 opening
 gamedroid-run: saw `GD_NET_END`
 bvmm net: lookup example.com type 28
 bvmm net: lookup example.com type 1
@@ -92,6 +88,6 @@ gamedroid-run: saw `GD_ONLINE`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 178 to game-1.ppm
-gamedroid-run: saved frame 178 to game-2.ppm
+gamedroid-run: saved frame 1376 to game-1.ppm
+gamedroid-run: saved frame 1487 to game-2.ppm
 gamedroid-run: script finished
