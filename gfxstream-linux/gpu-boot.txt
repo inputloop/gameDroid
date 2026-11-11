@@ -1,5 +1,5 @@
 RUN_EXIT=0 (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)
-console lines: 5806
+console lines: 5817
 === the runner and the renderer
 gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 8 GB.
@@ -7,13 +7,13 @@ gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82
 gameDroid: preparing the boot files
 gameDroid: setup finished in 12 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 82 to lock.ppm
-gamedroid-run: saved frame 167 to after-swipe.ppm
+gamedroid-run: saved frame 81 to lock.ppm
+gamedroid-run: saved frame 148 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 297 to help.ppm
+gamedroid-run: saved frame 287 to help.ppm
 gamedroid-run: saw `GD_HELP_FRONT`
 gamedroid-run: saw `GD_WEB_END`
 gamedroid-run: saw `GD_AV_END`
@@ -26,26 +26,26 @@ gamedroid-run: saw `GD_ONLINE`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 1121 to game-1.ppm
-gamedroid-run: saved frame 1429 to game-2.ppm
+gamedroid-run: saved frame 1027 to game-1.ppm
+gamedroid-run: saved frame 1304 to game-2.ppm
 gamedroid-run: script finished
 === milestones
-[9] virtio_gpu\|\[drm\] :: [    1.510027] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[1] init: starting service .surfaceflinger :: [   12.850466] init: starting service 'surfaceflinger'...
-[16] sys.boot_completed=1 :: [   33.710356] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
+[9] virtio_gpu\|\[drm\] :: [    1.844156] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[1] init: starting service .surfaceflinger :: [   11.374292] init: starting service 'surfaceflinger'...
+[18] sys.boot_completed=1 :: [   32.869286] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
 === the graphics driver in the kernel
-[    1.359433] ashmem: Using Rust implementation.
-[    1.427417] init: Loading module /lib/modules/virtio-gpu.ko with args ''
-[    1.429937] init: Loaded kernel module /lib/modules/virtio-gpu.ko
-[    1.510027] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[    1.511398] [drm] Host memory window: 0xb000000000 +0x200000000
-[    1.512088] [drm] features: +virgl -edid +resource_blob +host_visible
-[    1.512089] [drm] features: +context_init
-[    1.514609] [drm] number of scanouts: 1
-[    1.515094] [drm] number of cap sets: 2
-[    1.515725] [drm] cap set 0: id 3, max-version 0, max-size 116
-[    1.516494] [drm] cap set 1: id 9, max-version 0, max-size 16
-[    1.517432] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
+[    1.663450] ashmem: Using Rust implementation.
+[    1.749529] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    1.752400] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    1.844156] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[    1.845890] [drm] Host memory window: 0xb000000000 +0x200000000
+[    1.846783] [drm] features: +virgl -edid +resource_blob +host_visible
+[    1.846785] [drm] features: +context_init
+[    1.849776] [drm] number of scanouts: 1
+[    1.850425] [drm] number of cap sets: 2
+[    1.851246] [drm] cap set 0: id 3, max-version 0, max-size 116
+[    1.852203] [drm] cap set 1: id 9, max-version 0, max-size 16
+[    1.853273] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
 === who is drawing, by Android's account
 GD_GPU_BEGIN
 ranchu
@@ -56,10 +56,10 @@ init: Command 'setprop ro.vendor.hwcomposer.mode ${ro.boot.hardware.hwcomposer.m
 init: Command 'setprop debug.angle.feature_overrides_disabled ${ro.boot.hardware.angle_feature_overrides_disabled}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:16) took 0ms and failed: property 'ro.boot.hardware.an
 === services that keep restarting
      25 init: starting service 'vendor.threadnetwork_hal'
+      2 init: starting service 'virtualizationservice'
       2 init: starting service 'media.codeclist.generator'
       2 init: starting service 'idmap2d'
       2 init: starting service 'artd'
       2 init: starting service 'apexd'
       1 init: starting service 'zygote'
       1 init: starting service 'wpa_supplicant'
-      1 init: starting service 'vold'
