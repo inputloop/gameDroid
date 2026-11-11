@@ -42,7 +42,8 @@ device in CI. More below.*
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | A help page, and a real browser | Working in CI. "How to use this browser and OS" is stored on the phone after boot. When the Fulguris browser (free software, fetched from F-Droid) is installed, gameDroid makes that page its home page, skips its first-run screens and makes it Android's default browser. F3 in the window opens the page. Not yet done: gameDroid fetching and installing Fulguris by itself on first run; CI installs it by hand |
 | Sound and microphone | Android has a sound card and plays into it (CI). The app connects the computer's speakers and, only while Android records, a microphone (`--microphone`, `--list-microphones`). No real device has been heard yet: CI has none |
-| Camera | Android has one camera, backed by the engine (CI): its camera app shows gameDroid's test picture, live. A real webcam behind it is not connected yet |
+| Camera | Android has one camera, backed by the engine (CI): its camera app shows gameDroid's test picture, live. The app puts the computer's webcam behind it, opened only while Android's camera is in use (`--camera`, `--list-cameras`). No real webcam has been used yet: CI has none |
+| Firefox | Looked into. F-Droid's free build of Firefox (Fennec) has an x86-64 release; it installs and starts on gameDroid (CI). How to offer it is undecided ([notes](docs/research/firefox.md)) |
 | Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
@@ -193,7 +194,7 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
 | E8 | GPU acceleration | The path works in CI on Linux against a software Vulkan ([results](docs/engine/E8-gpu-plan.md)). Windows, a real GPU, and direct presentation are still to do |
-| E9 | Sound, microphone, camera | Sound card and camera device: done in CI, Android plays into one and shows the other's test picture. Host speakers and microphone: written in the app, not yet heard on a real machine. A real webcam behind the camera: not started ([spec and results](docs/engine/E9-sound-camera-spec.md)) |
+| E9 | Sound, microphone, camera | Sound card and camera device: done in CI. Host speakers, microphone and webcam behind them: written in the app, not yet tried on a real machine ([spec and results](docs/engine/E9-sound-camera-spec.md)) |
 
 gameDroid's own features build on these. What is next, in order: try
 `gamedroid.exe` on the Windows reference laptop; GPU acceleration, step by

@@ -240,3 +240,20 @@ Two things found on the way, both in the engine:
 
 Not done: a real webcam behind it (C2). The test picture is all Android
 can see so far.
+
+## C2, 2026-11-11: written, not yet seen
+
+The windowed app puts a webcam behind Android's camera (`core/webcam`,
+`app/src/camera.rs`). Linux: V4L2 spoken directly, no library. Windows:
+Media Foundation through `nokhwa` 0.10. JPEG from the camera passes through;
+YUYV and NV12 are encoded. The webcam is opened when Android starts its
+camera and closed when it stops. With no webcam, or one that cannot give
+exactly the size Android asked for (640x480 or 1280x720), Android sees the
+test picture and the reason is printed.
+
+Verified: choosing a camera, the conversions, the hand-over, the V4L2
+request numbers against the kernel's; and that it compiles for both
+systems. **Not verified: any picture from a real webcam.** CI has none.
+
+Known gaps: a webcam offering neither of those two sizes is not used (its
+picture is not rescaled); the Windows path has never run at all.
