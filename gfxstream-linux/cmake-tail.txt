@@ -5,9 +5,8 @@ cc1plus: note: unrecognized command-line option ‘-Wno-inconsistent-missing-ove
 cc1plus: note: unrecognized command-line option ‘-Wno-extern-c-compat’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-return-type-c-linkage’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-unused-private-field’ may have been intended to silence earlier diagnostics
-[207/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/render_thread.cpp.o
-[208/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_context.cpp.o
-[209/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_pipe.cpp.o
+[207/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/render_window.cpp.o
+[208/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_pipe.cpp.o
 In file included from /usr/include/strings.h:23,
                  from /usr/include/string.h:462,
                  from /home/runner/gfxstream/host/include/render-utils/stream.h:23,
@@ -23,8 +22,14 @@ cc1plus: note: unrecognized command-line option ‘-Wno-inconsistent-missing-ove
 cc1plus: note: unrecognized command-line option ‘-Wno-extern-c-compat’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-return-type-c-linkage’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-unused-private-field’ may have been intended to silence earlier diagnostics
+[209/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_context.cpp.o
 [210/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_ring_blob.cpp.o
-[211/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_resource.cpp.o
+[211/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_timelines.cpp.o
+[212/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/sync_thread.cpp.o
+[213/224] Linking CXX static library host/gl/libgfxstream-gl-server.a
+[214/224] Linking CXX static library host/renderControl_dec/librenderControl_dec.a
+[215/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/vsync_thread.cpp.o
+[216/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_resource.cpp.o
 In file included from /home/runner/gfxstream/host/common/include/gfxstream/host/color_buffer_interface.h:23,
                  from /home/runner/gfxstream/host/frame_buffer.h:35,
                  from /home/runner/gfxstream/host/virtio_gpu_resource.cpp:22:
@@ -45,14 +50,9 @@ cc1plus: note: unrecognized command-line option ‘-Wno-inconsistent-missing-ove
 cc1plus: note: unrecognized command-line option ‘-Wno-extern-c-compat’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-return-type-c-linkage’ may have been intended to silence earlier diagnostics
 cc1plus: note: unrecognized command-line option ‘-Wno-unused-private-field’ may have been intended to silence earlier diagnostics
-[212/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_timelines.cpp.o
-[213/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/vsync_thread.cpp.o
-[214/224] Linking CXX static library host/renderControl_dec/librenderControl_dec.a
-[215/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/sync_thread.cpp.o
-[216/224] Linking CXX static library host/gl/libgfxstream-gl-server.a
-[217/224] Building CXX object host/CMakeFiles/gfxstream_backend.dir/render_api.cpp.o
-[218/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/frame_buffer.cpp.o
-[219/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_frontend.cpp.o
+[217/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/virtio_gpu_frontend.cpp.o
+[218/224] Building CXX object host/CMakeFiles/gfxstream_backend.dir/render_api.cpp.o
+[219/224] Building CXX object host/CMakeFiles/gfxstream_backend_static.dir/frame_buffer.cpp.o
 [220/224] Building CXX object host/CMakeFiles/gfxstream_backend.dir/virtio_gpu_gfxstream_renderer.cpp.o
 [221/224] Building CXX object host/vulkan/CMakeFiles/gfxstream-vulkan-server.dir/vk_decoder_global_state.cpp.o
 [222/224] Linking CXX static library host/vulkan/libgfxstream-vulkan-server.a
