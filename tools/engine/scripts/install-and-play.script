@@ -16,6 +16,10 @@ expect GD_DATA_KB= 20
 # Which clock the kernel settled on, and how many processors it has.
 shell echo GD_""CLOCK=$(su 0 cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
 expect GD_CPUS= 20
+# Who is drawing: Android's Vulkan driver, and the renderer its OpenGL ES
+# reports.
+shell echo GD_""GPU_BEGIN; getprop ro.hardware.vulkan; su 0 dumpsys SurfaceFlinger | grep -m1 "GLES:" | cut -c1-200; echo GD_""GPU_END
+expect GD_GPU_END 40
 # The network. Join the virtual Wi-Fi as the app does, then look.
 shell su 0 sh -c '[ -e /sys/class/net/wlan0 ] && echo GD_WLAN_BY_IMAGE || { ip link add link buried_eth2 name wlan0 type virt_wifi; ip link set buried_eth2 up; echo GD_WLAN_BY_HAND; }; cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""WIFI_ASKED
 expect GD_WIFI_ASKED 30

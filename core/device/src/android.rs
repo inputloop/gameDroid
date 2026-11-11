@@ -91,9 +91,30 @@ pub struct Handles {
     pub touch: InputSender,
     /// Push key presses here.
     pub keyboard: InputSender,
+    /// Whether the host's GPU is drawing. Then the picture's colours are
+    /// described truthfully and need no correction.
+    pub host_gpu: bool,
 }
 
-/// A frame from the stock Android image with its colours put right.
+impl Handles {
+    /// The latest frame, with its colours right for showing.
+    pub fn frame(&self) -> Frame {
+        show(self.display.frame(), self.host_gpu)
+    }
+}
+
+/// `frame` with its colours right: corrected when Android drew it with the
+/// CPU (see [`true_colours`]), as it is when the host's GPU did.
+pub fn show(frame: Frame, host_gpu: bool) -> Frame {
+    if host_gpu {
+        frame
+    } else {
+        true_colours(frame)
+    }
+}
+
+/// A frame the stock Android image drew with the CPU, with its colours
+/// put right.
 ///
 /// The image's composer draws into a buffer the guest kernel describes to
 /// the display device as blue-green-red, but fills it red-green-blue. A host
@@ -191,6 +212,7 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
             display,
             touch,
             keyboard,
+            host_gpu: options.gfxstream.is_some(),
         },
     ))
 }

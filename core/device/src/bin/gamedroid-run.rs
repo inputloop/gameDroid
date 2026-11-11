@@ -12,7 +12,7 @@ use std::sync::mpsc::{self, Receiver, Sender};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
-use gamedroid_device::android::{file_as_disk, machine, true_colours, Handles, Options};
+use gamedroid_device::android::{file_as_disk, machine, show, Handles, Options};
 use gamedroid_device::script::{self, Step};
 
 /// What Android's init logs when the system has finished booting.
@@ -145,7 +145,7 @@ fn run_script(steps: Vec<Step>, session: Session) {
                     handles.keyboard.key(code, false);
                 }
                 Step::Screenshot(path) => {
-                    let frame = true_colours(handles.display.frame());
+                    let frame = handles.frame();
                     match std::fs::write(&path, frame.to_ppm()) {
                         Ok(()) => eprintln!(
                             "gamedroid-run: saved frame {} to {}",
@@ -317,6 +317,7 @@ fn main() -> ExitCode {
     };
     if let Some(path) = screenshot {
         let display = handles.display.clone();
+        let host_gpu = handles.host_gpu;
         std::thread::spawn(move || {
             let mut saved = 0;
             loop {
@@ -324,7 +325,7 @@ fn main() -> ExitCode {
                 if display.sequence() == saved {
                     continue;
                 }
-                let frame = true_colours(display.frame());
+                let frame = show(display.frame(), host_gpu);
                 saved = frame.sequence;
                 let tmp = path.with_extension("tmp");
                 if std::fs::write(&tmp, frame.to_ppm()).is_ok() {

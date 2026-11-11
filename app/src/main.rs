@@ -12,7 +12,7 @@ use std::time::{Duration, Instant};
 
 use gamedroid::frontend::{Action, Frontend, HostState, Mode};
 use gamedroid::view::rgb_to_window;
-use gamedroid_device::android::{machine, true_colours, Handles, Options};
+use gamedroid_device::android::{machine, Handles, Options};
 use gamedroid_input::{Profile, Touch};
 use minifb::{MouseButton, MouseMode, ScaleMode, Window, WindowOptions};
 
@@ -166,7 +166,7 @@ impl Guest {
                 if h.display.sequence() == *seen {
                     return None;
                 }
-                let frame = true_colours(h.display.frame());
+                let frame = h.frame();
                 *seen = frame.sequence;
                 Some(((frame.width, frame.height), frame.to_rgb()))
             }

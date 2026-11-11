@@ -13,7 +13,7 @@ on:
       - "core/device/src/bin/gamedroid-gpu-check.rs"
       - "Cargo.lock"
       - "core/device/**"
-      - "tools/engine/scripts/gpu-look.script"
+      - "tools/engine/scripts/install-and-play.script"
 permissions:
   contents: write  # to publish the result to the ci-logs branch
 env:
@@ -65,25 +65,29 @@ jobs:
           set -o pipefail
           cargo build --release -p gamedroid-device --bin gamedroid-gpu-check 2>&1 | tail -n 1
           timeout 120 target/release/gamedroid-gpu-check "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" 2>&1 | cut -c1-240 | tee "$HOME/out/engine-start.txt"
-      - name: Boot Android drawing through the renderer (G3, exploratory)
-        # Reported, never failing: this is the first time the pieces meet.
+      - name: Android and a game, drawn through the renderer (G3)
+        env:
+          GAME: com.shatteredpixel.shatteredpixeldungeon
+          BVMM_NET_TRACE: "1"
         run: |
           set +e +o pipefail
+          python3 tools/engine/fetch_fdroid_apk.py "$GAME" "$HOME/game.apk"
+          sed "s/PACKAGE/$GAME/" tools/engine/scripts/install-and-play.script > "$HOME/play.script"
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
           cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 1
           export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
           cd "$HOME/out"
-          timeout 330 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+          timeout 420 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
             --gpu "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" \
             --memory 4096 --display 720x1280 --cmdline ignore_loglevel \
-            --script "$GITHUB_WORKSPACE/tools/engine/scripts/gpu-look.script" > android.log 2> run.err
+            --apk "$HOME/game.apk" --script "$HOME/play.script" > android.log 2> run.err
           {
-            echo "RUN_EXIT=$? (0: booted and the script ran; 124: out of time; other: the runner stopped)"
+            echo "RUN_EXIT=$? (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)"
             echo "console lines: $(wc -l < android.log)"
             echo "=== the runner and the renderer"
-            grep -vE "downloading,|unpacking" run.err | awk '!seen[$0]++' | cut -c1-240 | head -n 40
+            grep -vE "downloading,|unpacking|bvmm net:" run.err | awk '!seen[$0]++' | cut -c1-240 | head -n 40
             echo "=== milestones"
             for pat in 'virtio_gpu\|\[drm\]' 'init: starting service .surfaceflinger' 'sys.boot_completed=1'; do
               echo "[$(grep -c -- "$pat" android.log)] $pat :: $(grep -m1 -- "$pat" android.log | cut -c1-160)"
@@ -99,12 +103,14 @@ jobs:
           } > gpu-boot.txt 2>&1
           cat gpu-boot.txt
           for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
-          exit 0
+          # Android must boot, say the host renderer is drawing, and get the
+          # game to the front.
+          grep -q '^RUN_EXIT=0 ' gpu-boot.txt && grep -q 'GFXStream' gpu-boot.txt
       - name: Publish
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux gpu-boot.txt gpu-1.png gpu-2.png result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux gpu-boot.txt lock.png after-swipe.png game-1.png game-2.png result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
   windows:
     runs-on: windows-latest
     timeout-minutes: 90
