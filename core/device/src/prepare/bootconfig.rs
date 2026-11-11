@@ -157,6 +157,10 @@ pub fn runtime(boot_device: &str, vbmeta_guid: &str, memory_mib: u64, density: u
         ("androidboot.vsock_lights_cid", "3"),
         ("androidboot.vsock_tombstone_port", "6600"),
         ("androidboot.modem_simulator_ports", "9600"),
+        // Wi-Fi made from a plain network card (the third one; see the
+        // machine's network cards in android.rs). Without this setting the
+        // image starts no Wi-Fi at all.
+        ("androidboot.wifi_impl", "virt_wifi"),
         // Verified boot: unlocked, as on the stock virtual device.
         ("androidboot.vbmeta.avb_version", "1.2"),
         ("androidboot.vbmeta.device_state", "unlocked"),

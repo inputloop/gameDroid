@@ -22,6 +22,10 @@ use crate::prepare::{self, sparse, Settings};
 pub const BUILD: &str = "16644040";
 const TARGET: &str = "aosp_cf_x86_64_only_phone-userdebug";
 const PRODUCT: &str = "aosp_cf_x86_64_only_phone";
+/// Raised whenever gameDroid changes the boot files it makes from the
+/// image (kernel arguments, boot settings), so that a set prepared by an
+/// older version is prepared again.
+pub const BOOT_FILES: u32 = 2;
 /// The archive's size and SHA-256, checked after the download.
 pub const ARCHIVE_BYTES: u64 = 1_163_636_385;
 pub const ARCHIVE_SHA256: Option<&str> =
@@ -281,8 +285,18 @@ pub fn ensure(
     let images = data.join("images").join(BUILD);
     let prepared = images.join("prepared");
     let ready = prepared.join("READY");
-    if ready.exists() {
-        return Ok(prepared);
+    let mark = format!("build {BUILD} boot-files {BOOT_FILES}\n");
+    match std::fs::read_to_string(&ready) {
+        Ok(found) if found == mark => return Ok(prepared),
+        // Set up by an older gameDroid: the partitions are as they should
+        // be, and only the boot files need making again.
+        Ok(_) => {
+            progress(Progress::Preparing);
+            prepare::prepare(&images, &prepared, settings)?;
+            std::fs::write(&ready, &mark).map_err(|e| io("writing", &ready, e))?;
+            return Ok(prepared);
+        }
+        Err(_) => {}
     }
     std::fs::create_dir_all(&images).map_err(|e| io("creating", &images, e))?;
     let downloaded = images.join("image.zip");
@@ -302,7 +316,7 @@ pub fn ensure(
     prepare::prepare(&images, &prepared, settings)?;
     // The archive is no longer needed; a failure to delete it is harmless.
     let _ = std::fs::remove_file(&downloaded);
-    std::fs::write(&ready, format!("build {BUILD}\n")).map_err(|e| io("writing", &ready, e))?;
+    std::fs::write(&ready, &mark).map_err(|e| io("writing", &ready, e))?;
     Ok(prepared)
 }
 
@@ -713,6 +727,21 @@ mod tests {
         .unwrap();
         assert_eq!(same, prepared);
         assert!(again.is_empty());
+
+        // A set prepared by an older gameDroid gets new boot files, and
+        // nothing else is touched (the archive is gone, after all).
+        std::fs::write(prepared.join("READY"), format!("build {BUILD}\n")).unwrap();
+        std::fs::remove_file(prepared.join("cmdline.txt")).unwrap();
+        let mut again = Vec::new();
+        ensure(&data, Some(&zip), 0, &Settings::default(), &mut |p| {
+            again.push(p)
+        })
+        .unwrap();
+        assert_eq!(again, vec![Progress::Preparing]);
+        assert!(prepared.join("cmdline.txt").exists());
+        assert!(std::fs::read_to_string(prepared.join("READY"))
+            .unwrap()
+            .contains("boot-files"));
         std::fs::remove_dir_all(dir).unwrap();
     }
 

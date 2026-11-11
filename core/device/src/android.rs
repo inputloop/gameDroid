@@ -15,9 +15,10 @@ use crate::cuttlefish::{SensorsControl, CONSOLE_PORTS, PHONE_SENSORS, SENSORS_CO
 
 /// The guest's vsock address, the one the stock image is configured for.
 const GUEST_CID: u64 = 3;
-/// The network card's hardware address (locally administered).
-const GUEST_MAC: [u8; 6] = [0x02, 0x67, 0x64, 0x00, 0x00, 0x15];
-const MODEM_MAC: [u8; 6] = [0x02, 0x67, 0x64, 0x00, 0x00, 0x01];
+/// A network card's hardware address (locally administered).
+fn mac(last: u8) -> [u8; 6] {
+    [0x02, 0x67, 0x64, 0x00, 0x00, last]
+}
 
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -156,14 +157,19 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         consoles: consoles(),
         vsock_cid: Some(GUEST_CID),
         rng: true,
-        // The stock image gives its network cards roles by position: the
-        // first is renamed `buried_eth0` and reserved for the mobile-data
-        // modem, which gameDroid does not emulate. The second stays `eth1`,
-        // which Android treats as plain Ethernet. So the first card here is
-        // connected to nothing, and the second has the internet behind it.
+        // The stock image gives its network cards roles by position:
+        //   1st  renamed `buried_eth0`, for the mobile-data modem, which
+        //        gameDroid does not emulate;
+        //   2nd  `eth1`, Ethernet, which the image marks as a restricted
+        //        network that ordinary apps are not given;
+        //   3rd  `eth2`, which the image turns into Wi-Fi (`wlan0`) when
+        //        booted with wifi_impl=virt_wifi.
+        // So the first two are connected to nothing and the third has the
+        // internet behind it: Android is "on Wi-Fi".
         nets: if options.network {
-            let (unplugged, _) = bvmm::virtio::net::Net::new(MODEM_MAC, |_| {});
-            vec![unplugged, bvmm::net::user_nat(GUEST_MAC)]
+            let (modem, _) = bvmm::virtio::net::Net::new(mac(0x01), |_| {});
+            let (ethernet, _) = bvmm::virtio::net::Net::new(mac(0x02), |_| {});
+            vec![modem, ethernet, bvmm::net::user_nat(mac(0x15))]
         } else {
             Vec::new()
         },

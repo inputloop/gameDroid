@@ -16,23 +16,15 @@ expect GD_DATA_KB= 20
 # Which clock the kernel settled on, and how many processors it has.
 shell echo GD_""CLOCK=$(su 0 cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
 expect GD_CPUS= 20
-# The network: what Android sees, and whether a web server answers.
-shell echo GD_""NET_BEGIN; ls /sys/class/net; ip -o -4 addr; ip route; echo GD_""NET_END
+# The network. Join the virtual Wi-Fi as the app does, then look.
+shell su 0 sh -c 'cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""WIFI_ASKED
+expect GD_WIFI_ASKED 30
+wait 15
+shell echo GD_""NET_BEGIN; ls /sys/class/net | tr '\n' ' '; echo; ip -o -4 addr; su 0 cmd wifi status | head -n 8; echo GD_""NET_END
 expect GD_NET_END 20
 shell printf 'HEAD / HTTP/1.0\r\nHost: example.com\r\n\r\n' | toybox nc -w 10 example.com 80 | head -n 1; echo GD_""HTTP_DONE
 expect GD_HTTP_DONE 40
-shell echo GD_""ETH_BEGIN; su 0 dumpsys ethernet | grep -E "eth1|IpClient|filter" | cut -c1-600; echo GD_""ETH_END
-expect GD_ETH_END 20
-shell echo GD_""RC_BEGIN; su 0 grep -rhE "wifi|wlan|rename_eth|disable_rename|virt_wifi|hwsim" /vendor/etc/init /system/etc/init /system_ext/etc/init 2>/dev/null | head -n 40; echo GD_""RC_END
-expect GD_RC_END 20
-shell echo GD_""PROP_BEGIN; getprop | grep -iE "wifi|ethernet|rename|netsim|radio.multisim|ril" | head -n 30; cmd overlay lookup android android:array/config_ethernet_interfaces; echo GD_""PROP_END
-expect GD_PROP_END 20
-# By hand, below Android's own network management: does the path carry?
-shell su 0 sh -c 'ip addr add 10.0.2.15/24 dev eth1; ip link set eth1 up; ip rule add from all lookup main pref 1; ip route add default via 10.0.2.2 dev eth1'; echo GD_""HAND_SET
-expect GD_HAND_SET 20
-shell echo GD_""HAND_BEGIN; su 0 ping -c 2 -W 3 10.0.2.2 | tail -n 3; printf 'HEAD / HTTP/1.0\r\n\r\n' | su 0 toybox nc -w 10 1.1.1.1 80 | head -n 1; echo GD_""HAND_END
-expect GD_HAND_END 60
-shell dumpsys connectivity | grep -iE "Active default network|NetworkAgentInfo.*(VALIDATED|ETHERNET)" | head -n 4; echo GD_""CONN_DONE
+shell dumpsys connectivity | grep -iE "Active default network|NetworkAgentInfo" | cut -c1-300 | head -n 4; echo GD_""CONN_DONE
 expect GD_CONN_DONE 20
 install
 start PACKAGE
