@@ -14,9 +14,10 @@
   332 |                                       offsetof(SmallFixedVector, mData) &&
       |                                                ^
 [209/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/render_window.cpp.o
-[210/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/render_thread.cpp.o
-[211/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_context.cpp.o
-[212/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_pipe.cpp.o
+[210/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_context.cpp.o
+[211/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/sync_thread.cpp.o
+[212/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/render_thread.cpp.o
+[213/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_pipe.cpp.o
 In file included from /usr/include/strings.h:23,
                  from /usr/include/string.h:462,
                  from ../host/include/render-utils/stream.h:23,
@@ -28,13 +29,12 @@ In file included from /usr/include/strings.h:23,
 ../host/include/render-utils/small_vector.h:332:48: warning: ‘offsetof’ within non-standard-layout type ‘gfxstream::SmallFixedVector<char, 512>’ is conditionally-supported [-Winvalid-offsetof]
   332 |                                       offsetof(SmallFixedVector, mData) &&
       |                                                ^
-[213/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/sync_thread.cpp.o
 [214/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/frame_buffer.cpp.o
 [215/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_ring_blob.cpp.o
-[216/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/vsync_thread.cpp.o
-[217/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_timelines.cpp.o
+[216/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_gfxstream_renderer.cpp.o
+[217/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/vsync_thread.cpp.o
 [218/225] Linking static target common/testenv/liblib_common_testenv.a
-[219/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_gfxstream_renderer.cpp.o
+[219/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_timelines.cpp.o
 [220/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_resource.cpp.o
 In file included from ../host/common/include/gfxstream/host/color_buffer_interface.h:23,
                  from ../host/frame_buffer.h:35,
@@ -52,9 +52,9 @@ In file included from ../host/common/include/gfxstream/host/color_buffer_interfa
   333 | }
       | ^
 [221/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/virtio_gpu_frontend.cpp.o
-[222/225] Compiling C++ object host/vulkan/liblib_vulkan_server.a.p/vk_decoder_global_state.cpp.o
-[223/225] Linking static target host/vulkan/liblib_vulkan_server.a
-[224/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/render_control.cpp.o
+[222/225] Compiling C++ object host/libgfxstream_backend.so.0.1.2.p/render_control.cpp.o
+[223/225] Compiling C++ object host/vulkan/liblib_vulkan_server.a.p/vk_decoder_global_state.cpp.o
+[224/225] Linking static target host/vulkan/liblib_vulkan_server.a
 [225/225] Linking target host/libgfxstream_backend.so.0.1.2
 INFO: autodetecting backend as ninja
 INFO: calculating backend command to run: /usr/local/bin/ninja -C /home/runner/gfxstream/build-meson
