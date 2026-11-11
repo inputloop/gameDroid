@@ -50,8 +50,11 @@ jobs:
           {
             echo "=== starting gfxstream (Linux, software renderers)"
             vulkaninfo --summary 2>/dev/null | grep -E "deviceName|driverName" | head -n 4
-            python3 tools/gpu/probe_gfxstream.py "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" 2>&1 | cut -c1-240 | tail -n 60
-          } | tee "$HOME/out/start.txt"
+            python3 tools/gpu/probe_gfxstream.py "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" vulkan 2>&1 | cut -c1-240 | tail -n 30
+          } > "$HOME/out/start.txt" 2>&1
+          cat "$HOME/out/start.txt"
+          # The mode gameDroid uses must start here.
+          grep -q 'GFXSTREAM_START_VULKAN=PASS' "$HOME/out/start.txt"
       - name: Publish
         if: always()
         env:
@@ -89,15 +92,20 @@ jobs:
           find . -iname '*gfxstream_backend*.dll' -o -iname '*gfxstream_backend*.lib' | while read -r f; do echo "$(stat -c %s "$f") $f"; done | tee -a "$OUT/result.txt"
           grep -E "error [A-Z0-9]*:|error :|fatal error" "$OUT/cmake.log" | sed -E 's/ \[[^]]*vcxproj\]$//' | awk '!seen[$0]++' | cut -c1-260 | head -n 60 > "$OUT/cmake-errors.txt"
           tail -n 60 "$OUT/cmake.log" | cut -c1-300 > "$OUT/cmake-tail.txt"
-      - name: Start the library (G2a)
+      - name: Try to start the library (G2a)
+        # Reported, never failing: this runner has no GPU and no Vulkan
+        # driver, so the start cannot succeed here. Only the mode gameDroid
+        # uses (Vulkan only) is tried.
         run: |
-          set +e
+          set +e +o pipefail
           dll="$(find "$RUNNER_TEMP/gfxstream/build" -iname 'gfxstream_backend.dll' | head -n 1)"
           {
-            echo "=== starting gfxstream (Windows runner: no GPU, no OpenGL ES libraries installed)"
+            echo "=== starting gfxstream (Windows runner: no GPU, no Vulkan driver)"
             echo "library: $dll"
-            [ -n "$dll" ] && python tools/gpu/probe_gfxstream.py "$(cygpath -w "$dll")" 2>&1 | cut -c1-240 | tail -n 60
-          } | tee out/start.txt
+            [ -n "$dll" ] && python tools/gpu/probe_gfxstream.py "$(cygpath -w "$dll")" vulkan 2>&1 | cut -c1-240 | tail -n 30
+          } > out/start.txt 2>&1
+          cat out/start.txt
+          exit 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:

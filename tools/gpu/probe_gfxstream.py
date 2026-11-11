@@ -95,7 +95,9 @@ def main():
         return 2
     library = sys.argv[1]
     worst = 0
-    for modes in (["gles"], ["vulkan"], ["gles", "vulkan"]):
+    # With modes named, only that combination is tried.
+    asked = [sys.argv[2:]] if len(sys.argv) > 2 else (["gles"], ["vulkan"], ["gles", "vulkan"])
+    for modes in asked:
         label = "+".join(modes)
         print(f"--- {label}", flush=True)
         try:
