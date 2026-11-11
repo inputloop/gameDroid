@@ -36,6 +36,9 @@ shell echo GD_""CAM_BEGIN; su 0 sh -c 'for d in /sys/class/video4linux/*; do ech
 expect GD_CAM_END 40
 shell su 0 sh -c 'for p in CAMERA RECORD_AUDIO ACCESS_FINE_LOCATION; do pm grant com.android.camera2 android.permission.$p 2>/dev/null; done'; am start -a android.media.action.STILL_IMAGE_CAMERA; echo GD_""CAM_STARTED
 expect GD_CAM_STARTED 30
+wait 12
+# The camera app's first-run question about locations: its Next button.
+tap 360 1180
 wait 15
 screenshot camera.ppm
 shell echo GD_""CAMTOP=$(dumpsys activity activities | grep -m1 -o "ResumedActivity.*" | cut -c1-90)
