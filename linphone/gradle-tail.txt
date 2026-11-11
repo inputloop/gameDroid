@@ -1,0 +1,12 @@
+Using CI built SDK from maven repository at https://download.linphone.org/maven_repository
+google-services.json found, enabling Firebase CloudMessaging feature
+Crashlytics has been disabled because either google-services.json file wasn't found or local Linphone SDK build folder isn't configured
+Git describe: 
+Git commits count: 0
+Git commit hash: 92318a2
+Git branch name: master
+Computed git version: 
+Keystore [null] doesn't exists!
+Debug flavor app version is [], app branch is [master]
+Release flavor app version is [], app branch is [master]
+Linphone SDK used is 5.6.0-alpha.219+f766649e29
