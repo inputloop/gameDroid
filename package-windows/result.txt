@@ -1,14 +1,18 @@
-size: 3648512 bytes
+size: 3892224 bytes
 --- libraries the file asks Windows for
 	DLL Name: ADVAPI32.dll
 	DLL Name: GDI32.dll
 	DLL Name: KERNEL32.dll
 	DLL Name: USER32.dll
-	DLL Name: WS2_32.dll
 	DLL Name: api-ms-win-core-synch-l1-2-0.dll
 	DLL Name: bcrypt.dll
 	DLL Name: bcryptprimitives.dll
 	DLL Name: ntdll.dll
+	DLL Name: ole32.dll
+	DLL Name: oleaut32.dll
+	DLL Name: ws2_32.dll
 --- window smoke test (demo mode, 120 frames)
 gamedroid: 120 frames in 2.0 s
 DEMO_EXIT=0
+--- microphones this machine has
+This computer has no microphone that gameDroid can see.
