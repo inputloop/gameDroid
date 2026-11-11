@@ -134,3 +134,52 @@ library also exists, which leaves open linking gfxstream into
 
 Built means compiled and linked. Nothing has loaded or run the library yet.
 Next is G2.
+
+## G2a result, 2026-11-11: the library starts, and it settles which mode to use
+
+Live-verified in CI (gfxstream-build on gameDroid 0792e43). The probe
+`tools/gpu/probe_gfxstream.py` loads the library we build and starts it as
+a VMM would, without a GPU.
+
+| Host | Mode | Result |
+|---|---|---|
+| Linux (Mesa lavapipe) | Vulkan only | **Starts.** Offers capability sets 3 (Vulkan), 8 (GLES) and 9 (composer); a context is created and destroyed |
+| Linux (Mesa llvmpipe) | OpenGL ES on the host | Fails: `Failed to find exactly 1 GLES 2.x config: found 0` |
+| Windows runner | OpenGL ES on the host | Fails: `libEGL.dll` and `libGLESv2.dll` not found, then an access violation |
+| Windows runner | Vulkan only | Fails: `VK_ERROR_INCOMPATIBLE_DRIVER`. The runner has no Vulkan driver at all |
+
+What this decides:
+
+- **gameDroid will run gfxstream in Vulkan-only mode, with OpenGL ES done
+  inside Android by ANGLE on top of that Vulkan.** This is Cuttlefish's
+  `gfxstream_guest_angle` mode (`hardware.egl=angle`,
+  `hardware.vulkan=ranchu`). The host then needs only a Vulkan driver, which
+  the NVIDIA driver supplies on both Windows and Linux. No ANGLE or OpenGL
+  ES libraries have to ship beside `gamedroid.exe`.
+- The price: Vulkan needs host memory mapped into the guest, so the
+  shared-memory work planned as G4 cannot be put off. Steps G2 to G4 merge
+  into one: the 3D protocol, blob resources and the memory mapping together.
+- **Windows cannot be tested in CI as it stands.** The runner has no Vulkan
+  driver. A software Vulkan for Windows (Mesa's lavapipe or SwiftShader)
+  has to be added to the CI job, for testing only.
+
+Two things to guard against, seen here:
+
+- A failed start does not return an error: the library hangs (the probe's
+  child processes timed out) or crashes. gameDroid must start it in a way
+  that a failure falls back to today's software rendering instead of taking
+  the emulator down. A separate process, or a check before loading.
+- The OpenGL ES failure on Linux was not investigated, since that mode is
+  not being used.
+
+Revised order:
+
+| Step | What | State |
+|---|---|---|
+| G1 | Build the library on both hosts | Done |
+| G2a | Start it without a GPU | Done on Linux; Windows needs a software Vulkan in CI |
+| G2 | Engine: 3D commands, capability sets, contexts, fences, blob resources, and the shared-memory region mapped into the guest (KVM first) | Next |
+| G3 | Boot Android in guest-ANGLE mode on Linux; the picture read back into the existing window | |
+| G4 | The same on Windows (`WHvMapGpaRange`), with a software Vulkan in CI | |
+| G5 | Present straight into the window instead of reading back | |
+| G6 | On the 3080 Ti, both hosts | Cannot be done in CI |

@@ -37,7 +37,7 @@ device in CI. More below.*
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
 | Android on Windows | Working in CI: boots on two processors with a precise clock, unlocks by touch, installs the game and brings it to the front. Not yet run on a real Windows machine with a GPU |
 | Internet in Android | Working in CI on both hosts: Android joins a virtual Wi-Fi backed by a NAT built into the engine (no driver or administrator rights needed), and Android's own internet check passes. IPv4 only, no incoming connections ([results](docs/engine/results/2026-11-11-network.md)) |
-| GPU acceleration | Not yet. Route chosen: gfxstream ([plan](docs/engine/E8-gpu-plan.md)). Step 1 of 6 done: its host library builds in CI on Linux and Windows. Nothing uses it yet |
+| GPU acceleration | Not yet. Route chosen: gfxstream in Vulkan-only mode, with OpenGL ES done inside Android by ANGLE ([plan](docs/engine/E8-gpu-plan.md)). Done in CI: its host library builds on both hosts and starts on Linux against a software Vulkan. Nothing in the engine uses it yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
@@ -181,7 +181,7 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E5 | Android boots | Done in CI on Linux and Windows |
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
-| E8 | GPU acceleration | Route chosen ([plan](docs/engine/E8-gpu-plan.md)); step G1 of six done (the library builds on both hosts). The hardest item |
+| E8 | GPU acceleration | Route chosen ([plan](docs/engine/E8-gpu-plan.md)); the library builds on both hosts and starts on Linux. The engine work is next. The hardest item |
 | E9 | Sound | Planned |
 
 gameDroid's own features build on these. What is next, in order: try
