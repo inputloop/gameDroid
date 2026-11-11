@@ -16,6 +16,9 @@ expect GD_DATA_KB= 20
 # Which clock the kernel settled on, and how many processors it has.
 shell echo GD_""CLOCK=$(su 0 cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
 expect GD_CPUS= 20
+# Which browser the image has, and what opens a web address.
+shell echo GD_""WEB_BEGIN; pm list packages | grep -iE "browser|webview|chrom|search"; cmd package resolve-activity --brief -a android.intent.action.VIEW -d http://example.com | tail -n 1; cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.APP_BROWSER | tail -n 3; echo GD_""WEB_END
+expect GD_WEB_END 40
 # Who is drawing: Android's Vulkan driver, and the renderer its OpenGL ES
 # reports.
 shell echo GD_""GPU_BEGIN; getprop ro.hardware.vulkan; su 0 dumpsys SurfaceFlinger | grep -m1 "GLES:" | cut -c1-200; echo GD_""GPU_END

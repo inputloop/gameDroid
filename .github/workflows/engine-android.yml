@@ -128,6 +128,8 @@ jobs:
           grep -a 'bvmm net:' bvmm.err | awk '!seen[$0]++' | cut -c1-160 | head -n 40
           echo "--- Android's own view"
           grep -a -iE 'Active default network|NetworkAgentInfo' android.log | grep -v '^\[' | cut -c1-220 | head -n 4
+          echo "=== browsers in the image"
+          sed -n '/^GD_WEB_BEGIN/,/^GD_WEB_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 20
           echo "=== shell and install lines from the console"
           grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30
       - name: Publish the logs to the ci-logs branch

@@ -183,3 +183,66 @@ Revised order:
 | G4 | The same on Windows (`WHvMapGpaRange`), with a software Vulkan in CI | |
 | G5 | Present straight into the window instead of reading back | |
 | G6 | On the 3080 Ti, both hosts | Cannot be done in CI |
+
+## G2 and G3 result, 2026-11-11: Android draws through gfxstream on Linux
+
+Live-verified in CI (gfxstream-build on gameDroid 3fc20f0, bContain
+989af02), against Mesa's software Vulkan, since the runner has no GPU.
+
+Android's own account of who is drawing:
+
+    ro.hardware.vulkan: ranchu
+    GLES: Google Inc. (Mesa), ANGLE (Mesa, Vulkan 1.3.275 (Virtio-GPU
+    GFXStream (llvmpipe (LLVM 20.1.2 256 bits))), ...), OpenGL ES 3.2
+
+And the guest kernel's view of the device:
+
+    [drm] Host memory window: 0xa000000000 +0x200000000
+    [drm] features: +virgl -edid +resource_blob +host_visible
+    [drm] features: +context_init
+    [drm] cap set 0: id 3, max-version 0, max-size 116
+    [drm] cap set 1: id 9, max-version 0, max-size 16
+
+Android booted in 34 s of guest time, unlocked by touch, went online,
+installed Shattered Pixel Dungeon and brought it to the front; the same
+script and checks as the software-rendering job. Frames reached the
+existing window path by reading each one back from the renderer.
+
+<img src="../screenshots/gpu-home.png" width="240" alt="Android's home screen drawn through gfxstream"> <img src="../screenshots/gpu-game.png" width="240" alt="Shattered Pixel Dungeon drawn through gfxstream">
+
+What was built:
+
+- **Engine (bContain `crates/bvmm`):** `gfxstream.rs`, the binding to the
+  library, loaded at run time; `virtio/gpu3d.rs`, the display device
+  (capability sets, contexts, command buffers, 3D resources, fences, blob
+  resources); a shared-memory window on the PCI device; and a `Mapper` that
+  places host memory in the running guest (memory slots on KVM,
+  `WHvMapGpaRange` on Windows).
+- **gameDroid:** boot settings for the mode, carried in a second initrd;
+  `gamedroid-run --gpu <library>`; `gamedroid-gpu-check`.
+
+What this does and does not show:
+
+- It shows the whole path is correct: protocol, fences, memory mapping,
+  readback. It worked on the first boot.
+- **It says nothing about speed.** The "GPU" in CI is the CPU pretending,
+  and every frame is copied back. Real acceleration is first seen on a
+  machine with a GPU.
+- The Windows half (`WHvMapGpaRange`) is written and compiles; it has never
+  run. CI's Windows runner has no Vulkan driver.
+- The windowed app (`gamedroid`) has no way to turn this on yet; only the
+  headless runner does.
+
+One fault found on the way: frames from the renderer came out with red and
+blue swapped, because gameDroid was applying the correction it needs for
+frames Android draws with the CPU. The correction is now applied only
+there.
+
+Remaining:
+
+| Step | What | State |
+|---|---|---|
+| G4 | The same on Windows | Code written; needs a Vulkan driver to run. In CI that means a software Vulkan; on the laptop, the NVIDIA driver |
+| G5 | Present straight into the window, no readback | Not started |
+| G6 | On the 3080 Ti, both hosts | The first real measurement |
+| | Turn it on from the app, with the check-first guard, and ship the library with `gamedroid.exe` | Not started |
