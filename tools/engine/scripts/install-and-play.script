@@ -17,10 +17,10 @@ expect GD_DATA_KB= 20
 shell echo GD_""CLOCK=$(su 0 cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
 expect GD_CPUS= 20
 # The network. Join the virtual Wi-Fi as the app does, then look.
-shell su 0 sh -c 'cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""WIFI_ASKED
+shell su 0 sh -c '[ -e /sys/class/net/wlan0 ] && echo GD_WLAN_BY_IMAGE || { ip link add link buried_eth2 name wlan0 type virt_wifi; ip link set buried_eth2 up; echo GD_WLAN_BY_HAND; }; cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""WIFI_ASKED
 expect GD_WIFI_ASKED 30
 wait 15
-shell echo GD_""NET_BEGIN; ls /sys/class/net | tr '\n' ' '; echo; ip -o -4 addr; su 0 cmd wifi status | head -n 8; echo GD_""NET_END
+shell echo GD_""NET_BEGIN; ls /sys/class/net | tr '\n' ' '; echo; ip -o -4 addr; su 0 cmd wifi status | head -n 8; su 0 cmd wifi list-scan-results | head -n 4; echo GD_""NET_END
 expect GD_NET_END 20
 shell printf 'HEAD / HTTP/1.0\r\nHost: example.com\r\n\r\n' | toybox nc -w 10 example.com 80 | head -n 1; echo GD_""HTTP_DONE
 expect GD_HTTP_DONE 40

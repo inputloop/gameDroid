@@ -11,10 +11,16 @@ use std::sync::Arc;
 pub const BOOTED: &[u8] = b"sys.boot_completed=1";
 
 /// Settings a games machine wants and a phone does not: no lock screen, a
-/// screen that stays on, and the (virtual) Wi-Fi joined without asking. Typed at the shell once Android has booted. They
+/// screen that stays on, and the (virtual) Wi-Fi joined without asking.
+///
+/// The `wlan0` step finishes what the image's own Wi-Fi helper sometimes
+/// cannot: it runs once at boot, and when it runs before the `virt_wifi`
+/// kernel module has loaded it fails to create the interface (seen in CI). Typed at the shell once Android has booted. They
 /// persist in Android's own settings, so repeating them is harmless.
 pub const GAMING_SETTINGS: &str = "su 0 sh -c 'locksettings set-disabled true; svc power stayon true; \
-     wm dismiss-keyguard; cmd wifi set-wifi-enabled enabled; cmd wifi connect-network VirtWifi open'";
+     wm dismiss-keyguard; [ -e /sys/class/net/wlan0 ] || { ip link add link buried_eth2 name wlan0 type virt_wifi; \
+     ip link set buried_eth2 up; }; cmd wifi set-wifi-enabled enabled; sleep 3; \
+     cmd wifi connect-network VirtWifi open'";
 
 /// Passes the console through to `out` and sets `booted` when Android
 /// reports that it has finished booting.
