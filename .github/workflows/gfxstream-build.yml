@@ -9,6 +9,7 @@ on:
   push:
     paths:
       - ".github/workflows/gfxstream-build.yml"
+      - "tools/gpu/**"
 permissions:
   contents: write  # to publish the result to the ci-logs branch
 env:
@@ -41,11 +42,21 @@ jobs:
           echo "CMAKE_EXIT=$?" | tee -a "$HOME/out/result.txt"
           find . -name 'libgfxstream*' -type f -printf '%s %p\n' 2>/dev/null | tee -a "$HOME/out/result.txt"
           tail -n 60 "$HOME/out/cmake.log" | cut -c1-300 > "$HOME/out/cmake-tail.txt"
+      - name: Start the library against software renderers (G2a)
+        run: |
+          set +e
+          # No GPU here: Mesa's software OpenGL ES (llvmpipe) and Vulkan (lavapipe).
+          sudo apt-get install -y -qq libegl1 libgles2 libgl1-mesa-dri mesa-vulkan-drivers vulkan-tools >/dev/null
+          {
+            echo "=== starting gfxstream (Linux, software renderers)"
+            vulkaninfo --summary 2>/dev/null | grep -E "deviceName|driverName" | head -n 4
+            python3 tools/gpu/probe_gfxstream.py "$HOME/gfxstream/build-cmake/libgfxstream_backend.so" 2>&1 | cut -c1-240 | tail -n 60
+          } | tee "$HOME/out/start.txt"
       - name: Publish
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux result.txt meson-tail.txt cmake-tail.txt start.txt
   windows:
     runs-on: windows-latest
     timeout-minutes: 90
@@ -78,6 +89,15 @@ jobs:
           find . -iname '*gfxstream_backend*.dll' -o -iname '*gfxstream_backend*.lib' | while read -r f; do echo "$(stat -c %s "$f") $f"; done | tee -a "$OUT/result.txt"
           grep -E "error [A-Z0-9]*:|error :|fatal error" "$OUT/cmake.log" | sed -E 's/ \[[^]]*vcxproj\]$//' | awk '!seen[$0]++' | cut -c1-260 | head -n 60 > "$OUT/cmake-errors.txt"
           tail -n 60 "$OUT/cmake.log" | cut -c1-300 > "$OUT/cmake-tail.txt"
+      - name: Start the library (G2a)
+        run: |
+          set +e
+          dll="$(find "$RUNNER_TEMP/gfxstream/build" -iname 'gfxstream_backend.dll' | head -n 1)"
+          {
+            echo "=== starting gfxstream (Windows runner: no GPU, no OpenGL ES libraries installed)"
+            echo "library: $dll"
+            [ -n "$dll" ] && python tools/gpu/probe_gfxstream.py "$(cygpath -w "$dll")" 2>&1 | cut -c1-240 | tail -n 60
+          } | tee out/start.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -88,4 +108,4 @@ jobs:
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-windows result.txt cmake-errors.txt cmake-tail.txt
+        run: cd out && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-windows result.txt cmake-errors.txt cmake-tail.txt start.txt
