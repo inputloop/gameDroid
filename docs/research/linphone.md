@@ -68,7 +68,7 @@ What that commits to, in order:
 | Step | What | State |
 |---|---|---|
 | L1 | Build the app for x86-64 from its source; see it install and start on gameDroid | **Done in CI, 2026-11-11** (below) |
-| L2 | Network in the guest (roadmap E4) | Not started |
+| L2 | Network in the guest (roadmap E4) | **Done in CI, 2026-11-11** (`docs/engine/results/2026-11-11-network.md`). Linphone itself has not been tried on it yet |
 | L3 | Sound out and microphone in the guest (roadmap E9) | Not started |
 | L4 | A call between two Linphone instances, heard and spoken | Needs L2 and L3 |
 | L5 | gameDroid offers to install it, from a build gameDroid publishes with its source | Needs L1; licence notes to write |

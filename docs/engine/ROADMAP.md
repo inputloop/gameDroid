@@ -31,7 +31,7 @@ on the laptop for anything involving the GPU or Intel-specific behaviour.
 | E1 | Device transport and a disk | PCI host bridge, modern virtio-pci, virtio-blk; a guest reads and writes a disk image | **Done in CI on both, 2026-11-10** (same file) |
 | E2 | Several vCPUs and big memory | Several vCPUs and more than 4 GiB visible in the guest, memory above the 4 GiB hole | **KVM: done in CI, 2026-11-10** (4 vCPUs, 5 GiB). **WHP: done in CI, 2026-11-11** (2 vCPUs with Android; `results/2026-11-11-windows-smp-clock.md`) |
 | E3 | ACPI and clean power-off | Guest shuts down and bvmm exits 0, no reset trick | CI |
-| E4 | Network and vsock | virtio-net with user-mode NAT; vsock stream to the host | CI |
+| E4 | Network and vsock | virtio-net with user-mode NAT; vsock stream to the host | **Network done in CI on both hosts, 2026-11-11** (`results/2026-11-11-network.md`): virtio-net and a built-in NAT; Android validates its connection. vsock services not started |
 | E5 | Android boots | Stock Android 17 image reaches `sys.boot_completed=1` | **KVM: done in CI, 2026-11-10** (`results/2026-11-10-E5-E6-android-boots.md`). Without adb; boot is read from the console |
 | E6 | A picture | virtio-gpu 2D scanout; Android screen visible with guest software rendering | **KVM: done in CI, 2026-11-10**, frames saved to files. A host window is gameDroid's job and not built |
 | E7 | Touch, keys, gamepad | virtio-input devices; taps and keys arrive in Android | **Touch: done in CI on KVM, 2026-11-10** (a swipe unlocks, another opens the app drawer). Keyboard present, untested. No gamepad device yet |

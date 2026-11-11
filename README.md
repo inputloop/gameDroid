@@ -36,10 +36,11 @@ device in CI. More below.*
 | A window | Working in CI on Linux and Windows with Android behind it. On Linux a real mouse swipe in the window unlocks Android. Game mode (keys and mouse following a profile) is checked against a test card only, not yet against a real game |
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
 | Android on Windows | Working in CI: boots on two processors with a precise clock, unlocks by touch, installs the game and brings it to the front. Not yet run on a real Windows machine with a GPU |
+| Internet in Android | Working in CI on both hosts: Android joins a virtual Wi-Fi backed by a NAT built into the engine (no driver or administrator rights needed), and Android's own internet check passes. IPv4 only, no incoming connections ([results](docs/engine/results/2026-11-11-network.md)) |
 | GPU acceleration | Not yet. Route chosen: gfxstream ([plan](docs/engine/E8-gpu-plan.md)). Step 1 of 6 done: its host library builds in CI on Linux and Windows. Nothing uses it yet |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
-| Linphone (voice calls) as an app gameDroid offers | Decided. Step 1 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid. Calls need network and sound in the guest, which do not exist yet ([notes](docs/research/linphone.md)) |
+| Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
@@ -176,7 +177,7 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E1 | PCI and a virtio disk | Done in CI on both hosts |
 | E2 | Several CPUs and large memory | Done in CI on both hosts (Windows: two processors tried) |
 | E3 | ACPI and clean power-off | Planned |
-| E4 | Network and vsock | Planned |
+| E4 | Network and vsock | Network done in CI on both hosts: Android is online. vsock services still to come |
 | E5 | Android boots | Done in CI on Linux and Windows |
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
