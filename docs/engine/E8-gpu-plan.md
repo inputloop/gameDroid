@@ -1,0 +1,107 @@
+# E8: GPU acceleration, the route
+
+Date: 2026-11-11. Status: plan. Nothing here is built yet.
+
+Confidence: the facts below were read from primary sources by a research
+pass on 2026-11-10 (the gfxstream, rutabaga_gfx, crosvm and android-cuttlefish
+repositories at their heads). Items marked (inferred) were not confirmed.
+Nothing has been built or run.
+
+## Decision
+
+**gfxstream**, reached through the `rutabaga_gfx` Rust crate.
+
+It is the only option with real Windows host support, and Windows is the
+platform gameDroid is judged on (ADR 0002).
+
+| Option | Windows host | NVIDIA | Verdict |
+|---|---|---|---|
+| gfxstream | Yes: documented CMake + ClangCL build, Win32 code paths | Yes | Chosen |
+| virglrenderer (virgl GL, Venus) | No, Linux only in practice (inferred) | Venus lists the proprietary driver 570.86+ | Linux only |
+| DRM native context | No | No NVIDIA entry in QEMU's host table | Not usable |
+| Kumquat | It is a test server, not a product path | Headless only | Not usable |
+
+Licences fit: gfxstream is Apache-2.0, rutabaga_gfx BSD-3-Clause; both may be
+combined into a GPLv3+ program.
+
+## What it takes
+
+**On the host**
+
+- `gfxstream_backend` built as a library on Linux (Meson) and Windows
+  (CMake, ClangCL). No published Windows binaries were found, so gameDroid
+  builds its own in CI at a pinned commit.
+- At run time on Windows it needs `libEGL.dll` and `libGLESv2.dll` (the GPU
+  vendor's or ANGLE's) and `vulkan-1.dll` (from the driver).
+- **Consequence for the single file:** `gamedroid.exe` cannot stay one
+  3 MB file. Either it carries the libraries inside itself and unpacks them
+  on first run, or it downloads them in setup as it does Android. Still one
+  file to start; no longer nothing-but-system-libraries.
+
+**In the engine (bvmm's virtio-gpu, today 2D only)**
+
+- Feature bits VIRGL, RESOURCE_BLOB, CONTEXT_INIT.
+- Commands: GET_CAPSET_INFO, GET_CAPSET, CTX_CREATE (with context_init),
+  CTX_ATTACH_RESOURCE, CTX_DETACH_RESOURCE, RESOURCE_CREATE_3D,
+  TRANSFER_TO_HOST_3D, TRANSFER_FROM_HOST_3D, SUBMIT_3D,
+  RESOURCE_CREATE_BLOB, RESOURCE_MAP_BLOB, RESOURCE_UNMAP_BLOB,
+  SET_SCANOUT_BLOB.
+- Fences completed asynchronously from the renderer's callback, per ring.
+- A shared-memory region on the PCI device (a 64-bit BAR) into which host
+  memory is mapped for the guest: a KVM memory slot on Linux,
+  `WHvMapGpaRange` on Windows. gfxstream's Vulkan needs this; no copy-only
+  Vulkan mode was found.
+- Capability sets: GFXSTREAM_VULKAN (3), GFXSTREAM_GLES (8),
+  GFXSTREAM_COMPOSER (9).
+
+**In the guest image: boot settings only** (from Cuttlefish's
+`crosvm_manager.cpp`)
+
+| Setting | Today (guest software) | gfxstream |
+|---|---|---|
+| `androidboot.hardware.egl` | `angle` | `emulation` |
+| `androidboot.hardware.vulkan` | `pastel` | `ranchu` |
+| `androidboot.cpuvulkan.version` | Vulkan 1.3 | `0` |
+| `androidboot.hardware.gltransport` | (none) | `virtio-gpu-asg` |
+| `androidboot.hardware.gralloc` | `minigbm` | `minigbm` |
+| `androidboot.opengles.version` | `196609` | `196609` |
+
+The stock image is expected to carry the gfxstream guest libraries already
+(inferred; the device makefile could not be fetched to confirm).
+
+**Getting the picture to the window.** gfxstream can present straight into a
+native window (`gfxstream_backend_setup_window` with an HWND or X11 window),
+or render without a surface and be read back. The first is the fast path and
+means the window is no longer drawn by gameDroid from a copied frame.
+
+## Order of work
+
+| Step | What | Proves |
+|---|---|---|
+| G1 | Build `gfxstream_backend` in CI on Linux and Windows at a pinned commit; publish as artifacts | The Windows build works at all. Biggest unknown |
+| G2 | Engine: 3D commands, capability sets, contexts, fences, through rutabaga, on Linux. Software Vulkan on the host (CI has no GPU) | The protocol work |
+| G3 | Boot Android with the gfxstream settings; GLES first | The image accepts it |
+| G4 | Shared-memory region and blob resources; Vulkan | The memory mapping |
+| G5 | The same on Windows: `WHvMapGpaRange`, HWND presentation, packaging the libraries | The product |
+| G6 | On the 3080 Ti, both hosts | Real speed. Cannot be done in CI |
+
+## Risks, plainly
+
+- **The Windows build of gfxstream.** Its README still names Visual Studio
+  2019. Google exercises it through the emulator and crosvm, not as a
+  standalone library. Expect breakage at head.
+- **CI has no GPU.** Everything up to G5 can only be proven against a
+  software renderer (lavapipe, SwiftShader). Real acceleration is first seen
+  on the reference laptop, by hand.
+- **Version drift** between rutabaga 0.1.85 and gfxstream's head.
+- **NVIDIA quirks** with external memory and synchronisation.
+- This is the largest single item on the roadmap. It is several sittings of
+  work, not one.
+
+## Sources
+
+- https://github.com/google/gfxstream
+- https://github.com/magma-gpu/rutabaga_gfx and https://crates.io/crates/rutabaga_gfx
+- https://github.com/google/android-cuttlefish (`base/cvd/cuttlefish/host/libs/vm_manager/crosvm_manager.cpp`)
+- https://github.com/google/crosvm
+- https://docs.mesa3d.org/drivers/venus.html
