@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# The browser gameDroid installs (Fulguris, from F-Droid): does it install
+# on this Android, take the help page as its home page from settings
+# written in advance, and become the default browser?
+name: browser
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/browser.yml"
+      - "tools/engine/scripts/browser.script"
+      - "core/device/src/console.rs"
+      - "core/device/assets/**"
+permissions:
+  contents: write  # to publish the result to the ci-logs branch
+jobs:
+  fulguris:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Fetch Fulguris from F-Droid and try it
+        run: |
+          set +e +o pipefail
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          mkdir -p "$HOME/out" && cd "$HOME/out"
+          python3 "$GITHUB_WORKSPACE/tools/engine/fetch_fdroid_apk.py" net.slions.fulguris.full.fdroid "$HOME/browser.apk" 2>&1 | tail -n 3
+          {
+            echo "APK: $(stat -c %s "$HOME/browser.apk") bytes"
+            echo "native code in the APK, by kind (none means it runs on any processor):"
+            unzip -l "$HOME/browser.apk" | grep -oE 'lib/[^/]+/' | sort | uniq -c
+          } | tee result.txt
+          (cd "$GITHUB_WORKSPACE" && cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 1)
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
+          timeout 420 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+            --memory 4096 --display 720x1280 --apk "$HOME/browser.apk" \
+            --script "$GITHUB_WORKSPACE/tools/engine/scripts/browser.script" > android.log 2> run.err
+          {
+            echo "RUN_EXIT=$? (0: every expectation met; 3: one failed; 124: out of time)"
+            grep -E "gamedroid-run:" run.err | cut -c1-200
+            echo "--- the default browser, and the files written"
+            grep -a -m1 -oE 'GD_ROLE=.*' android.log | cut -c1-120
+            grep -aE 'gamedroid-help.html|_preferences.xml' android.log | grep -v 'sh -c' | cut -c1-160 | head -n 6
+            echo "--- trouble"
+            grep -aE "FATAL EXCEPTION|INSTALL_FAILED|Process: net.slions|Permission denied|avc: .*fulguris" android.log | cut -c1-220 | head -n 10
+          } | tee -a result.txt
+          for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
+          grep -q '^RUN_EXIT=0 ' result.txt
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" browser result.txt browser.png browser-again.png

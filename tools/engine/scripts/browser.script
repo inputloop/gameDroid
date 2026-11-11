@@ -1,0 +1,16 @@
+# Install the browser the runner was given (Fulguris), make the help page
+# its home page, open it, and look.
+wait 20
+install
+help
+wait 15
+screenshot browser.ppm
+shell echo GD_""ROLE=$(su 0 cmd role get-role-holders --user 0 android.app.role.BROWSER); su 0 ls -l /data/data/net.slions.fulguris.full.fdroid/files/ /data/data/net.slions.fulguris.full.fdroid/shared_prefs/; dumpsys activity activities | grep -q "ResumedActivity.*fulguris" && echo GD_""BROWSER_FRONT
+expect GD_BROWSER_FRONT 40
+# Away and back by Android's own icon route: Home, then start it afresh.
+key 172
+wait 3
+shell am force-stop net.slions.fulguris.full.fdroid; am start -n $(cmd package resolve-activity --brief -c android.intent.category.LAUNCHER net.slions.fulguris.full.fdroid | tail -n 1); echo GD_""RESTARTED
+expect GD_RESTARTED 30
+wait 12
+screenshot browser-again.ppm
