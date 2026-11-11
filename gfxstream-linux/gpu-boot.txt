@@ -1,63 +1,63 @@
 RUN_EXIT=0 (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)
-console lines: 6200
+console lines: 6216
 === the runner and the renderer
 gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 8 GB.
 gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
 gameDroid: preparing the boot files
-gameDroid: setup finished in 10 s
+gameDroid: setup finished in 14 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 95 to lock.ppm
+gamedroid-run: saved frame 72 to lock.ppm
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android stopped playing (32768 bytes of sound)
 gameDroid: Android stopped playing (65536 bytes of sound)
-gameDroid: Android stopped playing (229376 bytes of sound)
-gameDroid: Android stopped playing (8192 bytes of sound)
-gamedroid-run: saved frame 180 to after-swipe.ppm
+gameDroid: Android stopped playing (131072 bytes of sound)
+gameDroid: Android stopped playing (32768 bytes of sound)
+gamedroid-run: saved frame 145 to after-swipe.ppm
+gameDroid: Android stopped playing (266240 bytes of sound)
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 342 to help.ppm
+gamedroid-run: saved frame 284 to help.ppm
 gamedroid-run: saw `GD_HELP_FRONT`
 gamedroid-run: saw `GD_WEB_END`
 gamedroid-run: saw `GD_AV_END`
 gamedroid-run: saw `GD_CAM_END`
 gamedroid-run: saw `GD_CAM_STARTED`
 gameDroid: Android started the camera (640x480, 30 frames a second)
-gameDroid: Android stopped playing (327680 bytes of sound)
-gameDroid: Android stopped playing (61440 bytes of sound)
-gamedroid-run: saved frame 654 to camera.ppm
+gameDroid: Android stopped playing (49152 bytes of sound)
+gameDroid: Android stopped playing (245760 bytes of sound)
+gameDroid: Android stopped playing (8192 bytes of sound)
+gamedroid-run: saved frame 583 to camera.ppm
 gamedroid-run: saw `GD_CAMTOP=`
+gameDroid: Android stopped the camera after 185 frames
 gamedroid-run: saw `GD_GPU_END`
 gamedroid-run: saw `GD_WIFI_ASKED`
-gameDroid: Android stopped the camera after 233 frames
 gamedroid-run: saw `GD_NET_END`
 gamedroid-run: saw `GD_HTTP_DONE`
 gamedroid-run: saw `GD_CONN_DONE`
 gamedroid-run: saw `GD_ONLINE`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
-gameDroid: Android stopped playing (147456 bytes of sound)
-gameDroid: Android stopped playing (163840 bytes of sound)
+gameDroid: Android stopped playing (24576 bytes of sound)
 === milestones
-[9] virtio_gpu\|\[drm\] :: [    1.516416] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[1] init: starting service .surfaceflinger :: [   13.737423] init: starting service 'surfaceflinger'...
-[18] sys.boot_completed=1 :: [   36.241566] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
+[9] virtio_gpu\|\[drm\] :: [    1.832851] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[1] init: starting service .surfaceflinger :: [   10.858068] init: starting service 'surfaceflinger'...
+[18] sys.boot_completed=1 :: [   33.076660] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
 === the graphics driver in the kernel
-[    1.378869] ashmem: Using Rust implementation.
-[    1.444514] init: Loading module /lib/modules/virtio-gpu.ko with args ''
-[    1.446804] init: Loaded kernel module /lib/modules/virtio-gpu.ko
-[    1.516416] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[    1.517658] [drm] Host memory window: 0x1000000000 +0x200000000
-[    1.518260] [drm] features: +virgl -edid +resource_blob +host_visible
-[    1.518261] [drm] features: +context_init
-[    1.520369] [drm] number of scanouts: 1
-[    1.520768] [drm] number of cap sets: 2
-[    1.521240] [drm] cap set 0: id 3, max-version 0, max-size 116
-[    1.521922] [drm] cap set 1: id 9, max-version 0, max-size 16
-[    1.522639] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
+[    1.641649] ashmem: Using Rust implementation.
+[    1.732698] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    1.736526] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    1.832851] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[    1.834668] [drm] Host memory window: 0x1000000000 +0x200000000
+[    1.835533] [drm] features: +virgl -edid +resource_blob +host_visible
+[    1.835534] [drm] features: +context_init
+[    1.838624] [drm] number of scanouts: 1
+[    1.839224] [drm] number of cap sets: 2
+[    1.839882] [drm] cap set 0: id 3, max-version 0, max-size 116
+[    1.840766] [drm] cap set 1: id 9, max-version 0, max-size 16
+[    1.841894] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
 === who is drawing, by Android's account
 GD_GPU_BEGIN
 ranchu
@@ -68,10 +68,10 @@ init: Command 'setprop ro.vendor.hwcomposer.mode ${ro.boot.hardware.hwcomposer.m
 init: Command 'setprop debug.angle.feature_overrides_disabled ${ro.boot.hardware.angle_feature_overrides_disabled}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:16) took 0ms and failed: property 'ro.boot.hardware.an
 === services that keep restarting
      31 init: starting service 'vendor.threadnetwork_hal'
+      3 init: starting service 'idmap2d'
+      3 init: starting service 'artd'
       2 init: starting service 'virtualizationservice'
       2 init: starting service 'media.codeclist.generator'
-      2 init: starting service 'idmap2d'
-      2 init: starting service 'artd'
       2 init: starting service 'apexd'
       1 init: starting service 'zygote'
       1 init: starting service 'wpa_supplicant'
