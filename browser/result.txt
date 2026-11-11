@@ -1,0 +1,24 @@
+APK: 9359352 bytes
+native code in the APK, by kind (none means it runs on any processor):
+RUN_EXIT=0 (0: every expectation met; 3: one failed; 124: out of time)
+gamedroid-run: Android booted; running the script
+gamedroid-run: APK installed (9359352 bytes)
+gamedroid-run: help page stored and opened
+gamedroid-run: saved frame 182 to browser.ppm
+gamedroid-run: saw `GD_BROWSER_FRONT`
+gamedroid-run: saw `GD_RESTARTED`
+gamedroid-run: saved frame 206 to browser-again.ppm
+gamedroid-run: script finished
+--- the default browser, and the files written
+GD_ROLE=net.slions.fulguris.full.fdroid
+m start -n $(cmd package roid >/dev/null 2>&1; then am start -n $(cmd package                          <resolve-activity --b
+-rw------- 1 u0_a122 u0_a122 6059 2026-11-11 03:35 gamedroid-help.html
+-rw-rw---- 1 u0_a122 u0_a122 405 2026-11-11 03:35 net.slions.fulguris.full.fdroid_preferences.xml
+--- trouble
+[    3.692582] init: Command 'write /dev/blkio/blkio.weight 1000' action=init (/system/etc/init/hw/init.rc:218) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.weight': open() failed: Permission denied
+[    3.695438] init: Command 'write /dev/blkio/background/blkio.weight 200' action=init (/system/etc/init/hw/init.rc:219) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.weight': open() failed: 
+[    3.698554] init: Command 'write /dev/blkio/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:221) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.group_idle': open() failed: Permission denie
+[    3.704045] init: Command 'write /dev/blkio/background/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:222) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.group_idle': open() fa
+[    8.593705] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ArtTest.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[    8.636823] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ProcessManagement.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[    8.662682] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/DisruptiveApp.o (uprobe_bind_service_locked) returned fd: -1 (Permission denied)
