@@ -48,13 +48,13 @@ gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
 gameDroid: setup finished in 16 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 87 to lock.ppm
-gamedroid-run: saved frame 208 to after-swipe.ppm
+gamedroid-run: saved frame 98 to lock.ppm
+gamedroid-run: saved frame 179 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 358 to help.ppm
+gamedroid-run: saved frame 310 to help.ppm
 gamedroid-run: saw `GD_HELP_FRONT`
 gamedroid-run: saw `GD_WEB_END`
 gamedroid-run: saw `GD_GPU_END`
@@ -62,40 +62,40 @@ gamedroid-run: saw `GD_WIFI_ASKED`
 bvmm net: tcp 10.0.2.3:853 refused
 bvmm net: lookup www.google.com type 1
 bvmm net: lookup connectivitycheck.gstatic.com type 1
-bvmm net: www.google.com is [142.251.152.119, 142.251.154.119, 142.251.155.119, 142.251.157.119, 142.251.153.119, 142.251.151.119, 142.251.156.119, 142.251.150.119]
 bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
+bvmm net: www.google.com is [142.251.156.119, 142.251.153.119, 142.251.151.119, 142.251.157.119, 142.251.152.119, 142.251.154.119, 142.251.155.119, 142.251.150.119]
 bvmm net: lookup time.android.com type 1
-bvmm net: tcp 142.251.153.119:443 opening
 bvmm net: tcp 142.251.150.120:80 opening
-bvmm net: time.android.com is [216.239.35.4, 216.239.35.12, 216.239.35.8, 216.239.35.0]
+bvmm net: time.android.com is [216.239.35.0, 216.239.35.4, 216.239.35.8, 216.239.35.12]
+bvmm net: tcp 142.251.153.119:443 opening
 bvmm net: tcp 10.0.2.3:853 refused
-bvmm net: lookup clientservices.googleapis.com type 1
-bvmm net: lookup www.gstatic.com type 1
-bvmm net: clientservices.googleapis.com is [192.179.26.139, 192.179.26.138, 192.179.26.102, 192.179.26.113, 192.179.26.101, 192.179.26.100]
-bvmm net: www.gstatic.com is [142.251.153.120, 142.251.154.120, 142.251.151.120, 142.251.155.120, 142.251.150.120, 142.251.157.120, 142.251.156.120, 142.251.152.120]
-bvmm net: tcp 192.179.26.139:443 opening
-bvmm net: tcp 142.251.153.120:443 opening
 bvmm net: lookup g.co type 1
 bvmm net: lookup preprod-remoteprovisioning.googleapis.com type 1
-bvmm net: g.co is [108.177.98.100, 108.177.98.138, 108.177.98.113, 108.177.98.102, 108.177.98.101, 108.177.98.139]
-bvmm net: tcp 108.177.98.100:443 opening
-bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.116.4, 172.217.119.4, 172.217.113.4, 172.217.118.4, 172.217.114.4, 172.217.112.4, 172.217.115.4, 172.217.117.4]
+bvmm net: g.co is [142.250.73.78]
+bvmm net: tcp 142.250.73.78:443 opening
+bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.116.4, 172.217.117.4, 172.217.112.4, 172.217.119.4, 172.217.113.4, 172.217.115.4, 172.217.114.4, 172.217.118.4]
 bvmm net: tcp 172.217.116.4:443 opening
-bvmm net: tcp 142.251.153.120:443 opening
-bvmm net: tcp 142.251.153.120:443 opening
-bvmm net: tcp 142.251.153.120:443 opening
-bvmm net: tcp 142.251.153.120:443 opening
+bvmm net: lookup clientservices.googleapis.com type 1
+bvmm net: clientservices.googleapis.com is [142.250.73.110]
+bvmm net: lookup www.gstatic.com type 1
+bvmm net: tcp 142.250.73.110:443 opening
+bvmm net: www.gstatic.com is [142.251.156.120, 142.251.154.120, 142.251.151.120, 142.251.153.120, 142.251.152.120, 142.251.155.120, 142.251.157.120, 142.251.150.120]
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
 gamedroid-run: saw `GD_NET_END`
 bvmm net: lookup example.com type 28
 bvmm net: lookup example.com type 1
-bvmm net: example.com is [172.66.147.243, 104.20.23.154]
-bvmm net: tcp 172.66.147.243:80 opening
+bvmm net: example.com is [104.20.23.154, 172.66.147.243]
+bvmm net: tcp 104.20.23.154:80 opening
 gamedroid-run: saw `GD_HTTP_DONE`
 gamedroid-run: saw `GD_CONN_DONE`
 gamedroid-run: saw `GD_ONLINE`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 1396 to game-1.ppm
-gamedroid-run: saved frame 1824 to game-2.ppm
+gamedroid-run: saved frame 1195 to game-1.ppm
+gamedroid-run: saved frame 1525 to game-2.ppm
 gamedroid-run: script finished
