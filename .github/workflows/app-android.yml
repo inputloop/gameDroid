@@ -10,6 +10,7 @@ on:
       - ".github/workflows/app-android.yml"
       - "app/**"
       - "core/device/**"
+      - "tools/ci/build-gfxstream.sh"
 permissions:
   contents: write  # to publish the screenshots to the ci-logs branch
 jobs:
@@ -23,9 +24,13 @@ jobs:
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
-          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev libasound2-dev >/dev/null
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev libasound2-dev cmake ninja-build pkg-config libdrm-dev libegl-dev libgles-dev libvulkan-dev libx11-xcb-dev libxcb1-dev mesa-vulkan-drivers >/dev/null
           echo "GAMEDROID_DATA=$RUNNER_TEMP/gd-data" >> "$GITHUB_ENV"
-      - run: cargo build --release -p gamedroid
+      - name: Build gamedroid, carrying the graphics library
+        run: |
+          lib="$(tools/ci/build-gfxstream.sh "$RUNNER_TEMP/gfx" | tail -n 1)"
+          echo "carrying $lib ($(stat -c %s "$lib") bytes)"
+          GAMEDROID_GFXSTREAM_EMBED="$lib" cargo build --release -p gamedroid
       - name: Start gamedroid as a user would, and watch its window
         run: |
           set +e
@@ -41,6 +46,9 @@ jobs:
           echo "window ${WIDTH}x${HEIGHT} at ${X},${Y}: $(xdotool getwindowname "$win")"
           for _ in $(seq 120); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
           grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
+          # Nobody asked for it: gameDroid must have found that the graphics
+          # library works here (against a software Vulkan) and used it.
+          grep -q 'will draw with the graphics card' app.err && echo "RESULT: graphics card mode was chosen" || echo "RESULT: graphics card mode was not chosen"
           sleep 8; import -window root 1-lock.png
           # Swipe up with the mouse, as a finger, to unlock.
           xdotool mousemove $((X + WIDTH / 2)) $((Y + HEIGHT * 8 / 10)); sleep 0.2; xdotool mousedown 1
@@ -68,6 +76,7 @@ jobs:
           grep -q 'Android booted behind the window' "$HOME/out/result.txt"
           grep -q 'the browser was installed and set up' "$HOME/out/result.txt"
           grep -q 'F3 opened the browser' "$HOME/out/result.txt"
+          grep -q 'graphics card mode was chosen' "$HOME/out/result.txt"
   windows:
     runs-on: windows-latest
     timeout-minutes: 40
@@ -80,7 +89,12 @@ jobs:
       - name: Build gamedroid.exe
         env:
           RUSTFLAGS: -C target-feature=+crt-static
-        run: cargo build --release -p gamedroid
+        run: |
+          # The graphics library, carried inside the file.
+          lib="$(tools/ci/build-gfxstream.sh "$RUNNER_TEMP/gfx" | tail -n 1)"
+          echo "carrying $lib ($(stat -c %s "$lib") bytes)"
+          export GAMEDROID_GFXSTREAM_EMBED="$lib"
+          cargo build --release -p gamedroid
       - name: Start gamedroid.exe as a user would, and look at the screen
         run: |
           set +e
@@ -99,6 +113,9 @@ jobs:
           ../target/release/gamedroid.exe --console android.log --frames 40000 2> app.err &
           for _ in $(seq 240); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
           grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted behind the window" || echo "RESULT: Android did not boot in time"
+          # This runner has no Vulkan driver: gameDroid must notice, say so,
+          # and carry on with the processor.
+          grep -q 'the graphics card cannot be used here' app.err && echo "RESULT: fell back from the graphics card" || echo "RESULT: no fallback message"
           sleep 10
           powershell -ExecutionPolicy Bypass -File shot.ps1 1-screen.png
           for _ in $(seq 300); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
@@ -114,3 +131,4 @@ jobs:
         run: |
           grep -q 'Android booted behind the window' out/result.txt
           grep -q 'the browser was installed and set up' out/result.txt
+          grep -q 'fell back from the graphics card' out/result.txt

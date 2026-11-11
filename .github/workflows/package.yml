@@ -11,6 +11,7 @@ on:
       - "app/**"
       - "Cargo.lock"
       - "Cargo.toml"
+      - "tools/ci/build-gfxstream.sh"
       - ".github/workflows/package.yml"
 permissions:
   contents: write  # to publish the smoke-test result to the ci-logs branch
@@ -27,6 +28,10 @@ jobs:
         env:
           RUSTFLAGS: -C target-feature=+crt-static
         run: |
+          # The graphics library, carried inside the file.
+          lib="$(tools/ci/build-gfxstream.sh "$RUNNER_TEMP/gfx" | tail -n 1)"
+          echo "carrying $lib ($(stat -c %s "$lib") bytes)"
+          export GAMEDROID_GFXSTREAM_EMBED="$lib"
           cargo build --release -p gamedroid
           ls -la target/release/gamedroid.exe
       - name: What it needs from Windows
@@ -55,8 +60,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libx11-dev libxkbcommon-dev libasound2-dev >/dev/null
-      - run: cargo build --release -p gamedroid
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libx11-dev libxkbcommon-dev libasound2-dev cmake ninja-build pkg-config libdrm-dev libegl-dev libgles-dev libvulkan-dev libx11-xcb-dev libxcb1-dev >/dev/null
+      - name: Build gamedroid, carrying the graphics library
+        run: |
+          lib="$(tools/ci/build-gfxstream.sh "$RUNNER_TEMP/gfx" | tail -n 1)"
+          echo "carrying $lib ($(stat -c %s "$lib") bytes)"
+          GAMEDROID_GFXSTREAM_EMBED="$lib" cargo build --release -p gamedroid
       - run: ls -la target/release/gamedroid && ldd target/release/gamedroid
       - uses: actions/upload-artifact@v4
         with:

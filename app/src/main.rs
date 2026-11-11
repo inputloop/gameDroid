@@ -16,6 +16,17 @@ use gamedroid_device::android::{machine, Handles, Options};
 use gamedroid_input::{Profile, Touch};
 use minifb::{MouseButton, MouseMode, ScaleMode, Window, WindowOptions};
 
+/// The gfxstream library this gameDroid carries inside itself, if it was
+/// built with one.
+#[cfg(carries_gfxstream)]
+const CARRIED_GFXSTREAM: Option<&[u8]> = Some(include_bytes!(env!("GAMEDROID_GFXSTREAM_PATH")));
+#[cfg(not(carries_gfxstream))]
+const CARRIED_GFXSTREAM: Option<&[u8]> = None;
+
+/// The argument gameDroid starts itself with to try the graphics library
+/// in a process that can be abandoned.
+const GPU_CHECK: &str = "--gpu-check";
+
 const USAGE: &str = "\
 usage: gamedroid [options]
        gamedroid <prepared-dir> [options]
@@ -34,6 +45,9 @@ usage: gamedroid [options]
   --cpus <n>          virtual processors (default: half the host's, 2 to 8)
   --memory <MiB>      guest memory (default 4096)
   --console <file>    write Android's console log here (default: discard)
+  --gpu auto|on|off   draw with the graphics card. auto (the default): if it
+                      can be shown to work here, and the last such start
+                      booted. on: insist, and say why not. off: never
   --microphone <name> the microphone Android hears: part of its name (default:
                       the system's default one). Opened only while Android
                       is recording.
@@ -207,6 +221,8 @@ struct Args {
     options: Options,
     console: Option<PathBuf>,
     frames: Option<u64>,
+    /// Whether to draw with the graphics card.
+    gpu: gamedroid_device::gpu::Wish,
     /// Part of the name of the microphone Android should hear.
     microphone: Option<String>,
     /// Running gameDroid's own image set, which it looks after: it gets
@@ -224,6 +240,7 @@ fn parse() -> Result<Args, String> {
         console: None,
         frames: None,
         own_image: false,
+        gpu: gamedroid_device::gpu::Wish::Auto,
         microphone: std::env::var("GAMEDROID_MICROPHONE").ok(),
     };
     let mut args = std::env::args().skip(1);
@@ -234,6 +251,15 @@ fn parse() -> Result<Args, String> {
             "--game-mode" => a.game_mode = true,
             "--profile" => a.profile = Some(value(&arg)?.into()),
             "--console" => a.console = Some(value(&arg)?.into()),
+            "--gpu" => {
+                use gamedroid_device::gpu::Wish;
+                a.gpu = match value(&arg)?.as_str() {
+                    "auto" => Wish::Auto,
+                    "on" => Wish::On,
+                    "off" => Wish::Off,
+                    _ => return Err("--gpu takes auto, on or off".into()),
+                }
+            }
             "--microphone" => a.microphone = Some(value(&arg)?),
             "--list-microphones" => {
                 let names = gamedroid::audio::microphones();
@@ -320,6 +346,34 @@ fn run() -> Result<(), String> {
                     }
                 }
             }
+            // The graphics card, if it can be shown to work here.
+            let gpu_data = if args.own_image {
+                gamedroid_device::setup::data_folder().unwrap_or_else(|| dir.clone())
+            } else {
+                dir.clone()
+            };
+            {
+                use gamedroid_device::gpu;
+                if let Some(library) = CARRIED_GFXSTREAM {
+                    if let Err(e) = gpu::unpack(&gpu_data, library) {
+                        eprintln!("gameDroid: {e}");
+                    }
+                }
+                let me = std::env::current_exe()
+                    .map_err(|e| format!("finding gameDroid itself: {e}"))?;
+                let (library, why) =
+                    gpu::decide(args.gpu, &gpu_data, gpu::find(&gpu_data), &|library| {
+                        gpu::check(&me, GPU_CHECK, library)
+                    });
+                eprintln!("gameDroid: {why}");
+                if library.is_none() && args.gpu == gpu::Wish::On {
+                    return Err(why);
+                }
+                if library.is_some() {
+                    gpu::starting(&gpu_data);
+                }
+                options.gfxstream = library;
+            }
             let (config, handles) = machine(dir, &options)?;
             let console: Box<dyn std::io::Write + Send> = match &args.console {
                 Some(path) => Box::new(
@@ -335,6 +389,22 @@ fn run() -> Result<(), String> {
             help_line = Some(shell.clone());
             // Once booted: a games machine's settings, the browser, and
             // the help page.
+            {
+                // A boot that finishes shows the graphics card works here.
+                let (booted, data, used) = (
+                    booted.clone(),
+                    gpu_data.clone(),
+                    options.gfxstream.is_some(),
+                );
+                std::thread::spawn(move || {
+                    while !booted.load(std::sync::atomic::Ordering::SeqCst) {
+                        std::thread::sleep(Duration::from_millis(500));
+                    }
+                    if used {
+                        gamedroid_device::gpu::booted(&data);
+                    }
+                });
+            }
             gamedroid_device::console::after_boot(booted, console.marks(), shell, browser_bytes);
             std::thread::spawn(move || {
                 match bvmm::run_linux(&config, Box::new(console), Some(Box::new(keys))) {
@@ -444,6 +514,19 @@ fn run() -> Result<(), String> {
 }
 
 fn main() -> ExitCode {
+    // gameDroid starting itself to try the graphics library: say how it
+    // went on the last line, and nothing else.
+    let mut first = std::env::args_os().skip(1);
+    if first.next().is_some_and(|a| a == GPU_CHECK) {
+        let library = first.next().map(PathBuf::from).unwrap_or_default();
+        return match gamedroid_device::gpu::check_here(&library) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                println!("{e}");
+                ExitCode::FAILURE
+            }
+        };
+    }
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {

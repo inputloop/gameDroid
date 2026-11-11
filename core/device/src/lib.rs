@@ -11,6 +11,7 @@ pub mod android;
 pub mod camera;
 pub mod console;
 pub mod cuttlefish;
+pub mod gpu;
 pub mod prepare;
 pub mod script;
 pub mod setup;

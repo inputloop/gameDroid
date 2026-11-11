@@ -579,6 +579,11 @@ fn browser_url() -> String {
     format!("https://f-droid.org/repo/net.slions.fulguris.full.fdroid_{BROWSER_VERSION}.apk")
 }
 
+/// The folder Android is kept in, as chosen at setup.
+pub fn data_folder() -> Option<PathBuf> {
+    plan().ok().map(|p| p.data)
+}
+
 /// The browser's APK in gameDroid's data, fetched if it is not there yet.
 /// `None` if it cannot be had (no internet, say): Android then keeps only
 /// its stock test browser, and this is tried again at the next start.
