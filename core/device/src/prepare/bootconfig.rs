@@ -161,6 +161,9 @@ pub fn runtime(boot_device: &str, vbmeta_guid: &str, memory_mib: u64, density: u
         // machine's network cards in android.rs). Without this setting the
         // image starts no Wi-Fi at all.
         ("androidboot.wifi_impl", "virt_wifi"),
+        // The image's Wi-Fi helper makes the card's address from this
+        // number, and aborts if it is absent.
+        ("androidboot.wifi_mac_prefix", "5554"),
         // Verified boot: unlocked, as on the stock virtual device.
         ("androidboot.vbmeta.avb_version", "1.2"),
         ("androidboot.vbmeta.device_state", "unlocked"),
