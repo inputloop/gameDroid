@@ -1,0 +1,14 @@
+# Install the APK the runner was given, start it, and look.
+wait 20
+shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard'; echo GD_""UNLOCKED
+expect GD_UNLOCKED 30
+wait 3
+install
+start PACKAGE
+expect GD_START_STATUS=0 60
+wait 30
+screenshot app-1.ppm
+shell dumpsys activity activities | grep -q "ResumedActivity.*PACKAGE" && echo GD_""FRONT_OK; echo GD_""MEM=$(su 0 dumpsys meminfo PACKAGE | grep -m1 "TOTAL PSS" | tr -s " " | cut -c1-60)
+expect GD_FRONT_OK 30
+wait 20
+screenshot app-2.ppm

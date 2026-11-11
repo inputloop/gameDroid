@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Firefox on gameDroid: does the free-software build of Firefox for Android
+# (Fennec, from F-Droid) have an x86-64 release, and does it install and
+# start on this Android? Exploratory; it reports what happened.
+name: firefox
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/firefox.yml"
+      - "tools/engine/fetch_fdroid_x86_64.py"
+      - "tools/engine/scripts/try-app.script"
+permissions:
+  contents: write  # to publish the result to the ci-logs branch
+env:
+  PACKAGE: org.mozilla.fennec_fdroid
+jobs:
+  fennec:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Fetch Fennec from F-Droid and try it
+        run: |
+          set +e +o pipefail
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          mkdir -p "$HOME/out" && cd "$HOME/out"
+          python3 "$GITHUB_WORKSPACE/tools/engine/fetch_fdroid_x86_64.py" "$PACKAGE" "$HOME/app.apk" 2>&1 | tee result.txt
+          [ -s "$HOME/app.apk" ] || { echo "nothing to try" | tee -a result.txt; exit 0; }
+          echo "APK: $(stat -c %s "$HOME/app.apk") bytes" | tee -a result.txt
+          (cd "$GITHUB_WORKSPACE" && cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 1)
+          sed "s/PACKAGE/$PACKAGE/g" "$GITHUB_WORKSPACE/tools/engine/scripts/try-app.script" > try.script
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
+          timeout 480 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+            --memory 4096 --display 720x1280 --apk "$HOME/app.apk" --script try.script > android.log 2> run.err
+          {
+            echo "RUN_EXIT=$? (0: installed, started and in front; 3: an expectation failed; 124: out of time)"
+            grep -E "gamedroid-run:" run.err | cut -c1-200
+            grep -a -m1 -oE 'GD_MEM=.*' android.log | cut -c1-90
+            echo "--- trouble"
+            grep -aE "FATAL EXCEPTION|INSTALL_FAILED|UnsatisfiedLinkError|Process: org.mozilla|has died|lowmemorykiller" android.log | cut -c1-220 | head -n 10
+          } | tee -a result.txt
+          for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
+          exit 0
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" firefox result.txt app-1.png app-2.png
