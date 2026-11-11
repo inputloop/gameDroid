@@ -1,0 +1,19 @@
+package=org.mozilla.fennec_fdroid
+suggested=1590120
+newest_codes=[1590120, 1590110, 1590100, 1590020, 1590010, 1590000, 1580220, 1580210]
+version_code=1590120 abis=arm64-v8a
+version_code=1590110 abis=x86_64
+chosen=1590110
+url=https://f-droid.org/repo/org.mozilla.fennec_fdroid_1590110.apk
+APK: 134181631 bytes
+RUN_EXIT=0 (0: installed, started and in front; 3: an expectation failed; 124: out of time)
+gamedroid-run: Android booted; running the script
+gamedroid-run: saw `GD_UNLOCKED`
+gamedroid-run: APK installed (134181631 bytes)
+gamedroid-run: saw `GD_START_STATUS=0`
+gamedroid-run: saved frame 404 to app-1.ppm
+gamedroid-run: saw `GD_FRONT_OK`
+gamedroid-run: saved frame 404 to app-2.ppm
+gamedroid-run: script finished
+GD_MEM= TOTAL PSS: 226361 TOTAL RSS: 454736 TOTAL SWAP (KB): 0
+--- trouble
