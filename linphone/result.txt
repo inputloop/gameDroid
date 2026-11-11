@@ -2,21 +2,21 @@ linphone-android commit: 92318a248f8fe3ba3b6787b97874c6f2bd9bf616 (2026-11-09)
 116:            abiFilters += listOf("x86_64")
 keystore.properties
 GRADLE_EXIT=0
-APK: 114770248 bytes
+APK: 114770280 bytes
 --- native code in the APK, by kind
      15 lib/x86_64/
 package: org.linphone
 RUN_EXIT=0 (0: installed, started and in front; 3: an expectation failed; 124: out of time)
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 93 to lock.ppm
-gamedroid-run: saved frame 219 to after-swipe.ppm
+gamedroid-run: saved frame 134 to lock.ppm
+gamedroid-run: saved frame 248 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
-gamedroid-run: APK installed (114770248 bytes)
+gamedroid-run: APK installed (114770280 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 350 to game-1.ppm
-gamedroid-run: saved frame 350 to game-2.ppm
+gamedroid-run: saved frame 435 to game-1.ppm
+gamedroid-run: saved frame 436 to game-2.ppm
 gamedroid-run: script finished
 --- crashes and native-library trouble
