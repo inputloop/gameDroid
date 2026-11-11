@@ -46,14 +46,15 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 21 s
+gameDroid: setup finished in 18 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 84 to lock.ppm
-gamedroid-run: saved frame 124 to after-swipe.ppm
+gamedroid-run: saved frame 80 to lock.ppm
+gamedroid-run: saved frame 154 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
+gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
-gamedroid-run: saved frame 388 to game-1.ppm
-gamedroid-run: saved frame 459 to game-2.ppm
+gamedroid-run: saved frame 722 to game-1.ppm
+gamedroid-run: saved frame 949 to game-2.ppm
 gamedroid-run: script finished
