@@ -1,23 +1,25 @@
 RUN_EXIT=0 (0: the script ran and every expectation was met; 3: an expectation failed; 124: out of time)
-console lines: 5777
+console lines: 5764
 === the runner and the renderer
 gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data
 gameDroid: this downloads about 1.2 GB; games and data may use up to 8 GB.
 gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
 gameDroid: preparing the boot files
-gameDroid: setup finished in 13 s
+gameDroid: setup finished in 17 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 120 to lock.ppm
+gamedroid-run: saved frame 104 to lock.ppm
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (49152 bytes of sound)
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android stopped playing (32768 bytes of sound)
-gameDroid: Android stopped playing (45056 bytes of sound)
-gamedroid-run: saved frame 234 to after-swipe.ppm
+gameDroid: Android stopped playing (28672 bytes of sound)
+gameDroid: Android stopped playing (389120 bytes of sound)
+gamedroid-run: saved frame 175 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 372 to help.ppm
+gamedroid-run: saved frame 301 to help.ppm
 gamedroid-run: saw `GD_HELP_FRONT`
 gamedroid-run: saw `GD_WEB_END`
 gamedroid-run: saw `GD_AV_END`
@@ -29,30 +31,33 @@ gamedroid-run: saw `GD_CONN_DONE`
 gamedroid-run: saw `GD_ONLINE`
 gamedroid-run: APK installed (30275058 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
-gameDroid: Android stopped playing (81920 bytes of sound)
-gameDroid: Android stopped playing (311296 bytes of sound)
-gameDroid: Android stopped playing (425984 bytes of sound)
+gameDroid: Android stopped playing (65536 bytes of sound)
+gameDroid: Android stopped playing (131072 bytes of sound)
+gameDroid: Android stopped playing (180224 bytes of sound)
+gameDroid: Android stopped playing (176128 bytes of sound)
+gameDroid: Android stopped playing (315392 bytes of sound)
+gameDroid: Android stopped playing (3096576 bytes of sound)
+gameDroid: Android stopped playing (229376 bytes of sound)
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 1563 to game-1.ppm
-gamedroid-run: saved frame 2004 to game-2.ppm
-gamedroid-run: script finished
+gamedroid-run: saved frame 1107 to game-1.ppm
+gamedroid-run: saved frame 1395 to game-2.ppm
 === milestones
-[9] virtio_gpu\|\[drm\] :: [    1.524952] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[1] init: starting service .surfaceflinger :: [   10.161341] init: starting service 'surfaceflinger'...
-[17] sys.boot_completed=1 :: [   24.239057] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
+[9] virtio_gpu\|\[drm\] :: [    1.594618] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[1] init: starting service .surfaceflinger :: [   12.359995] init: starting service 'surfaceflinger'...
+[20] sys.boot_completed=1 :: [   30.315278] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
 === the graphics driver in the kernel
-[    1.385762] ashmem: Using Rust implementation.
-[    1.451254] init: Loading module /lib/modules/virtio-gpu.ko with args ''
-[    1.453618] init: Loaded kernel module /lib/modules/virtio-gpu.ko
-[    1.524952] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
-[    1.526305] [drm] Host memory window: 0xb000000000 +0x200000000
-[    1.526964] [drm] features: +virgl -edid +resource_blob +host_visible
-[    1.526965] [drm] features: +context_init
-[    1.529323] [drm] number of scanouts: 1
-[    1.529775] [drm] number of cap sets: 2
-[    1.530316] [drm] cap set 0: id 3, max-version 0, max-size 116
-[    1.531010] [drm] cap set 1: id 9, max-version 0, max-size 16
-[    1.531774] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
+[    1.460573] ashmem: Using Rust implementation.
+[    1.520332] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    1.522496] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    1.594618] [drm] pci: virtio-gpu-pci detected at 0000:00:03.0
+[    1.595792] [drm] Host memory window: 0xb000000000 +0x200000000
+[    1.596403] [drm] features: +virgl -edid +resource_blob +host_visible
+[    1.596404] [drm] features: +context_init
+[    1.598566] [drm] number of scanouts: 1
+[    1.598971] [drm] number of cap sets: 2
+[    1.599536] [drm] cap set 0: id 3, max-version 0, max-size 116
+[    1.600163] [drm] cap set 1: id 9, max-version 0, max-size 16
+[    1.600883] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:03.0 on minor 0
 === who is drawing, by Android's account
 GD_GPU_BEGIN
 ranchu
