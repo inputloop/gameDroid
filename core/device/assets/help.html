@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use this browser and OS</title>
+<style>
+  :root { --bg: #f6f4ef; --fg: #1d1f24; --soft: #5a5f6b; --card: #ffffff; --line: #dedbd3; --accent: #2f5fd0; --key-bg: #ecebe6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161a; --fg: #e9e7e1; --soft: #a4a9b5; --card: #1d2026; --line: #30343c; --accent: #8fb0ff; --key-bg: #2a2e36; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 20px 16px 48px; background: var(--bg); color: var(--fg);
+         font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 8px 0 4px; }
+  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  p { margin: 0 0 10px; }
+  .lead { color: var(--soft); margin-bottom: 20px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 0 0 14px; }
+  nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+  nav a { color: var(--accent); text-decoration: none; border: 1px solid var(--line); background: var(--card);
+          border-radius: 999px; padding: 6px 12px; font-size: .95rem; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 6px; border-top: 1px solid var(--line); }
+  tr:first-child th, tr:first-child td { border-top: 0; }
+  th { width: 42%; font-weight: 600; }
+  kbd { display: inline-block; min-width: 1.6em; text-align: center; padding: 1px 6px; border-radius: 6px;
+        background: var(--key-bg); border: 1px solid var(--line); font: .9em ui-monospace, Consolas, monospace; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  .note { color: var(--soft); font-size: .95rem; }
+  footer { color: var(--soft); font-size: .9rem; margin-top: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>How to use this browser and OS</h1>
+  <p class="lead">This is Android, running in a window on your computer inside gameDroid. This page is stored on the phone, so it works without the internet.</p>
+
+  <nav>
+    <a href="#controls">Controls</a>
+    <a href="#android">Android</a>
+    <a href="#browser">This browser</a>
+    <a href="#games">Games</a>
+    <a href="#internet">Internet</a>
+    <a href="#limits">Limits</a>
+  </nav>
+
+  <section id="controls">
+    <h2>Controls</h2>
+    <table>
+      <tr><th>Mouse click</th><td>A tap with one finger.</td></tr>
+      <tr><th>Mouse drag</th><td>A swipe. Hold the button and move.</td></tr>
+      <tr><th>Keyboard</th><td>Types into whatever has the cursor.</td></tr>
+      <tr><th><kbd>Esc</kbd></th><td>Android's Back.</td></tr>
+      <tr><th><kbd>F2</kbd></th><td>Android's Home.</td></tr>
+      <tr><th><kbd>F1</kbd></th><td>Game mode on or off, when gameDroid was started with a game profile. In game mode the keys and mouse follow the profile: keys become taps, <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> a joystick, the mouse a look-around.</td></tr>
+    </table>
+  </section>
+
+  <section id="android">
+    <h2>Finding your way around Android</h2>
+    <ul>
+      <li><b>All apps:</b> on the home screen, drag upward from the lower part of the screen.</li>
+      <li><b>Home:</b> the round button at the bottom, or <kbd>F2</kbd>.</li>
+      <li><b>Back:</b> the triangle at the bottom, or <kbd>Esc</kbd>.</li>
+      <li><b>Recent apps:</b> the square at the bottom. Drag an app upward to close it.</li>
+      <li><b>Notifications and quick settings:</b> drag downward from the very top.</li>
+      <li><b>Settings:</b> in the list of all apps.</li>
+    </ul>
+    <p class="note">There is no lock screen and the screen does not switch itself off: gameDroid turns both off, since this is a games machine and not a phone in a pocket.</p>
+  </section>
+
+  <section id="browser">
+    <h2>This browser</h2>
+    <p>The browser that comes with this Android is a plain one, made for testing. It is enough to read a page or sign in somewhere.</p>
+    <ul>
+      <li><b>Go to a page:</b> tap the address bar at the top, type an address, and press Enter.</li>
+      <li><b>Back:</b> <kbd>Esc</kbd>, or Android's Back button.</li>
+      <li><b>Search:</b> it has no search box. Go to a search site first, or type the site's full address.</li>
+      <li><b>It has no tabs, bookmarks or downloads list.</b></li>
+    </ul>
+    <p class="note">To come back to this page, type its address: <br><code id="here"></code></p>
+  </section>
+
+  <section id="games">
+    <h2>Games and apps</h2>
+    <ul>
+      <li>This Android has <b>no Google Play</b> and no Google apps. That is deliberate: gameDroid is free software and ships none of Google's.</li>
+      <li>Apps come as <b>APK files</b>. Free-software apps and games are collected at <b>f-droid.org</b>.</li>
+      <li>This Android is the <b>x86-64</b> kind. An app built only for ARM phones will refuse to install or will not start.</li>
+    </ul>
+  </section>
+
+  <section id="internet">
+    <h2>Internet</h2>
+    <p>Android believes it is on a Wi-Fi network named <b>VirtWifi</b>. That network is your computer: whatever internet your computer has, Android has, through the same firewall and VPN.</p>
+    <ul>
+      <li>Nothing outside can connect <i>in</i> to this Android.</li>
+      <li>If pages do not load, check that your computer itself is online.</li>
+    </ul>
+  </section>
+
+  <section id="limits">
+    <h2>What does not work yet</h2>
+    <ul>
+      <li><b>Sound.</b> There is none yet, in either direction.</li>
+      <li><b>Camera, phone calls, text messages, location.</b></li>
+      <li><b>Game controllers.</b></li>
+      <li><b>Speed.</b> Graphics are drawn by the processor unless gameDroid was started with its graphics-card mode, which is still experimental.</li>
+    </ul>
+  </section>
+
+  <footer>gameDroid is free software under the GNU General Public License, version 3 or later.</footer>
+</main>
+<script>document.getElementById("here").textContent = location.href;</script>
+</body>
+</html>

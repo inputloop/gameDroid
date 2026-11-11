@@ -22,6 +22,63 @@ pub const GAMING_SETTINGS: &str = "su 0 sh -c 'locksettings set-disabled true; s
      ip link set buried_eth2 up; }; cmd wifi set-wifi-enabled enabled; sleep 3; \
      cmd wifi connect-network VirtWifi open'";
 
+/// "How to use this browser and OS": the page kept on the phone.
+pub const HELP_PAGE: &str = include_str!("../assets/help.html");
+/// The browser the stock image ships: Chromium's WebView test shell. It is
+/// the only one, has no start-page setting, and opens a blank page unless
+/// it is started with an address.
+pub const BROWSER: &str = "org.chromium.webview_shell";
+const BROWSER_ACTIVITY: &str = "org.chromium.webview_shell/.WebViewBrowserActivity";
+/// Where the page is kept: in the browser's own files, the one place it may
+/// always read, whatever Android's storage rules say.
+const HELP_FILE: &str = "/data/data/org.chromium.webview_shell/files/gamedroid-help.html";
+/// The page's address in the browser.
+pub const HELP_URL: &str = "file:///data/data/org.chromium.webview_shell/files/gamedroid-help.html";
+
+fn base64(bytes: &[u8]) -> String {
+    const T: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
+    for chunk in bytes.chunks(3) {
+        let b = [
+            chunk[0],
+            *chunk.get(1).unwrap_or(&0),
+            *chunk.get(2).unwrap_or(&0),
+        ];
+        let n = (b[0] as u32) << 16 | (b[1] as u32) << 8 | b[2] as u32;
+        for i in 0..4 {
+            let c = T[(n >> (18 - 6 * i)) as usize & 63] as char;
+            out.push(if i <= chunk.len() { c } else { '=' });
+        }
+    }
+    out
+}
+
+/// Shell command lines, to be typed in order at Android's root shell, that
+/// store the help page on the phone where the browser can read it.
+///
+/// The page crosses the serial line as base64 text in pieces short enough
+/// for a terminal line, is put back together on the other side, and is
+/// given to the browser's user and security label.
+pub fn help_page_commands() -> Vec<String> {
+    let tmp = "/data/local/tmp/gd-help.b64";
+    let mut lines = vec![format!("su 0 rm -f {tmp}")];
+    for piece in base64(HELP_PAGE.as_bytes()).as_bytes().chunks(900) {
+        let piece = std::str::from_utf8(piece).unwrap_or_default();
+        lines.push(format!("su 0 sh -c 'echo {piece} >> {tmp}'"));
+    }
+    let dir = "/data/data/org.chromium.webview_shell";
+    lines.push(format!(
+        "su 0 sh -c 'mkdir -p {dir}/files && base64 -d {tmp} > {HELP_FILE} && \
+         chown -R $(stat -c %u:%g {dir}) {dir}/files && restorecon -R {dir}/files; rm -f {tmp}'"
+    ));
+    lines
+}
+
+/// A shell command line that opens the help page in the browser.
+pub fn open_help_command() -> String {
+    format!("am start -n {BROWSER_ACTIVITY} -a android.intent.action.VIEW -d {HELP_URL}")
+}
+
 /// Passes the console through to `out` and sets `booted` when Android
 /// reports that it has finished booting.
 pub struct BootWatch<W: Write> {
@@ -110,6 +167,47 @@ mod tests {
         watch.write_all(b"completed=1) from init.rc\n").unwrap();
         assert!(booted.load(Ordering::SeqCst));
         assert!(watch.out.ends_with(b"from init.rc\n") && watch.out.starts_with(b"[ 1.0]"));
+    }
+
+    #[test]
+    fn the_help_page_crosses_the_serial_line_whole() {
+        // RFC 4648's examples.
+        for (plain, coded) in [
+            ("", ""),
+            ("f", "Zg=="),
+            ("fo", "Zm8="),
+            ("foo", "Zm9v"),
+            ("foobar", "Zm9vYmFy"),
+        ] {
+            assert_eq!(base64(plain.as_bytes()), coded);
+        }
+        let lines = help_page_commands();
+        // Every line fits a terminal line, and nothing in the page can end
+        // the quoting it travels in.
+        assert!(lines.iter().all(|l| l.len() < 1200 && !l.contains('\n')));
+        let coded: String = lines
+            .iter()
+            .filter_map(|l| l.strip_prefix("su 0 sh -c 'echo ")?.split(' ').next())
+            .collect();
+        assert_eq!(coded, base64(HELP_PAGE.as_bytes()));
+        assert!(coded
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || "+/=".contains(c)));
+        let last = lines.last().unwrap();
+        assert!(
+            last.contains("base64 -d") && last.contains("restorecon") && last.contains("chown")
+        );
+        // The page itself: complete, and it reaches nothing outside itself.
+        assert!(
+            HELP_PAGE.starts_with("<!doctype html>") && HELP_PAGE.trim_end().ends_with("</html>")
+        );
+        assert!(HELP_PAGE.contains("<title>How to use this browser and OS</title>"));
+        assert!(
+            !HELP_PAGE.contains("http://")
+                && !HELP_PAGE.contains("https://")
+                && !HELP_PAGE.contains("src=")
+        );
+        assert!(open_help_command().ends_with(HELP_URL));
     }
 
     #[test]

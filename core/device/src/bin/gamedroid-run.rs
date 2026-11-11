@@ -167,6 +167,24 @@ fn run_script(steps: Vec<Step>, session: Session) {
                         failed = true;
                     }
                 }
+                Step::Help => {
+                    for line in gamedroid_device::console::help_page_commands() {
+                        session.shell(&line);
+                        // The serial line has no flow control: give the
+                        // shell time to take each line.
+                        std::thread::sleep(Duration::from_millis(150));
+                    }
+                    session.shell(&format!(
+                        "{}; echo GD_HELP''_OPENED=$?",
+                        gamedroid_device::console::open_help_command()
+                    ));
+                    if session.expect("GD_HELP_OPENED=0", Duration::from_secs(60)) {
+                        eprintln!("gamedroid-run: help page stored and opened");
+                    } else {
+                        eprintln!("gamedroid-run: EXPECT FAILED: the help page did not open");
+                        failed = true;
+                    }
+                }
                 Step::Install => match session.apk_bytes {
                     None => {
                         eprintln!("gamedroid-run: EXPECT FAILED: `install` needs --apk");

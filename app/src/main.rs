@@ -344,8 +344,21 @@ fn run() -> Result<(), String> {
                 if at.elapsed() > Duration::from_secs(5) {
                     let line = format!("{}\n", gamedroid_device::console::GAMING_SETTINGS);
                     let _ = shell.send(line.into_bytes());
-                    // Keep the sender: dropping it would close the serial line.
-                    std::mem::forget(settle.take());
+                    // Then the help page, a line at a time: the serial line
+                    // has no flow control. The thread also keeps the
+                    // sender, without which the serial line would close.
+                    let shell = shell.clone();
+                    std::thread::spawn(move || {
+                        std::thread::sleep(Duration::from_secs(4));
+                        for line in gamedroid_device::console::help_page_commands() {
+                            let _ = shell.send(format!("{line}\n").into_bytes());
+                            std::thread::sleep(Duration::from_millis(150));
+                        }
+                        loop {
+                            std::thread::park();
+                        }
+                    });
+                    settle = None;
                 }
             }
         }

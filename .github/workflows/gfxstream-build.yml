@@ -110,7 +110,7 @@ jobs:
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux gpu-boot.txt lock.png after-swipe.png game-1.png game-2.png result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" gfxstream-linux gpu-boot.txt lock.png after-swipe.png game-1.png game-2.png help.png result.txt meson-tail.txt cmake-tail.txt start.txt engine-start.txt
   windows:
     runs-on: windows-latest
     timeout-minutes: 90

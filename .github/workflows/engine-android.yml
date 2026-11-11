@@ -138,7 +138,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "$GAMEDROID_DATA/run" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
-          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" ${{ matrix.name }} summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" ${{ matrix.name }} summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png help.png
       - name: Verdict
         if: matrix.required
         run: |

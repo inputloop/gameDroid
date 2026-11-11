@@ -50,6 +50,8 @@ pub enum Step {
     },
     /// Install the APK the runner was started with.
     Install,
+    /// Store the help page on the phone and open it in the browser.
+    Help,
     /// Start an installed app by package name.
     Start(String),
 }
@@ -128,6 +130,10 @@ pub fn parse(text: &str) -> Result<Vec<Step>, String> {
             "install" => {
                 count(0)?;
                 Step::Install
+            }
+            "help" => {
+                count(0)?;
+                Step::Help
             }
             "start" => {
                 count(1)?;
