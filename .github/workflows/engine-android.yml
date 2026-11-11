@@ -132,6 +132,11 @@ jobs:
           sed -n '/^GD_AV_BEGIN/,/^GD_AV_END/p' android.log | grep -v '^\[' | cut -c1-400 | head -n 24
           echo "--- what the sound card was asked to do"
           grep -a 'gameDroid: Android' bvmm.err | awk '!seen[$0]++' | cut -c1-120 | head -n 12
+          echo "=== the camera"
+          sed -n '/^GD_CAM_BEGIN/,/^GD_CAM_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 24
+          grep -a -m1 -oE 'GD_CAMTOP=.*' android.log | cut -c1-120
+          grep -aE 'virtio.media|virtio_media' android.log | cut -c1-180 | head -n 8
+          grep -a 'gameDroid: Android st.*camera' bvmm.err | head -n 6
           echo "=== browsers in the image"
           sed -n '/^GD_WEB_BEGIN/,/^GD_WEB_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 20
           echo "=== shell and install lines from the console"
@@ -142,7 +147,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "$GAMEDROID_DATA/run" && cut -c1-400 android.log > android-log.txt 2>/dev/null || true
-          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" ${{ matrix.name }} summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png help.png
+          "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" ${{ matrix.name }} summary.txt android-log.txt bvmm.err cmdline.txt bootconfig.txt screen.png lock.png after-swipe.png game-1.png game-2.png help.png camera.png
       - name: Verdict
         if: matrix.required
         run: |

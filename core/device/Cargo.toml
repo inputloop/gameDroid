@@ -15,6 +15,8 @@ bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-
 ureq = { version = "2", default-features = false, features = ["tls"] }
 zip = { version = "2", default-features = false, features = ["deflate"] }
 sha2 = "0.10"
+# For the camera's test picture: frames are sent as JPEG.
+jpeg-encoder = "0.6"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

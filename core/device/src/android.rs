@@ -41,6 +41,8 @@ pub struct Options {
     /// behind it, what Android plays is counted and dropped, and it
     /// records silence.
     pub sound: bool,
+    /// A camera. Until a real one is connected it shows a test picture.
+    pub camera: bool,
     /// The sound card to use, if not the stand-in.
     pub sound_card: Option<SoundCard>,
 }
@@ -68,6 +70,7 @@ impl Default for Options {
             gfxstream: None,
             network: true,
             sound: true,
+            camera: true,
             sound_card: None,
         }
     }
@@ -231,6 +234,12 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
             "initrd.img"
         }))?),
         gfxstream: options.gfxstream.clone(),
+        camera: options.camera.then(|| {
+            bvmm::virtio::media::Camera::new(
+                "gameDroid camera",
+                Box::new(crate::camera::TestPicture::default()),
+            )
+        }),
         sound: match (&options.sound_card, options.sound) {
             (Some(card), _) => Some(card.0.clone()),
             (None, true) => Some(bvmm::virtio::snd::Sound::new(Box::new(Meter::default()))),

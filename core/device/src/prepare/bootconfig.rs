@@ -170,8 +170,10 @@ pub fn runtime(
             "none",
         ),
         (
+            // The image's V4L2 camera service, which uses the camera
+            // gameDroid provides, in place of its synthetic cameras.
             "androidboot.vendor.apex.com.google.emulated.camera.provider.hal",
-            "com.google.emulated.camera.provider.hal",
+            "com.google.emulated.camera.provider.hal.v4l2",
         ),
         ("androidboot.hypervisor.vm.supported", "0"),
         ("androidboot.hypervisor.protected_vm.supported", "0"),
