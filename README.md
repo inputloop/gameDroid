@@ -40,6 +40,7 @@ device in CI. More below.*
 | GPU acceleration | Working in CI on Linux, experimentally: Android draws through gfxstream on the host (Vulkan on the host, OpenGL ES by ANGLE inside Android), boots, and runs the game. CI has no GPU, so this proves the path, not the speed. Not yet run on Windows or on a real GPU, and not yet switchable from the app ([plan and results](docs/engine/E8-gpu-plan.md)) |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
+| A help page on the phone | Working in CI: "How to use this browser and OS" is stored on the phone after boot and opens in the stock browser without the internet. It is not yet the browser's start page: the stock browser (Chromium's WebView test shell) has no such setting and opens blank |
 | Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
@@ -70,6 +71,13 @@ its window.
 The same on Linux, after a mouse swipe unlocked it:
 
 <img src="docs/screenshots/window-android-linux.png" width="320" alt="The gameDroid window showing Android's home screen on Linux">
+
+### The help page, inside Android
+
+"How to use this browser and OS", stored on the phone and shown by the
+stock browser (CI):
+
+<img src="docs/screenshots/help-page.png" width="240" alt="The gameDroid help page open in Android's browser">
 
 ### Android on Windows
 
