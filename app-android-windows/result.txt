@@ -1,20 +1,25 @@
 RESULT: Android booted behind the window
 screen 1024x768 saved to 1-screen.png
 RESULT: the browser was installed and set up
-SUCCESS: The process "gamedroid.exe" with PID 9904 has been terminated.
+SUCCESS: The process "gamedroid.exe" with PID 4332 has been terminated.
 --- program messages
-gameDroid: first run. Setting up Android (build 16644040) in D:\a\_temp/gd-data
-gameDroid: this downloads about 1.2 GB; games and data may use up to 25 GB.
-gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
-gameDroid: unpacking boot.img
-gameDroid: unpacking init_boot.img
-gameDroid: unpacking vendor_boot.img
-gameDroid: unpacking vbmeta.img
-gameDroid: unpacking vbmeta_system.img
-gameDroid: unpacking vbmeta_vendor_dlkm.img
-gameDroid: unpacking vbmeta_system_dlkm.img
-gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 15 s
+gameDroid: setup finished in 21 s
 gameDroid: fetching the Fulguris browser from F-Droid (9 MB)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (16384 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (32768 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (16384 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (98304 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (16384 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (393216 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (131072 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (389120 bytes of sound)
