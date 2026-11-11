@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Linphone as an app inside Android (docs/research/linphone.md, option A).
+# The published builds are ARM only and gameDroid's Android is x86-64, so:
+# can the app be built for x86-64 from its source, and does that build
+# install and start on gameDroid? Exploratory; it reports what happened.
+# No call can work yet: the guest has no network or sound device.
+name: linphone
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/linphone.yml"
+permissions:
+  contents: write  # to publish the result to the ci-logs branch
+jobs:
+  build-and-try:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Build Linphone for x86-64
+        run: |
+          set +e
+          mkdir -p "$HOME/out" && exec > >(tee "$HOME/out/result.txt") 2>&1
+          git clone -q --depth 1 https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
+          cd "$HOME/linphone"
+          echo "linphone-android commit: $(git rev-parse HEAD) ($(git log -1 --format=%cs))"
+          # The one change: build for x86-64 instead of the two ARM kinds.
+          sed -i 's/abiFilters += listOf("armeabi-v7a", "arm64-v8a")/abiFilters += listOf("x86_64")/' app/build.gradle.kts
+          grep -n 'abiFilters' app/build.gradle.kts
+          ls keystore.properties 2>/dev/null || echo "no keystore.properties in the repository"
+          ./gradlew --no-daemon -q assembleDebug > "$HOME/out/gradle.log" 2>&1
+          echo "GRADLE_EXIT=$?"
+          tail -n 40 "$HOME/out/gradle.log" | cut -c1-300 > "$HOME/out/gradle-tail.txt"
+          apk="$(find app/build/outputs -name '*.apk' | head -n 1)"
+          if [ -n "$apk" ]; then
+            cp "$apk" "$HOME/linphone.apk"
+            echo "APK: $(stat -c %s "$apk") bytes"
+            echo "--- native code in the APK, by kind"
+            unzip -l "$apk" | grep -oE 'lib/[^/]+/' | sort | uniq -c
+            aapt2="$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)"
+            echo "package: $("$aapt2" dump packagename "$apk")"
+            "$aapt2" dump packagename "$apk" > "$HOME/out/package.txt"
+          else
+            echo "no APK was produced"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Try it on gameDroid
+        run: |
+          set +e
+          [ -f "$HOME/linphone.apk" ] || { echo "nothing to try" | tee -a "$HOME/out/result.txt"; exit 0; }
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 2
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
+          cd "$HOME/out"
+          sed "s/PACKAGE/$(cat package.txt)/" "$GITHUB_WORKSPACE/tools/engine/scripts/install-and-play.script" > play.script
+          timeout 600 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+            --memory 4096 --display 720x1280 --apk "$HOME/linphone.apk" --script play.script > android.log 2> run.err
+          echo "RUN_EXIT=$? (0: installed, started and in front; 3: an expectation failed; 124: out of time)" | tee -a result.txt
+          grep -E "gamedroid-run:" run.err | cut -c1-200 | tee -a result.txt
+          echo "--- crashes and native-library trouble" | tee -a result.txt
+          grep -E "FATAL EXCEPTION|UnsatisfiedLinkError|INSTALL_FAILED|NO_MATCHING_ABIS|Process: org.linphone|has died" android.log | cut -c1-240 | head -n 12 | tee -a result.txt
+          for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
+      - name: Publish
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" linphone result.txt gradle-tail.txt run.err lock.png after-swipe.png game-1.png game-2.png

@@ -1,6 +1,6 @@
 # Linphone and gameDroid
 
-Date: 2026-11-11. Status: research. Nothing built.
+Date: 2026-11-11. Status: **decided, option A** (see the end). First experiment in CI.
 
 Confidence: read from Linphone's own repositories and F-Droid's build recipe
 by a research pass on 2026-11-10. Items marked (inferred) were not confirmed.
@@ -58,7 +58,20 @@ gameDroid can offer to install. B only if the aim is voice chat between
 gameDroid players that works outside any one game, which is a product
 decision, not an engineering one.
 
-**The question for the owner:** which of A, B or C is meant.
+## Decision
+
+2026-11-11, by the owner: **A. Linphone as an app inside Android that
+gameDroid offers to install.**
+
+What that commits to, in order:
+
+| Step | What | State |
+|---|---|---|
+| L1 | Build the app for x86-64 from its source; see it install and start on gameDroid | In CI (`.github/workflows/linphone.yml`) |
+| L2 | Network in the guest (roadmap E4) | Not started |
+| L3 | Sound out and microphone in the guest (roadmap E9) | Not started |
+| L4 | A call between two Linphone instances, heard and spoken | Needs L2 and L3 |
+| L5 | gameDroid offers to install it, from a build gameDroid publishes with its source | Needs L1; licence notes to write |
 
 ## Sources
 
