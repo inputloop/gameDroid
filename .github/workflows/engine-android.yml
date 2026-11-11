@@ -118,6 +118,12 @@ jobs:
           grep -m1 -oE 'GD_CLOCK=[a-z0-9-]+ GD_CPUS=[0-9]+' android.log
           grep -E 'tsc:|TSC|clocksource: Switched|smp: Brought up|unchecked MSR|Hyper-V:' android.log | cut -c1-180 | head -n 14
           grep -iE 'userdata|/data' android.log | grep -iE 'format|mkfs|f2fs|ext4|wipe|mount' | cut -c1-200 | head -n 12
+          echo "=== network, as Android sees it"
+          sed -n '/^GD_NET_BEGIN/,/^GD_NET_END/p' android.log | grep -v '^\[' | cut -c1-160 | head -n 30
+          echo "--- a web server's first line (empty means no answer)"
+          grep -a -m2 -E '^HTTP/1\.[01] [0-9]+' android.log | cut -c1-80
+          echo "--- Android's own view"
+          grep -a -iE 'Active default network|NetworkAgentInfo' android.log | grep -v '^\[' | cut -c1-220 | head -n 4
           echo "=== shell and install lines from the console"
           grep -nE 'GD_|uid=|pm install|Success|Failure|INSTALL_|Events injected|monkey' android.log | cut -c1-220 | tail -n 30
       - name: Publish the logs to the ci-logs branch

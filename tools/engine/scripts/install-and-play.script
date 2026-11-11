@@ -16,6 +16,13 @@ expect GD_DATA_KB= 20
 # Which clock the kernel settled on, and how many processors it has.
 shell echo GD_""CLOCK=$(su 0 cat /sys/devices/system/clocksource/clocksource0/current_clocksource) GD_""CPUS=$(nproc)
 expect GD_CPUS= 20
+# The network: what Android sees, and whether a web server answers.
+shell echo GD_""NET_BEGIN; ls /sys/class/net; ip -o -4 addr; ip route; echo GD_""NET_END
+expect GD_NET_END 20
+shell printf 'HEAD / HTTP/1.0\r\nHost: example.com\r\n\r\n' | toybox nc -w 10 example.com 80 | head -n 1; echo GD_""HTTP_DONE
+expect GD_HTTP_DONE 40
+shell dumpsys connectivity | grep -iE "Active default network|NetworkAgentInfo.*(VALIDATED|ETHERNET)" | head -n 4; echo GD_""CONN_DONE
+expect GD_CONN_DONE 20
 install
 start PACKAGE
 expect GD_START_STATUS=0 60

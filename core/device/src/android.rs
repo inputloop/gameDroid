@@ -15,6 +15,8 @@ use crate::cuttlefish::{SensorsControl, CONSOLE_PORTS, PHONE_SENSORS, SENSORS_CO
 
 /// The guest's vsock address, the one the stock image is configured for.
 const GUEST_CID: u64 = 3;
+/// The network card's hardware address (locally administered).
+const GUEST_MAC: [u8; 6] = [0x02, 0x67, 0x64, 0x00, 0x00, 0x15];
 
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -28,6 +30,8 @@ pub struct Options {
     /// An extra read-only disk (`/dev/block/vdb` in Android), used to hand
     /// files such as an APK to the guest.
     pub extra_disk: Option<std::path::PathBuf>,
+    /// A network card with the host's internet behind it.
+    pub network: bool,
 }
 
 /// How many processors to give Android on a host with `host` logical
@@ -50,6 +54,7 @@ impl Default for Options {
             height: 1280,
             extra_cmdline: String::new(),
             extra_disk: None,
+            network: true,
         }
     }
 }
@@ -150,6 +155,11 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         consoles: consoles(),
         vsock_cid: Some(GUEST_CID),
         rng: true,
+        nets: if options.network {
+            vec![bvmm::net::user_nat(GUEST_MAC)]
+        } else {
+            Vec::new()
+        },
         ..Default::default()
     };
     Ok((
