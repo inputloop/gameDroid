@@ -1,9 +1,9 @@
 RESULT: Android booted behind the window
 screen 1024x768 saved to 1-screen.png
-SUCCESS: The process "gamedroid.exe" with PID 4844 has been terminated.
+SUCCESS: The process "gamedroid.exe" with PID 1616 has been terminated.
 --- program messages
 gameDroid: first run. Setting up Android (build 16644040) in D:\a\_temp/gd-data
-gameDroid: this downloads about 1.2 GB; games and data may use up to 26 GB.
+gameDroid: this downloads about 1.2 GB; games and data may use up to 23 GB.
 gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
 gameDroid: unpacking boot.img
 gameDroid: unpacking init_boot.img
@@ -15,4 +15,4 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 13 s
+gameDroid: setup finished in 17 s
