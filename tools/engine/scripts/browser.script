@@ -1,6 +1,10 @@
 # Install the browser the runner was given (Fulguris), make the help page
 # its home page, open it, and look.
 wait 20
+# As the app does after boot: no lock screen.
+shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard'; echo GD_""UNLOCKED
+expect GD_UNLOCKED 30
+wait 3
 install
 help
 wait 15
