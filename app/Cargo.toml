@@ -13,3 +13,6 @@ gamedroid-device = { path = "../core/device" }
 bvmm = { git = "https://github.com/inputloop/bcontain", branch = "claude/gifted-ramanujan-i2r9yh" }
 # X11 only on Linux for now: it needs no extra development packages to build.
 minifb = { version = "0.28", default-features = false, features = ["x11"] }
+# The host's speakers and microphones. WASAPI on Windows (no C libraries);
+# ALSA on Linux (needs libasound2-dev to build).
+cpal = "0.15"

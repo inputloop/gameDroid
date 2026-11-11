@@ -34,6 +34,10 @@ usage: gamedroid [options]
   --cpus <n>          virtual processors (default: half the host's, 2 to 8)
   --memory <MiB>      guest memory (default 4096)
   --console <file>    write Android's console log here (default: discard)
+  --microphone <name> the microphone Android hears: part of its name (default:
+                      the system's default one). Opened only while Android
+                      is recording.
+  --list-microphones  print the microphones this computer has, and stop
   --frames <n>        exit after n frames (for tests)
 
 in the window:
@@ -203,6 +207,8 @@ struct Args {
     options: Options,
     console: Option<PathBuf>,
     frames: Option<u64>,
+    /// Part of the name of the microphone Android should hear.
+    microphone: Option<String>,
     /// Running gameDroid's own image set, which it looks after: it gets
     /// the browser installed.
     own_image: bool,
@@ -218,6 +224,7 @@ fn parse() -> Result<Args, String> {
         console: None,
         frames: None,
         own_image: false,
+        microphone: std::env::var("GAMEDROID_MICROPHONE").ok(),
     };
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -227,6 +234,17 @@ fn parse() -> Result<Args, String> {
             "--game-mode" => a.game_mode = true,
             "--profile" => a.profile = Some(value(&arg)?.into()),
             "--console" => a.console = Some(value(&arg)?.into()),
+            "--microphone" => a.microphone = Some(value(&arg)?),
+            "--list-microphones" => {
+                let names = gamedroid::audio::microphones();
+                if names.is_empty() {
+                    println!("This computer has no microphone that gameDroid can see.");
+                }
+                for (i, name) in names.iter().enumerate() {
+                    println!("{name}{}", if i == 0 { "   (the default)" } else { "" });
+                }
+                std::process::exit(0);
+            }
             "--cpus" => {
                 a.options.cpus = value(&arg)?.parse().map_err(|_| "--cpus needs a number")?
             }
@@ -287,6 +305,11 @@ fn run() -> Result<(), String> {
             // The browser's APK rides on a second disk, for Android to
             // install once it has booted.
             let mut options = args.options.clone();
+            // The host's speakers and microphone, behind Android's sound card.
+            let host_sound = gamedroid::audio::HostSound::new(args.microphone.clone());
+            options.sound_card = Some(gamedroid_device::android::SoundCard(
+                bvmm::virtio::snd::Sound::new(Box::new(host_sound)),
+            ));
             let mut browser_bytes = None;
             if args.own_image {
                 if let Some(apk) = gamedroid_device::setup::browser_apk() {

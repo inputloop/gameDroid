@@ -37,9 +37,12 @@ pub struct Options {
     pub gfxstream: Option<std::path::PathBuf>,
     /// A network card with the host's internet behind it.
     pub network: bool,
-    /// A sound card. Nothing on the host is connected to it yet: what
-    /// Android plays is counted and dropped, and it records silence.
+    /// A sound card. Unless `sound_card` gives one with the host's devices
+    /// behind it, what Android plays is counted and dropped, and it
+    /// records silence.
     pub sound: bool,
+    /// The sound card to use, if not the stand-in.
+    pub sound_card: Option<SoundCard>,
 }
 
 /// How many processors to give Android on a host with `host` logical
@@ -65,6 +68,7 @@ impl Default for Options {
             gfxstream: None,
             network: true,
             sound: true,
+            sound_card: None,
         }
     }
 }
@@ -133,6 +137,17 @@ pub fn true_colours(mut frame: Frame) -> Frame {
         other => other,
     };
     frame
+}
+
+/// A sound card made elsewhere (by the app, with the host's speakers and
+/// microphone behind it).
+#[derive(Clone)]
+pub struct SoundCard(pub bvmm::virtio::snd::Sound);
+
+impl std::fmt::Debug for SoundCard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("SoundCard")
+    }
 }
 
 /// A stand-in for the host's speakers and microphone, until they are
@@ -216,9 +231,11 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
             "initrd.img"
         }))?),
         gfxstream: options.gfxstream.clone(),
-        sound: options
-            .sound
-            .then(|| bvmm::virtio::snd::Sound::new(Box::new(Meter::default()))),
+        sound: match (&options.sound_card, options.sound) {
+            (Some(card), _) => Some(card.0.clone()),
+            (None, true) => Some(bvmm::virtio::snd::Sound::new(Box::new(Meter::default()))),
+            (None, false) => None,
+        },
         cmdline: cmdline.trim().to_string(),
         // The boot configuration names the system disk by its PCI slot, so
         // it must stay the first device.

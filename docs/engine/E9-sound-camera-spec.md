@@ -164,3 +164,42 @@ otherwise encode with `jpeg-encoder` (pure Rust).
 CI has neither a sound device nor a camera, so S2, S3 and C2 can only be
 proven there with stand-ins. Real devices are first heard and seen on a
 real machine.
+
+## S1 result, 2026-11-11: Android has a sound card
+
+Live-verified in CI on Linux (engine-android on gameDroid 326a447, bContain
+b47fa89):
+
+     0 [SoundCard      ]: virtio-snd - VirtIO SoundCard
+    00-00: virtio-snd : VirtIO PCM 0 : playback 1 : capture 1
+    Output thread ..., name AudioOut_D ... Sample rate: 48000 Hz
+    gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+    gameDroid: Android stopped playing (2818048 bytes of sound)
+
+The engine's virtio-snd device is card 0 (the loopback module did not take
+its place), Android's audio service opened it at 48 kHz stereo, and Android
+played into it: system sounds and then the game's, megabytes at a time.
+The earlier inference that Android's audio had been failing without a card
+was not checked directly.
+
+## S2 and S3, 2026-11-11: written, not yet heard
+
+The windowed app now puts the host's default speakers and a microphone
+behind the card (`app/src/audio.rs`, using cpal 0.15): a short queue of
+samples between Android's pace and the host device's, converting rate and
+channels as sound leaves it. The microphone is opened only while Android is
+recording, and closed when it stops. `--microphone <part of its name>`
+chooses one; `--list-microphones` prints them.
+
+Verified: the queue and conversion, by unit tests. **Not verified: any
+sound through a real device.** CI machines have none. The headless runner
+keeps its metering stand-in.
+
+Known weakness: Android's card keeps time by the computer's clock and the
+host's sound device by its own. They drift apart slowly; the queue absorbs
+it by dropping its oldest sound when it grows past a quarter of a second,
+which may be heard as an occasional click. A proper fix follows the host
+device's clock.
+
+`/dev/video0` already exists in the stock guest (owned by system:camera),
+before any camera work. What provides it has not been established.

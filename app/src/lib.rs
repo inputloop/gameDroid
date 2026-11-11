@@ -9,6 +9,7 @@
 //! * [`frontend`] turns what the player is doing this instant into touches
 //!   and key presses for the guest.
 
+pub mod audio;
 pub mod controls;
 pub mod frontend;
 pub mod view;
