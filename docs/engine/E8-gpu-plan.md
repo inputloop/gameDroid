@@ -246,3 +246,28 @@ Remaining:
 | G5 | Present straight into the window, no readback | Not started |
 | G6 | On the 3080 Ti, both hosts | The first real measurement |
 | | Turn it on from the app, with the check-first guard, and ship the library with `gamedroid.exe` | Not started |
+
+## Turned on by itself, 2026-11-11
+
+Live-verified in CI on Linux (app-android on gameDroid d46989a): the
+windowed app, started with no arguments, carried the gfxstream library
+inside itself, unpacked it, tried it in a separate process against a
+software Vulkan, chose the graphics card, and Android booted, with the
+browser set up and F3 working as before.
+
+How the choice is made (`core/device/src/gpu.rs`):
+
+1. Find the library: the one `GAMEDROID_GFXSTREAM` names, one beside the
+   program, or gameDroid's own copy (unpacked from inside the program when
+   it was built carrying one; the package jobs do that).
+2. If the last start with the graphics card never finished booting, leave
+   it alone and say so. `--gpu on` tries again.
+3. Start gameDroid again as a separate process just to start the renderer.
+   If that fails, hangs past 40 seconds or crashes: draw with the
+   processor, and say why.
+4. Otherwise draw with the graphics card.
+
+`--gpu off` never uses it; `--gpu on` treats a failed check as an error.
+
+Still unverified: the fallback on Windows (the run is in CI as this is
+written), and everything on a real GPU.

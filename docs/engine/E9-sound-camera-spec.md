@@ -203,3 +203,40 @@ device's clock.
 
 `/dev/video0` already exists in the stock guest (owned by system:camera),
 before any camera work. What provides it has not been established.
+
+## C1 result, 2026-11-11: Android has a camera
+
+Live-verified in CI on Linux (engine-android on gameDroid d46989a, bContain
+c01474f).
+
+    /sys/class/video4linux/video1 virtio-media
+    Number of camera devices: 1
+    == Camera Provider HAL ...ICameraProvider/external/0-0 ... 1 devices
+    gameDroid: Android started the camera (640x480, 30 frames a second)
+    gameDroid: Android stopped the camera after 285 frames
+
+The engine's virtio-media device appears as `/dev/video1`, the image's V4L2
+camera service takes it as Android's one camera, and Android's own camera
+app shows its picture: the test picture's colour bars, with the block that
+moves.
+
+<img src="../screenshots/camera-test-picture.png" width="240" alt="Android's camera app showing gameDroid's test picture">
+
+Answers to what was open:
+
+- `/dev/video0`, there before any of this, is the kernel's "Dummy video
+  device" (the loopback module). Android's camera service ignores it.
+- Android reports the camera as facing **front**, not as an external
+  camera, so apps that want a front camera will find it.
+- The image does contain the V4L2 camera variant and `virtio-media.ko`.
+
+Two things found on the way, both in the engine:
+
+- The machine reached 32 devices and the PCI bus held 31. It now takes up
+  to 248, without moving the first 31.
+- Shared-memory windows started at 512 GiB, beyond the 39-bit addresses of
+  ordinary desktop and laptop processors. The GPU's window would have
+  failed on such a machine. They now start at 64 GiB.
+
+Not done: a real webcam behind it (C2). The test picture is all Android
+can see so far.

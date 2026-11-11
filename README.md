@@ -37,11 +37,12 @@ device in CI. More below.*
 | Keyboard, controllers | A keyboard device exists and Android sees it; not yet exercised with Android. No controller device yet |
 | Android on Windows | Working in CI: boots on two processors with a precise clock, unlocks by touch, installs the game and brings it to the front. Not yet run on a real Windows machine with a GPU |
 | Internet in Android | Working in CI on both hosts: Android joins a virtual Wi-Fi backed by a NAT built into the engine (no driver or administrator rights needed), and Android's own internet check passes. IPv4 only, no incoming connections ([results](docs/engine/results/2026-11-11-network.md)) |
-| GPU acceleration | Working in CI on Linux, experimentally: Android draws through gfxstream on the host (Vulkan on the host, OpenGL ES by ANGLE inside Android), boots, and runs the game. CI has no GPU, so this proves the path, not the speed. Not yet run on Windows or on a real GPU, and not yet switchable from the app ([plan and results](docs/engine/E8-gpu-plan.md)) |
+| GPU acceleration | Working in CI on Linux: Android draws through gfxstream on the host, and the app turns this on by itself when the graphics library it carries is shown to work (tried first in a separate process; a start that never boots is not repeated unasked; `--gpu on/off` overrides). CI has no GPU, so this proves the path, not the speed. Not yet run on Windows or on a real GPU ([plan and results](docs/engine/E8-gpu-plan.md)) |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
 | A help page, and a real browser | Working in CI. "How to use this browser and OS" is stored on the phone after boot. When the Fulguris browser (free software, fetched from F-Droid) is installed, gameDroid makes that page its home page, skips its first-run screens and makes it Android's default browser. F3 in the window opens the page. Not yet done: gameDroid fetching and installing Fulguris by itself on first run; CI installs it by hand |
 | Sound and microphone | Android has a sound card and plays into it (CI). The app connects the computer's speakers and, only while Android records, a microphone (`--microphone`, `--list-microphones`). No real device has been heard yet: CI has none |
+| Camera | Android has one camera, backed by the engine (CI): its camera app shows gameDroid's test picture, live. A real webcam behind it is not connected yet |
 | Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
@@ -192,7 +193,7 @@ Engine milestones, from [docs/engine/ROADMAP.md](docs/engine/ROADMAP.md):
 | E6 | A picture | Done in CI on both hosts, to a file; the window is tested without Android only |
 | E7 | Touch, keys, gamepad | Touch done in CI on both hosts; keyboard untested; no gamepad device yet |
 | E8 | GPU acceleration | The path works in CI on Linux against a software Vulkan ([results](docs/engine/E8-gpu-plan.md)). Windows, a real GPU, and direct presentation are still to do |
-| E9 | Sound, microphone, camera | Route chosen and specified ([spec](docs/engine/E9-sound-camera-spec.md)): virtio-snd and virtio-media in the engine, the host's devices behind them. Not started |
+| E9 | Sound, microphone, camera | Sound card and camera device: done in CI, Android plays into one and shows the other's test picture. Host speakers and microphone: written in the app, not yet heard on a real machine. A real webcam behind the camera: not started ([spec and results](docs/engine/E9-sound-camera-spec.md)) |
 
 gameDroid's own features build on these. What is next, in order: try
 `gamedroid.exe` on the Windows reference laptop; GPU acceleration, step by
