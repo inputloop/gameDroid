@@ -10,6 +10,7 @@ on:
       - ".github/workflows/firefox.yml"
       - "tools/engine/fetch_fdroid_x86_64.py"
       - "tools/engine/scripts/try-app.script"
+      - "tools/engine/scripts/firefox-local.script"
 permissions:
   contents: write  # to publish the result to the ci-logs branch
 env:
@@ -31,14 +32,18 @@ jobs:
           [ -s "$HOME/app.apk" ] || { echo "nothing to try" | tee -a result.txt; exit 0; }
           echo "APK: $(stat -c %s "$HOME/app.apk") bytes" | tee -a result.txt
           (cd "$GITHUB_WORKSPACE" && cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 1)
-          sed "s/PACKAGE/$PACKAGE/g" "$GITHUB_WORKSPACE/tools/engine/scripts/try-app.script" > try.script
+          cp "$GITHUB_WORKSPACE/tools/engine/scripts/firefox-local.script" try.script
           export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
-          timeout 480 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
+          sha256sum "$HOME/app.apk" | cut -c1-64 | sed 's/^/APK SHA-256: /' | tee -a result.txt
+          timeout 560 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
             --memory 4096 --display 720x1280 --apk "$HOME/app.apk" --script try.script > android.log 2> run.err
           {
             echo "RUN_EXIT=$? (0: installed, started and in front; 3: an expectation failed; 124: out of time)"
             grep -E "gamedroid-run:" run.err | cut -c1-200
-            grep -a -m1 -oE 'GD_MEM=.*' android.log | cut -c1-90
+            grep -a -oE 'GD_[ABC]=[0-9]+' android.log | tr '\n' ' '; echo
+            echo "--- its settings after first starts"
+            sed -n '/^GD_PREFS_BEGIN/,/^GD_PREFS_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 40
+            grep -a -E '^-rw.*t\.html' android.log | cut -c1-160
             echo "--- trouble"
             grep -aE "FATAL EXCEPTION|INSTALL_FAILED|UnsatisfiedLinkError|Process: org.mozilla|has died|lowmemorykiller" android.log | cut -c1-220 | head -n 10
           } | tee -a result.txt
@@ -48,4 +53,4 @@ jobs:
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" firefox result.txt app-1.png app-2.png
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" firefox result.txt fx-0-first-start.png fx-1-own-files.png fx-2-downloads.png fx-3-http.png

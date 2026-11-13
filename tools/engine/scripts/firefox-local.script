@@ -1,0 +1,31 @@
+# Can Fennec show a page stored on the phone? Three places are tried, each
+# opened by intent, with a screenshot of what came up.
+wait 20
+shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard'; echo GD_""UNLOCKED
+expect GD_UNLOCKED 30
+wait 3
+install
+# Start it once so its folders exist, then stop it.
+start org.mozilla.fennec_fdroid
+expect GD_START_STATUS=0 60
+wait 25
+screenshot fx-0-first-start.ppm
+shell am force-stop org.mozilla.fennec_fdroid; echo GD_""STOPPED
+expect GD_STOPPED 20
+# A page in its own files, and one in shared storage.
+shell su 0 sh -c 'D=/data/data/org.mozilla.fennec_fdroid; mkdir -p $D/files; echo "<html><body><h1>LOCAL PAGE IN OWN FILES</h1></body></html>" > $D/files/t.html; chown -R $(stat -c %u:%g $D) $D/files/t.html; restorecon $D/files/t.html; mkdir -p /sdcard/Download; echo "<html><body><h1>LOCAL PAGE IN DOWNLOADS</h1></body></html>" > /sdcard/Download/t.html; ls -l $D/files/t.html /sdcard/Download/t.html'; echo GD_""PAGES
+expect GD_PAGES 30
+shell am start -a android.intent.action.VIEW -d file:///data/data/org.mozilla.fennec_fdroid/files/t.html org.mozilla.fennec_fdroid; echo GD_""A=$?
+expect GD_A= 30
+wait 25
+screenshot fx-1-own-files.ppm
+shell am force-stop org.mozilla.fennec_fdroid; am start -a android.intent.action.VIEW -d file:///sdcard/Download/t.html org.mozilla.fennec_fdroid; echo GD_""B=$?
+expect GD_B= 30
+wait 25
+screenshot fx-2-downloads.ppm
+shell am force-stop org.mozilla.fennec_fdroid; am start -a android.intent.action.VIEW -d "http://10.0.2.2/" org.mozilla.fennec_fdroid; echo GD_""C=$?
+expect GD_C= 30
+wait 25
+screenshot fx-3-http.ppm
+shell echo GD_""PREFS_BEGIN; su 0 ls /data/data/org.mozilla.fennec_fdroid/shared_prefs/; su 0 grep -hE "telemetry|first_run|onboard|terms|marketing|crash|experiment|studies|start_on_home" /data/data/org.mozilla.fennec_fdroid/shared_prefs/fenix_preferences.xml | head -n 30; su 0 ls /data/data/org.mozilla.fennec_fdroid/files/mozilla 2>&1 | head -n 5; echo GD_""PREFS_END
+expect GD_PREFS_END 30
