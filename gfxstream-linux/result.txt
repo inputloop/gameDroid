@@ -1,21 +1,21 @@
 MESON_EXIT=0
 89186424 build-meson/host/libgfxstream_backend.so.0.1.2
 CMAKE_EXIT=0
-102662104 ./libgfxstream_backend.so
-641310 ./host/native_window/libgfxstream_host_native_window.a
-169662 ./host/tracing/libgfxstream_host_tracing.a
-106184166 ./host/vulkan/libgfxstream-vulkan-server.a
-3333170 ./host/address_space/libgfxstream_host_address_space.a
-742948 ./host/library/libgfxstream_host_library.a
-1710616 ./host/decoder_common/libgfxstream_host_decoder_common.a
 30812886 ./host/gl/libgfxstream-gl-server.a
 3793688 ./host/gl/OpenGLESDispatch/libgfxstream_openglesdispatch.a
-228212 ./host/compressed_textures/libgfxstream_host_compressed_textures.a
-2976900 ./host/features/libgfxstream_features.a
-58081272 ./host/libgfxstream_backend_static.a
+641310 ./host/native_window/libgfxstream_host_native_window.a
+1710616 ./host/decoder_common/libgfxstream_host_decoder_common.a
 7967032 ./host/common/libgfxstream_host_common.a
-422736 ./common/utils/libgfxstream_common_utils.a
-4263742 ./common/base/libgfxstream_common_base.a
-277216 ./common/etc/libgfxstream_etc.a
+58081272 ./host/libgfxstream_backend_static.a
+228212 ./host/compressed_textures/libgfxstream_host_compressed_textures.a
+106184166 ./host/vulkan/libgfxstream-vulkan-server.a
+3333170 ./host/address_space/libgfxstream_host_address_space.a
+169662 ./host/tracing/libgfxstream_host_tracing.a
+2976900 ./host/features/libgfxstream_features.a
+742948 ./host/library/libgfxstream_host_library.a
 789262 ./common/logging/libgfxstream_common_logging.a
+277216 ./common/etc/libgfxstream_etc.a
+4263742 ./common/base/libgfxstream_common_base.a
 243522 ./common/build_info/libgfxstream_common_build_info.a
+422736 ./common/utils/libgfxstream_common_utils.a
+102662104 ./libgfxstream_backend.so
