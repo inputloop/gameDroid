@@ -6,14 +6,37 @@ version_code=1590110 abis=x86_64
 chosen=1590110
 url=https://f-droid.org/repo/org.mozilla.fennec_fdroid_1590110.apk
 APK: 134181631 bytes
+APK SHA-256: c1caf99ca2bbed0e75bd53d5f9ba07a7d27cd6ed96218ecd3dd4f702adb2d4a3
 RUN_EXIT=0 (0: installed, started and in front; 3: an expectation failed; 124: out of time)
 gamedroid-run: Android booted; running the script
 gamedroid-run: saw `GD_UNLOCKED`
 gamedroid-run: APK installed (134181631 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
-gamedroid-run: saved frame 404 to app-1.ppm
-gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 404 to app-2.ppm
+gamedroid-run: saved frame 409 to fx-0-first-start.ppm
+gamedroid-run: saw `GD_STOPPED`
+gamedroid-run: saw `GD_PAGES`
+gamedroid-run: saw `GD_A=`
+gamedroid-run: saved frame 707 to fx-1-own-files.ppm
+gamedroid-run: saw `GD_B=`
+gamedroid-run: saved frame 708 to fx-2-downloads.ppm
+gamedroid-run: saw `GD_C=`
+gamedroid-run: saved frame 774 to fx-3-http.ppm
+gamedroid-run: saw `GD_PREFS_END`
 gamedroid-run: script finished
-GD_MEM= TOTAL PSS: 226361 TOTAL RSS: 454736 TOTAL SWAP (KB): 0
+GD_A=1 GD_B=1 GD_C=0 
+--- its settings after first starts
+GD_PREFS_BEGIN
+core_prefs_kp_post_m.xml   fxaStateAC_kp_pre_m.xml
+core_prefs_kp_pre_m.xml    loginsCrypto.xml
+custom-search-engines.xml  mozac_feature_search_metadata.xml
+fenix_preferences.xml      mozac_feature_search_region.xml
+    <boolean name="pref_key_is_first_run" value="false" />
+    <int name="pref_key_onboarding_current_page_index" value="0" />
+    <boolean name="pref_key_terms_accepted" value="false" />
+    <boolean name="pref_key_app_is_onboarding_set_as_default_displayed" value="false" />
+g7h7v7lu.default
+profiles.ini
+GD_PREFS_END
+-rw------- 1 u0_a122 u0_a122  59 2026-11-13 18:53 /data/data/org.mozilla.fennec_fdroid/files/t.html
+-rw-rw---- 1 u0_a113 media_rw 59 2026-11-13 18:53 /sdcard/Download/t.html
 --- trouble
