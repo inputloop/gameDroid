@@ -1,10 +1,10 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
 RESULT: graphics card mode was chosen
-lock and after-swipe differ by 259195 pixels
+lock and after-swipe differ by 259197 pixels
 RESULT: the browser was installed and set up
 RESULT: F3 opened the browser
-after-swipe and help differ by 239258 pixels
+after-swipe and help differ by 257417 pixels
 gameDroid: unpacking vbmeta_system.img
 gameDroid: unpacking vbmeta_vendor_dlkm.img
 gameDroid: unpacking vbmeta_system_dlkm.img
