@@ -1,79 +1,79 @@
 === milestones
 [1] Linux version :: [    0.000000] Linux version 6.12.74-android16-6-g3ec022196c4e-ab15076761 (kleaf@build-host) (Android (14043575, +pgo, +bolt, +lto, +mlgo, based on r536225) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-pro
-[4] virtio_blk virtio :: [    1.784285] virtio_blk virtio0: 1/0/0 default/read/poll queues
-[1] vda:  :: [    1.788692]  vda: vda1 vda2 vda3 vda4 vda5 vda6 vda7 vda8 vda9 vda10 vda11 vda12
-[8] virtio_gpu\|virtio-gpu\|\[drm\] :: [    1.701250] init: Loading module /lib/modules/virtio-gpu.ko with args ''
-[1] Run /init as init process :: [    1.685319] Run /init as init process
-[1] init: init first stage started :: [    1.689777] init: init first stage started!
-[2] Switching root :: [    1.981266] init: Switching root to '/first_stage_ramdisk'
-[1] init: init second stage started :: [    2.282393] init: init second stage started!
-[1] init: starting service .zygote :: [    9.539041] init: starting service 'zygote'...
-[1] init: starting service .surfaceflinger :: [   11.134099] init: starting service 'surfaceflinger'...
-[202] system_server :: [   13.823307] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Found android.hardware.power.stats.IPowerStats/default in device VINTF manifest.
-[2] ISensors :: [    9.878133] servicemanager: Caller(pid=613,uid=1000,sid=u:r:hal_sensors_default:s0) Found android.hardware.sensors.ISensors/default in device VINTF manifest.
-[15] sys.boot_completed=1 :: [   32.092153] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
+[4] virtio_blk virtio :: [    1.570065] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[1] vda:  :: [    1.573458]  vda: vda1 vda2 vda3 vda4 vda5 vda6 vda7 vda8 vda9 vda10 vda11 vda12
+[8] virtio_gpu\|virtio-gpu\|\[drm\] :: [    1.509146] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[1] Run /init as init process :: [    1.497885] Run /init as init process
+[1] init: init first stage started :: [    1.501050] init: init first stage started!
+[2] Switching root :: [    1.723621] init: Switching root to '/first_stage_ramdisk'
+[1] init: init second stage started :: [    1.959711] init: init second stage started!
+[1] init: starting service .zygote :: [    9.812075] init: starting service 'zygote'...
+[1] init: starting service .surfaceflinger :: [   11.116967] init: starting service 'surfaceflinger'...
+[201] system_server :: [   13.141705] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Found android.hardware.power.stats.IPowerStats/default in device VINTF manifest.
+[2] ISensors :: [    9.987415] servicemanager: Caller(pid=595,uid=1000,sid=u:r:hal_sensors_default:s0) Found android.hardware.sensors.ISensors/default in device VINTF manifest.
+[17] sys.boot_completed=1 :: [   26.921637] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1237)
 E5_Linux=PASS (Android reported boot completed)
 === first-stage init and mounts (first 60)
-[    0.228484] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
-[    0.391793] rcu: srcu_init: Setting srcu_struct sizes based on contention.
-[    1.602056] device-mapper: uevent: version 1.0.3
-[    1.603286] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
-[    1.689777] init: init first stage started!
-[    1.690959] init: Loading module /lib/modules/failover.ko with args ''
-[    1.693761] init: Loaded kernel module /lib/modules/failover.ko
-[    1.694630] init: Loading module /lib/modules/nd_virtio.ko with args ''
-[    1.695879] init: Loaded kernel module /lib/modules/nd_virtio.ko
-[    1.696774] init: Loading module /lib/modules/net_failover.ko with args ''
-[    1.698145] init: Loaded kernel module /lib/modules/net_failover.ko
-[    1.699089] init: Loading module /lib/modules/virtio_dma_buf.ko with args ''
-[    1.700301] init: Loaded kernel module /lib/modules/virtio_dma_buf.ko
-[    1.701250] init: Loading module /lib/modules/virtio-gpu.ko with args ''
-[    1.704185] init: Loaded kernel module /lib/modules/virtio-gpu.ko
-[    1.705095] init: Loading module /lib/modules/virtio_input.ko with args ''
-[    1.706447] init: Loaded kernel module /lib/modules/virtio_input.ko
-[    1.707380] init: Loading module /lib/modules/virtio_net.ko with args ''
-[    1.709828] init: Loaded kernel module /lib/modules/virtio_net.ko
-[    1.710739] init: Loading module /lib/modules/virtio-rng.ko with args ''
-[    1.711981] init: Loaded kernel module /lib/modules/virtio-rng.ko
-[    1.712899] init: Loading module /lib/modules/libarc4.ko with args ''
-[    1.714672] init: Loaded kernel module /lib/modules/libarc4.ko
-[    1.715548] init: Loading module /lib/modules/rfkill.ko with args ''
-[    1.717371] init: Loaded kernel module /lib/modules/rfkill.ko
-[    1.718281] init: Loading module /lib/modules/cfg80211.ko with args ''
-[    1.741367] init: Loaded kernel module /lib/modules/cfg80211.ko
-[    1.742690] init: Loading module /lib/modules/mac80211.ko with args ''
-[    1.762578] init: Loaded kernel module /lib/modules/mac80211.ko
-[    1.763479] init: Loading module /lib/modules/mac80211_hwsim.ko with args 'radios=0'
-[    1.767089] init: Loaded kernel module /lib/modules/mac80211_hwsim.ko
-[    1.768039] init: Loading module /lib/modules/virtio_blk.ko with args ''
-[    1.769962] init: Loaded kernel module /lib/modules/virtio_blk.ko
-[    1.770867] init: Loading module /lib/modules/virtio_console.ko with args ''
-[    1.772912] init: Loaded kernel module /lib/modules/virtio_console.ko
-[    1.773907] init: Loading module /lib/modules/virtio_pci_modern_dev.ko with args ''
-[    1.775683] init: Loaded kernel module /lib/modules/virtio_pci_modern_dev.ko
-[    1.776746] init: Loading module /lib/modules/virtio_pci_legacy_dev.ko with args ''
-[    1.778482] init: Loaded kernel module /lib/modules/virtio_pci_legacy_dev.ko
-[    1.779537] init: Loading module /lib/modules/virtio_pci.ko with args ''
-[    1.966896] init: Loaded kernel module /lib/modules/virtio_pci.ko
-[    1.967829] init: Loading module /lib/modules/vmw_vsock_virtio_transport.ko with args ''
-[    1.974118] init: Loaded kernel module /lib/modules/vmw_vsock_virtio_transport.ko
-[    1.975296] init: Loaded 19 modules from /lib/modules
-[    1.976201] init: Loaded 19 kernel modules took 285 ms
-[    1.977174] init: Copied ramdisk prop to /second_stage_resources/system/etc/ramdisk/build.prop
-[    1.978504] init: Using generic ramdisk copy of snapuserd /system/bin/snapuserd_ramdisk
-[    1.979680] init: hard linking /system/bin/snapuserd_ramdisk to /first_stage_ramdisk/system/bin/snapuserd succeeded
-[    1.981266] init: Switching root to '/first_stage_ramdisk'
-[    1.982380] init: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
-[    1.990920] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/metadata'
-[    1.992228] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/metadata'
-[    1.994793] init: [libfs_mgr] Created logical partition product_a on device /dev/block/dm-0
-[    1.995987] init: [libfs_mgr] Skipping zero-length logical partition: product_b
-[    1.997459] init: [libfs_mgr] Created logical partition system_a on device /dev/block/dm-1
-[    1.999434] init: [libfs_mgr] Created logical partition system_b on device /dev/block/dm-2
-[    2.001092] init: [libfs_mgr] Created logical partition system_ext_a on device /dev/block/dm-3
-[    2.002394] init: [libfs_mgr] Skipping zero-length logical partition: system_ext_b
-[    2.004140] init: [libfs_mgr] Created logical partition system_dlkm_a on device /dev/block/dm-4
-[    2.005392] init: [libfs_mgr] Skipping zero-length logical partition: system_dlkm_b
+[    0.195255] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.340506] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    1.432381] device-mapper: uevent: version 1.0.3
+[    1.433408] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
+[    1.501050] init: init first stage started!
+[    1.501902] init: Loading module /lib/modules/failover.ko with args ''
+[    1.503995] init: Loaded kernel module /lib/modules/failover.ko
+[    1.504585] init: Loading module /lib/modules/nd_virtio.ko with args ''
+[    1.505479] init: Loaded kernel module /lib/modules/nd_virtio.ko
+[    1.506090] init: Loading module /lib/modules/net_failover.ko with args ''
+[    1.507080] init: Loaded kernel module /lib/modules/net_failover.ko
+[    1.507698] init: Loading module /lib/modules/virtio_dma_buf.ko with args ''
+[    1.508516] init: Loaded kernel module /lib/modules/virtio_dma_buf.ko
+[    1.509146] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    1.511485] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    1.512093] init: Loading module /lib/modules/virtio_input.ko with args ''
+[    1.513016] init: Loaded kernel module /lib/modules/virtio_input.ko
+[    1.513659] init: Loading module /lib/modules/virtio_net.ko with args ''
+[    1.515582] init: Loaded kernel module /lib/modules/virtio_net.ko
+[    1.516186] init: Loading module /lib/modules/virtio-rng.ko with args ''
+[    1.517044] init: Loaded kernel module /lib/modules/virtio-rng.ko
+[    1.517659] init: Loading module /lib/modules/libarc4.ko with args ''
+[    1.518971] init: Loaded kernel module /lib/modules/libarc4.ko
+[    1.519549] init: Loading module /lib/modules/rfkill.ko with args ''
+[    1.520872] init: Loaded kernel module /lib/modules/rfkill.ko
+[    1.521439] init: Loading module /lib/modules/cfg80211.ko with args ''
+[    1.539893] init: Loaded kernel module /lib/modules/cfg80211.ko
+[    1.540486] init: Loading module /lib/modules/mac80211.ko with args ''
+[    1.554094] init: Loaded kernel module /lib/modules/mac80211.ko
+[    1.554774] init: Loading module /lib/modules/mac80211_hwsim.ko with args 'radios=0'
+[    1.557748] init: Loaded kernel module /lib/modules/mac80211_hwsim.ko
+[    1.558423] init: Loading module /lib/modules/virtio_blk.ko with args ''
+[    1.559915] init: Loaded kernel module /lib/modules/virtio_blk.ko
+[    1.560520] init: Loading module /lib/modules/virtio_console.ko with args ''
+[    1.562130] init: Loaded kernel module /lib/modules/virtio_console.ko
+[    1.562802] init: Loading module /lib/modules/virtio_pci_modern_dev.ko with args ''
+[    1.564072] init: Loaded kernel module /lib/modules/virtio_pci_modern_dev.ko
+[    1.564772] init: Loading module /lib/modules/virtio_pci_legacy_dev.ko with args ''
+[    1.565933] init: Loaded kernel module /lib/modules/virtio_pci_legacy_dev.ko
+[    1.566688] init: Loading module /lib/modules/virtio_pci.ko with args ''
+[    1.711616] init: Loaded kernel module /lib/modules/virtio_pci.ko
+[    1.712430] init: Loading module /lib/modules/vmw_vsock_virtio_transport.ko with args ''
+[    1.717686] init: Loaded kernel module /lib/modules/vmw_vsock_virtio_transport.ko
+[    1.718627] init: Loaded 19 modules from /lib/modules
+[    1.719264] init: Loaded 19 kernel modules took 217 ms
+[    1.720147] init: Copied ramdisk prop to /second_stage_resources/system/etc/ramdisk/build.prop
+[    1.721208] init: Using generic ramdisk copy of snapuserd /system/bin/snapuserd_ramdisk
+[    1.722142] init: hard linking /system/bin/snapuserd_ramdisk to /first_stage_ramdisk/system/bin/snapuserd succeeded
+[    1.723621] init: Switching root to '/first_stage_ramdisk'
+[    1.724402] init: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
+[    1.730088] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/metadata'
+[    1.731238] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/metadata'
+[    1.733211] init: [libfs_mgr] Created logical partition product_a on device /dev/block/dm-0
+[    1.734245] init: [libfs_mgr] Skipping zero-length logical partition: product_b
+[    1.735452] init: [libfs_mgr] Created logical partition system_a on device /dev/block/dm-1
+[    1.736757] init: [libfs_mgr] Created logical partition system_b on device /dev/block/dm-2
+[    1.738074] init: [libfs_mgr] Created logical partition system_ext_a on device /dev/block/dm-3
+[    1.739137] init: [libfs_mgr] Skipping zero-length logical partition: system_ext_b
+[    1.740480] init: [libfs_mgr] Created logical partition system_dlkm_a on device /dev/block/dm-4
+[    1.741504] init: [libfs_mgr] Skipping zero-length logical partition: system_dlkm_b
 sed: couldn't write 135 items to stdout: Broken pipe
 cut: write error: Broken pipe
 grep: write error: Broken pipe
@@ -94,7 +94,7 @@ grep: write error: Broken pipe
  init: Unable to read config file '/odm/etc/init': open() failed: No such file or directory
  ueventd: Unable to read config file '/odm/etc/ueventd.rc': open() failed: No such file or directory
  init: Command 'mkdir /metadata/aconfig 0775 root system' action=early-init (/system/etc/init/aconfigd.rc:27) took 0ms and failed: mkdir() failed on /metadata/aconfig: Read-only file system
- main[379]: Failed to initialize platform storage in early init: failed to copy file from /system/etc/aconfig/package.map to /metadata/aconfig/maps/system.package.new: Os { code: 2, kind: NotFound, message: "No such file or direct
+ main[372]: Failed to initialize platform storage in early init: failed to copy file from /system/etc/aconfig/package.map to /metadata/aconfig/maps/system.package.new: Os { code: 2, kind: NotFound, message: "No such file or direct
  init: Command 'setprop ro.vendor.cuttlefish_service_bluetooth_checker ${ro.boot.cuttlefish_service_bluetooth_checker}' action=early-init (/vendor/etc/init/init.cutf_cvm.rc:136) took 0ms and failed: property 'ro.boot.cuttlefish_se
  init: Command 'setprop ro.vendor.hwcomposer.mode ${ro.boot.hardware.hwcomposer.mode}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:11) took 0ms and failed: property 'ro.boot.hardware.hwcomposer.mode' doesn't exist 
  init: Command 'setprop debug.hwui.renderer ${ro.boot.hardware.guest_hwui_renderer}' action=early-init (/vendor/etc/init/init_graphics.vendor.rc:17) took 0ms and failed: property 'ro.boot.hardware.guest_hwui_renderer' doesn't exis
@@ -118,18 +118,17 @@ grep: write error: Broken pipe
  vold: Failed to generate rollback-resistant key.  This is expected if keystore doesn't support rollback resistance.  Falling back to non-rollback-resistant key.
  fsck.f2fs: Info: No error was reported
  init: Unable to set property 'ro.crypto.type' from uid:0 gid:0 pid:1: Read-only property was already set
- servicemanager: Caller(pid=401,uid=0,sid=u:r:vold:s0) Tried to start aidl service android.hardware.boot.IBootControl/default as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the s
- servicemanager: Caller(pid=401,uid=0,sid=u:r:vold:s0) Tried to start aidl service android.security.maintenance as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is inte
+ servicemanager: Caller(pid=398,uid=0,sid=u:r:vold:s0) Tried to start aidl service android.security.maintenance as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is inte
  init: Command 'copy /data/system/entropy.dat /dev/urandom' action=post-fs-data (/system/etc/init/hw/init.rc:683) took 0ms and failed: Could not read input file '/data/system/entropy.dat': open() failed: No such file or directory
  init: Command 'enter_default_mount_ns' action=post-fs-data (/system/etc/init/hw/init.rc:696) took 0ms and failed: Failed to switch to default mount namespace.: Invalid argument
  init: Could not load single persistent property file, trying legacy directory: Unable to read persistent property file: open() failed: No such file or directory
  logd: Cannot read /data/misc/logd/event-log-tags
- logd: FrameworkListener: read() failed (Connection reset by peer)
  init: Command 'copy /data/misc/recovery/ro.build.fingerprint /data/misc/recovery/ro.build.fingerprint.1' action=post-fs-data (/system/etc/init/hw/init.rc:755) took 0ms and failed: Could not read input file '/data/misc/recovery/ro
  init: Command 'copy /data/misc/recovery/proc/version /data/misc/recovery/proc/version.1' action=post-fs-data (/system/etc/init/hw/init.rc:762) took 0ms and failed: Could not read input file '/data/misc/recovery/proc/version': ope
+ logd: FrameworkListener: read() failed (Connection reset by peer)
  dlkm_loader: LoadWithAliases was unable to load vivid, tried: vivid
  dlkm_loader: LoadWithAliases was unable to load vkms, tried: vkms
- libprocessgroup: Failed to write 1 to /sys/fs/cgroup/system/uid_0/pid_576/cgroup.kill: No such file or directory
+ libprocessgroup: Failed to write 1 to /sys/fs/cgroup/system/uid_0/pid_568/cgroup.kill: No such file or directory
  init: Command 'rm /data/misc/perfetto-traces/.guardraildata' action=post-fs-data (/system/etc/init/perfetto.rc:105) took 0ms and failed: unlink() failed: No such file or directory
  NetBpfLoad: bpf_create_map[tether_error_map] btf:1 -> 4
  NetBpfLoad: map /sys/fs/bpf/tethering/map_offload_tether_error_map id 1
@@ -144,12 +143,13 @@ grep: write error: Broken pipe
  init: Command 'write /dev/sys/block/by-name/rootdisk/queue/discard_max_bytes 134217728' action=boot (/system/etc/init/hw/init.rc:1157) took 0ms and failed: Unable to write to file '/dev/sys/block/by-name/rootdisk/queue/discard_ma
  healthd: Failed to lookup glob /sys/devices/platform/*gcdd/system_dev_stat: -3
  libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: android.hardware.oemlock.IOemLock/default
- type=1400 audit(1794373169.156:189): avc:  denied  { write } for  comm="init" name="error_report_end" dev="tracefs" ino=10598 scontext=u:r:init:s0 tcontext=u:object_r:debugfs_bootreceiver_tracing:s0 tclass=dir permissive=0 bug=b/
- type=1302 audit(1794373169.156:189): item=0 name="/sys/kernel/tracing/instances/bootreceiver/events/error_report/error_report_end/enable" inode=19680823 dev=00:0c mode=0100640 ouid=0 ogid=3012 rdev=00:00 obj=u:object_r:debugfs_bo
+ type=1400 audit(1794595973.288:189): avc:  denied  { write } for  comm="init" name="error_report_end" dev="tracefs" ino=10985 scontext=u:r:init:s0 tcontext=u:object_r:debugfs_bootreceiver_tracing:s0 tclass=dir permissive=0 bug=b/
+ type=1302 audit(1794595973.288:189): item=0 name="/sys/kernel/tracing/instances/bootreceiver/events/error_report/error_report_end/enable" inode=19680823 dev=00:0c mode=0100640 ouid=0 ogid=3012 rdev=00:00 obj=u:object_r:debugfs_bo
  init: Command 'start vendor.audio-hal' action=init.svc.audioserver=running (/system/etc/init/audioserver.rc:44) took 0ms and failed: service vendor.audio-hal not found
  init: Command 'start vendor.audio-hal-4-0-msd' action=init.svc.audioserver=running (/system/etc/init/audioserver.rc:47) took 0ms and failed: service vendor.audio-hal-4-0-msd not found
+ init: Command 'start audio_proxy_service' action=init.svc.audioserver=running (/system/etc/init/audioserver.rc:48) took 0ms and failed: service audio_proxy_service not found
 === services that keep restarting
-     31 init: starting service 'vendor.threadnetwork_hal'
+     30 init: starting service 'vendor.threadnetwork_hal'
       2 init: starting service 'virtualizationservice'
       2 init: starting service 'media.codeclist.generator'
       2 init: starting service 'idmap2d'
@@ -170,80 +170,86 @@ grep: write error: Broken pipe
       1 init: starting service 'vendor.ril-daemon'
       1 init: starting service 'vendor.rebootescrow-default'
 === last 60 lines
-[  158.129364] ieee80211 phy0: get_station
-[  158.477797] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  158.482046] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 130986ms ago)
-[  158.483648] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  158.828499] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  158.834451] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  158.837931] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
-[  159.481390] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  159.491269] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 131995ms ago)
-[  159.493432] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  159.834383] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  159.846639] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  159.848905] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
-[  160.488492] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  160.492171] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 132996ms ago)
-[  160.497568] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  160.846390] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  160.850365] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  160.852650] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
-[  161.133975] ieee80211 phy0: get_station
-[  161.260193] init: starting service 'vendor.threadnetwork_hal'...
-[  161.265950] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1084/pid_6561
-[  161.274543] init: ... started service 'vendor.threadnetwork_hal' has pid 6561
-[  161.440764] logd: logdr: UID=1084 GID=0 PID=6564 n tail=500 logMask=8 pid=6561 start=0ns deadline=0ns
-[  161.445722] logd: logdr: UID=1084 GID=0 PID=6564 n tail=500 logMask=1 pid=6561 start=0ns deadline=0ns
-[  161.466525] init: Service 'vendor.threadnetwork_hal' (pid 6561) received SIGABRT
-[  161.467640] init: Sending SIGKILL to service 'vendor.threadnetwork_hal' (pid 6561) process group...
-[  161.469104] type=1701 audit(1794373319.368:242): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/android.hardware.t
-[  161.475565] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1084/pid_6561
-[  161.476704] init: process with updatable components 'vendor.threadnetwork_hal' exited 4 times in 4 minutes
-[  161.479060] init: Untracked process (pid: 6564 name: (crash_dump64) ppid: 1 pgrp: 6563 state: Z) received SIGKILL
-[  161.480529] init: Untracked process (pid: 6564 name: (crash_dump64) ppid: 1 pgrp: 6563 state: Z) did not have an associated service entry and will not be reaped
-[  161.482922] init: Untracked process (pid: 6566 name: (android.hardwar) ppid: 1 pgrp: 6561 state: Z) received SIGKILL
-[  161.484441] init: Untracked process (pid: 6566 name: (android.hardwar) ppid: 1 pgrp: 6561 state: Z) did not have an associated service entry and will not be reaped
-[  161.487482] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
-[  161.489193] init: starting service 'exec 50 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
-[  161.491941] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  161.495595] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_6569
-[  161.509886] init: ... started service 'exec 50 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 6569
-[  161.511338] init: SVC_EXEC service 'exec 50 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 6569 (uid 1000 gid 1000+0 context default) started; waiting...
-[  161.513420] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 134017ms ago)
-[  161.515307] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  161.529000] init: Service 'exec 50 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6569) exited with status 0 waiting took 0.037000 seconds
-[  161.534256] init: Sending SIGKILL to service 'exec 50 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6569) process group...
-[  161.536222] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_6569
-[  161.850666] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  161.877079] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  161.884416] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
-[  162.495358] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  162.502501] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 135006ms ago)
-[  162.511173] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  162.877117] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  162.887071] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  162.893933] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
-[  163.502100] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
-[  163.507445] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2627, started 136011ms ago)
-[  163.509076] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 391 (/system/bin/servicemanager)
-[  163.886156] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
-[  163.890358] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 391 (/system/bin/servicemanager)
-[  163.892793] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  152.625795] ieee80211 phy0: get_station
+[  152.966349] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  152.968958] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 129265ms ago)
+[  152.970038] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  152.989516] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  152.992257] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  152.995846] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  153.968873] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  153.971670] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 130268ms ago)
+[  153.972734] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  153.999039] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  154.001989] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  154.003672] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  154.971316] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  154.973821] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 131270ms ago)
+[  154.975134] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  155.002187] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  155.004944] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  155.006740] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  155.630526] ieee80211 phy0: get_station
+[  155.973813] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  155.976588] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 132273ms ago)
+[  155.977682] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  156.004972] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  156.010303] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  156.012048] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  156.108339] init: starting service 'vendor.threadnetwork_hal'...
+[  156.113124] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1084/pid_6553
+[  156.125188] init: ... started service 'vendor.threadnetwork_hal' has pid 6553
+[  156.247898] logd: logdr: UID=1084 GID=0 PID=6556 n tail=500 logMask=8 pid=6553 start=0ns deadline=0ns
+[  156.251613] logd: logdr: UID=1084 GID=0 PID=6556 n tail=500 logMask=1 pid=6553 start=0ns deadline=0ns
+[  156.285362] type=1701 audit(1794596118.352:241): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/android.hardware.t
+[  156.288286] init: Service 'vendor.threadnetwork_hal' (pid 6553) received SIGABRT
+[  156.289225] init: Sending SIGKILL to service 'vendor.threadnetwork_hal' (pid 6553) process group...
+[  156.292445] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1084/pid_6553
+[  156.293435] init: process with updatable components 'vendor.threadnetwork_hal' exited 4 times in 4 minutes
+[  156.297103] init: Untracked process (pid: 6558 name: (android.hardwar) ppid: 1 pgrp: 6558 state: Z) exited with status 0
+[  156.298497] init: Untracked process (pid: 6558 name: (android.hardwar) ppid: 1 pgrp: 6558 state: Z) did not have an associated service entry and will not be reaped
+[  156.300342] init: Untracked process (pid: 6556 name: (crash_dump64) ppid: 1 pgrp: 6555 state: Z) exited with status 0
+[  156.301671] init: Untracked process (pid: 6556 name: (crash_dump64) ppid: 1 pgrp: 6555 state: Z) did not have an associated service entry and will not be reaped
+[  156.304322] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  156.305729] init: starting service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  156.308821] libprocessgroup: Created cgroup /sys/fs/cgroup/system/uid_1000/pid_6561
+[  156.322415] init: ... started service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 6561
+[  156.323705] init: SVC_EXEC service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 6561 (uid 1000 gid 1000+0 context default) started; waiting...
+[  156.336041] init: Service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6561) exited with status 0 waiting took 0.027000 seconds
+[  156.337301] init: Sending SIGKILL to service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6561) process group...
+[  156.338810] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_6561
+[  156.976431] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  156.980631] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 133277ms ago)
+[  156.981723] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  157.010329] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  157.014648] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  157.016327] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
+[  157.980575] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck startin
+[  157.983064] init: service 'ot-daemon' requested start, but it is already running (flags: 134, pid: 2609, started 134279ms ago)
+[  157.984135] init: Control message: Processed ctl.interface_start for 'aidl/ot_daemon' from pid: 383 (/system/bin/servicemanager)
+[  158.014862] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a l
+[  158.017613] init: Control message: Could not find 'aidl/android.hardware.threadnetwork.IThreadChip/chip0' for ctl.interface_start from pid: 383 (/system/bin/servicemanager)
+[  158.019165] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens when a service i
 === screen
-after-swipe.ppm: 720x1280, 1543 distinct colours in a sample
-camera.ppm: 720x1280, 79 distinct colours in a sample
-game-1.ppm: 720x1280, 599 distinct colours in a sample
-game-2.ppm: 720x1280, 552 distinct colours in a sample
+after-swipe.ppm: 720x1280, 1559 distinct colours in a sample
+camera.ppm: 720x1280, 76 distinct colours in a sample
+game-1.ppm: 720x1280, 594 distinct colours in a sample
+game-2.ppm: 720x1280, 497 distinct colours in a sample
 help.ppm: 720x1280, 402 distinct colours in a sample
-lock.ppm: 720x1280, 1247 distinct colours in a sample
-screen.ppm: 720x1280, 562 distinct colours in a sample
+lock.ppm: 720x1280, 1241 distinct colours in a sample
+screen.ppm: 720x1280, 484 distinct colours in a sample
 === runner messages
+bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.119.4, 172.217.112.4, 172.217.117.4, 172.217.115.4, 172.217.114.4, 172.217.116.4, 172.217.113.4, 172.217.118.4]
+bvmm net: tcp 172.217.119.4:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: tcp 142.251.156.120:443 opening
 gamedroid-run: saw `GD_NET_END`
 bvmm net: lookup example.com type 28
 bvmm net: lookup example.com type 1
-bvmm net: example.com is [104.20.23.154, 172.66.147.243]
-bvmm net: tcp 104.20.23.154:80 opening
+bvmm net: example.com is [172.66.147.243, 104.20.23.154]
+bvmm net: tcp 172.66.147.243:80 opening
 gamedroid-run: saw `GD_HTTP_DONE`
 gamedroid-run: saw `GD_CONN_DONE`
 gamedroid-run: saw `GD_ONLINE`
@@ -252,37 +258,31 @@ gamedroid-run: saw `GD_START_STATUS=0`
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (196608 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (589824 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (360448 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (2682880 bytes of sound)
+gameDroid: Android stopped playing (278528 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 1447 to game-1.ppm
-gamedroid-run: saved frame 1726 to game-2.ppm
+gamedroid-run: saved frame 1932 to game-1.ppm
+gamedroid-run: saved frame 2401 to game-2.ppm
 gamedroid-run: script finished
 === storage for games and data (asked for 12 GB)
 GD_DATA_KB=12580864
 === clock and processors
 GD_CLOCK=tsc GD_CPUS=2
 [    0.000000] [Firmware Bug]: TSC doesn't count with P0 frequency!
-[    0.004440] tsc: Detected 2445.426 MHz processor
-[    0.166630] TSC deadline timer available
-[    0.434972] smp: Brought up 1 node, 2 CPUs
-[    0.767673] clocksource: Switched to clocksource kvm-clock
-[    0.849434] kvm_amd: TSC scaling supported
-[    0.884467] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x233fd7ba1b0, max_idle_ns: 440795295779 ns
-[    0.887251] clocksource: Switched to clocksource tsc
-[    6.313403] init: [libfs_mgr] Invalid f2fs superblock on '/dev/block/by-name/userdata'
-[    6.315791] init: [libfs_mgr] mount_with_alternatives(): skipping mount due to invalid magic, mountpoint=/data blk_dev=/dev/block/vda10 rec[5].fs_type=f2fs
-[    6.318192] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/userdata'
-[    6.319824] init: [libfs_mgr] mount_with_alternatives(): skipping mount due to invalid magic, mountpoint=/data blk_dev=/dev/block/vda10 rec[6].fs_type=ext4
-[    6.322461] init: [libfs_mgr] fs_mgr_mount_all(): /dev/block/vda10 is wiped and /data f2fs is formattable. Format it.
-[    6.324722] init: Calling: /system/bin/vdc cryptfs encryptFstab /dev/block/by-name/userdata /data true f2fs false 0  
-[    6.529368] make_f2fs: Info: [/dev/block/mapper/userdata] Discarding device
+[    0.003634] tsc: Detected 2596.122 MHz processor
+[    0.138542] TSC deadline timer available
+[    0.376032] smp: Brought up 1 node, 2 CPUs
+[    0.660613] clocksource: Switched to clocksource kvm-clock
+[    0.724112] kvm_amd: TSC scaling supported
+[    0.749571] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x256becde448, max_idle_ns: 440795276694 ns
+[    0.751841] clocksource: Switched to clocksource tsc
+[    7.210738] init: [libfs_mgr] Invalid f2fs superblock on '/dev/block/by-name/userdata'
+[    7.211746] init: [libfs_mgr] mount_with_alternatives(): skipping mount due to invalid magic, mountpoint=/data blk_dev=/dev/block/vda10 rec[5].fs_type=f2fs
+[    7.213464] init: [libfs_mgr] Invalid ext4 superblock on '/dev/block/by-name/userdata'
+[    7.214795] init: [libfs_mgr] mount_with_alternatives(): skipping mount due to invalid magic, mountpoint=/data blk_dev=/dev/block/vda10 rec[6].fs_type=ext4
+[    7.216654] init: [libfs_mgr] fs_mgr_mount_all(): /dev/block/vda10 is wiped and /data f2fs is formattable. Format it.
+[    7.218451] init: Calling: /system/bin/vdc cryptfs encryptFstab /dev/block/by-name/userdata /data true f2fs false 0  
+[    7.384728] make_f2fs: Info: [/dev/block/mapper/userdata] Discarding device
 === network, as Android sees it
 GD_NET_BEGIN
 buried_eth0 buried_eth2 dummy0 erspan0 eth1 gre0 gretap0 hwsim0 ifb0 ifb1 ip6_vti0 ip6gre0 ip6tnl0 ip_vti0 lo sit0 thread-wpan tunl0 wlan0 
@@ -290,98 +290,103 @@ buried_eth0 buried_eth2 dummy0 erspan0 eth1 gre0 gretap0 hwsim0 ifb0 ifb1 ip6_vt
 18: wlan0    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic wlan0\       valid_lft 604788sec preferred_lft 604788sec
 Wifi is enabled
 Wifi scanning is only available when wifi is enabled
-==== ClientModeManager instance: ConcreteClientModeManager{id=101680 iface=wlan0 role=ROLE_CLIENT_PRIMARY} ====
+==== ClientModeManager instance: ConcreteClientModeManager{id=96317 iface=wlan0 role=ROLE_CLIENT_PRIMARY} ====
 Wifi is connected to "VirtWifi"
-WifiInfo: SSID: "VirtWifi", BSSID: 56:8a:cb:88:6f:57, MAC: 02:15:b2:00:00:00, IP: /10.0.2.15, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: unk
-successfulTxPackets: 191
-successfulTxPacketsPerSecond: 2.5113864996589905
+WifiInfo: SSID: "VirtWifi", BSSID: 6e:6c:f4:bf:91:a7, MAC: 02:15:b2:00:00:00, IP: /10.0.2.15, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: unk
+successfulTxPackets: 183
+successfulTxPacketsPerSecond: 2.5987735752084116
 retriedTxPackets: 0
     BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
-  56:8a:cb:88:6f:57       5240        -50             15.814    VirtWifi                          [ESS]
+  6e:6c:f4:bf:91:a7       5240        -50             16.036    VirtWifi                          [ESS]
 GD_NET_END
 GD_WLAN_BY_IMAGE
 GD_WLAN_BY_IMAGE
 GD_WLAN_BY_IMAGE
+GD_WLAN_BY_HAND
 --- a web server's first line (empty means no answer)
 --- what the NAT was asked (first 40)
 bvmm net: tcp 10.0.2.3:853 refused
 bvmm net: lookup connectivitycheck.gstatic.com type 1
 bvmm net: lookup www.google.com type 1
-bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
-bvmm net: www.google.com is [142.251.154.119, 142.251.151.119, 142.251.153.119, 142.251.157.119, 142.251.150.119, 142.251.155.119, 142.251.156.119, 142.251.152.
+bvmm net: www.google.com is [142.251.155.119, 142.251.150.119, 142.251.156.119, 142.251.152.119, 142.251.154.119, 142.251.153.119, 142.251.151.119, 142.251.157.
 bvmm net: lookup time.android.com type 1
-bvmm net: time.android.com is [216.239.35.12, 216.239.35.0, 216.239.35.4, 216.239.35.8]
-bvmm net: tcp 142.251.152.119:443 opening
+bvmm net: tcp 142.251.154.119:443 opening
+bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
 bvmm net: tcp 142.251.150.120:80 opening
-bvmm net: lookup clientservices.googleapis.com type 1
+bvmm net: time.android.com is [216.239.35.8, 216.239.35.0, 216.239.35.12, 216.239.35.4]
 bvmm net: lookup g.co type 1
-bvmm net: clientservices.googleapis.com is [142.251.179.100, 142.251.179.138, 142.251.179.101, 142.251.179.113, 142.251.179.139, 142.251.179.102]
-bvmm net: tcp 142.251.179.100:443 opening
-bvmm net: g.co is [172.253.63.101, 172.253.63.138, 172.253.63.100, 172.253.63.102, 172.253.63.139, 172.253.63.113]
+bvmm net: g.co is [142.251.32.174]
+bvmm net: tcp 142.251.32.174:443 opening
 bvmm net: lookup www.gstatic.com type 1
-bvmm net: tcp 172.253.63.101:443 opening
-bvmm net: www.gstatic.com is [142.251.153.120, 142.251.157.120, 142.251.151.120, 142.251.150.120, 142.251.154.120, 142.251.155.120, 142.251.152.120, 142.251.156
-bvmm net: tcp 142.251.153.120:443 opening
+bvmm net: www.gstatic.com is [142.251.156.120, 142.251.157.120, 142.251.153.120, 142.251.155.120, 142.251.152.120, 142.251.154.120, 142.251.151.120, 142.251.150
+bvmm net: lookup clientservices.googleapis.com type 1
+bvmm net: tcp 142.251.156.120:443 opening
+bvmm net: clientservices.googleapis.com is [142.251.215.238]
+bvmm net: tcp 142.251.215.238:443 opening
 bvmm net: lookup preprod-remoteprovisioning.googleapis.com type 1
-bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.113.4, 172.217.116.4, 172.217.117.4, 172.217.118.4, 172.217.112.4, 172.217.119.4, 172.217.115.4,
-bvmm net: tcp 172.217.113.4:443 opening
+bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.119.4, 172.217.112.4, 172.217.117.4, 172.217.115.4, 172.217.114.4, 172.217.116.4, 172.217.113.4,
+bvmm net: tcp 172.217.119.4:443 opening
 bvmm net: lookup example.com type 28
 bvmm net: lookup example.com type 1
-bvmm net: example.com is [104.20.23.154, 172.66.147.243]
-bvmm net: tcp 104.20.23.154:80 opening
+bvmm net: example.com is [172.66.147.243, 104.20.23.154]
+bvmm net: tcp 172.66.147.243:80 opening
 --- Android's own view
-dumpsys connectivity | grep -iE "Active default network|NetworkAgectivity | grep -iE "Active default network|NetworkAge                         <ntInfo" | cut -c1-300 | he default network|Netw
+console:/ $ dumpsys connectivity | grep -iE "Active default network|NetworkAgectivity | grep -iE "Active default network|NetworkAge                         <ntInfo" | cut -c1-300 | he default 
 Active default network: 100
-  NetworkAgentInfo{network{100}  handle{432902426637}  ni{WIFI CONNECTED extra: } created=2026-11-11T05:01:04.738Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&IS_UNMETERED&EVER_USER_SELECTED&EVER_VALIDATED&IS_VALID
+  NetworkAgentInfo{network{100}  handle{432902426637}  ni{WIFI CONNECTED extra: } created=2026-11-13T18:54:23.501Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&IS_UNMETERED&EVER_USER_SELECTED&EVER_VALIDATED&IS_VALID
 console:/ $ dumpsys connectivity | grep -q "Active default network: [0-9]" && ctivity | grep -q "Active default network: [0-9]" &&                          <dumpsys connectivity | gr default n
 === sound and camera: what the image has
 GD_AV_BEGIN
  0 [SoundCard      ]: virtio-snd - VirtIO SoundCard
                       VirtIO SoundCard at pci/0000:00:1f.0/virtio30
 00-00: virtio-snd : VirtIO PCM 0 : playback 1 : capture 1
-Output thread 0x71e0bf831790, name AudioOut_D, tid 739, type 0 (MIXER):
+Output thread 0x7beca4858790, name AudioOut_D, tid 778, type 0 (MIXER):
   Standby: yes
   Sample rate: 48000 Hz
   HAL format: 0x1 (AUDIO_FORMAT_PCM_16_BIT)
-Output thread 0x71e0bf5ce790, name AudioOut_1D, tid 786, type 0 (MIXER):
+Output thread 0x7beca45f5790, name AudioOut_1D, tid 787, type 0 (MIXER):
   Standby: yes
   Sample rate: 48000 Hz
   HAL format: 0x1 (AUDIO_FORMAT_PCM_16_BIT)
-crw-rw---- 1 system camera 81,   0 2026-11-11 04:59 /dev/video0
+crw-rw---- 1 system camera 81,   0 2026-11-13 18:52 /dev/video0
 snd-aloop.ko v4l2-tpg.ko v4l2loopback.ko virtio-media.ko virtio_snd.ko vivid.ko snd-aloop.ko v4l2-tpg.ko v4l2loopback.ko virtio-media.ko virtio_snd.ko vivid.ko 
-com.google.emulated.camera.provider.hal com.google.emulated.camera.provider.hal@1 com.google.emulated.camera.provider.hal.apex com.google.emulated.camera.provider.hal.v4l2.apex 
+com.google.emulated.camera.provider.hal com.google.emulated.camera.provider.hal@1 com.google.emulated.camera.provider.hal.apex com.google.emulated.camera.provid[   65.908720] init: Untracked process (pid: 5154 name: (android.hardwar) ppid: 1 pgrp: 5154 state: Z) did not have an associated service entry and will not be reaped
+er.hal.v4l2.apex [   65.910720] init: Service 'vendor.threadnetwork_hal' (pid 5137) received SIGABRT
+
 /dev/video0
-/dev/video1
+/dev/video1[   65.963167] init: Sending SIGKILL to service 'exec 31 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 5167) process group...
+
 GD_AV_END
 --- what the sound card was asked to do
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (49152 bytes of sound)
+gameDroid: Android stopped playing (311296 bytes of sound)
 gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android stopped playing (180224 bytes of sound)
-gameDroid: Android stopped playing (258048 bytes of sound)
+gameDroid: Android stopped playing (253952 bytes of sound)
 gameDroid: Android started the camera (640x480, 30 frames a second)
-gameDroid: Android stopped the camera after 227 frames
-gameDroid: Android stopped playing (196608 bytes of sound)
-gameDroid: Android stopped playing (589824 bytes of sound)
-gameDroid: Android stopped playing (360448 bytes of sound)
-gameDroid: Android stopped playing (2682880 bytes of sound)
+gameDroid: Android stopped playing (32768 bytes of sound)
+gameDroid: Android stopped playing (98304 bytes of sound)
+gameDroid: Android stopped playing (163840 bytes of sound)
+gameDroid: Android stopped playing (270336 bytes of sound)
+gameDroid: Android stopped the camera after 246 frames
+gameDroid: Android stopped playing (278528 bytes of sound)
 === the camera
 GD_CAM_BEGIN
 /sys/class/video4linux/video0 Dummy video device (0x0000)
 /sys/class/video4linux/video1 virtio-media
+
 Number of camera devices: 1
 == Camera device 101 dynamic info: ==
   Device 101 is closed, no client instance
 == Camera Provider HAL android.hardware.camera.provider.ICameraProvider/external/0-0 (v2.0, remote) static info: 1 devices: ==
     Facing: Front
 GD_CAM_END
-GD_CAMTOP=ResumedActivity=ActivityRecord{206893150 u0 com.android.camera2/com.android.camera.CameraA
-[    8.047130] dlkm_loader: Loading module /vendor/lib/modules/virtio-media.ko with args ''
-[    8.053095] dlkm_loader: Loaded kernel module /vendor/lib/modules/virtio-media.ko
+GD_CAMTOP=ResumedActivity=ActivityRecord{222710124 u0 com.android.camera2/com.android.camera.CameraA
+[    8.761571] dlkm_loader: Loading module /vendor/lib/modules/virtio-media.ko with args ''
+[    8.766607] dlkm_loader: Loaded kernel module /vendor/lib/modules/virtio-media.ko
 snd-aloop.ko v4l2-tpg.ko v4l2loopback.ko virtio-media.ko virtio_snd.ko vivid.ko snd-aloop.ko v4l2-tpg.ko v4l2loopback.ko virtio-media.ko virtio_snd.ko vivid.ko 
 /sys/class/video4linux/video1 virtio-media
 gameDroid: Android started the camera (640x480, 30 frames a second)
-gameDroid: Android stopped the camera after 227 frames
+gameDroid: Android stopped the camera after 246 frames
 === browsers in the image
 GD_WEB_BEGIN
 package:com.android.webview
@@ -393,33 +398,33 @@ org.chromium.webview_shell/.WebViewBrowserActivity
 No activities found
 GD_WEB_END
 === shell and install lines from the console
-6077:[  154.811464] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6079:[  155.465596] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6082:[  155.808924] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6084:[  155.820872] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6090:[  156.469112] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6092:[  156.478851] type=1701 audit(1794373314.380:241): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/and
-6110:[  156.818229] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6112:[  156.824801] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6113:[  157.474394] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6116:[  157.824271] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6118:[  157.833776] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6120:[  158.477797] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6123:[  158.828499] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6125:[  158.837931] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6126:[  159.481390] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6129:[  159.834383] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6131:[  159.848905] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6132:[  160.488492] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6135:[  160.846390] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6137:[  160.852650] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6146:[  161.469104] type=1701 audit(1794373319.368:242): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/and
-6155:[  161.491941] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6164:[  161.850666] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6166:[  161.884416] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6167:[  162.495358] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6170:[  162.877117] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6172:[  162.893933] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
-6173:[  163.502100] servicemanager: Caller(pid=813,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
-6176:[  163.886156] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
-6178:[  163.892793] servicemanager: Caller(pid=2627,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6029:[  148.976185] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6031:[  149.957787] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6034:[  149.974223] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6036:[  149.980017] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6037:[  150.960844] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6040:[  150.978974] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6042:[  150.988023] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6050:[  151.160146] type=1701 audit(1794596113.224:240): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/and
+6065:[  151.963843] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6068:[  151.986592] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6070:[  151.991953] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6072:[  152.966349] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6075:[  152.989516] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6077:[  152.995846] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6078:[  153.968873] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6081:[  153.999039] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6083:[  154.003672] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6084:[  154.971316] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6087:[  155.002187] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6089:[  155.006740] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6091:[  155.973813] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6094:[  156.004972] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6096:[  156.012048] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6102:[  156.285362] type=1701 audit(1794596118.352:241): auid=4294967295 uid=1084 gid=0 ses=4294967295 subj=u:r:hal_threadnetwork_default:s0 comm="android.hardwar" exe="/apex/com.android.hardware.threadnetwork/bin/hw/and
+6119:[  156.976431] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6122:[  157.010329] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6124:[  157.016327] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
+6125:[  157.980575] servicemanager: Caller(pid=807,uid=1000,sid=u:r:system_server:s0) Since 'ot_daemon' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may b
+6128:[  158.014862] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Since 'android.hardware.threadnetwork.IThreadChip/chip0' could not be found trying to start it as a lazy AIDL service. (if it's not confi
+6130:[  158.019165] servicemanager: Caller(pid=2609,uid=1084,sid=u:r:ot_daemon:s0) Tried to start aidl service android.hardware.threadnetwork.IThreadChip/chip0 as a lazy service, but was unable to. Usually this happens w
