@@ -1,25 +1,30 @@
-APK: 9359352 bytes
-native code in the APK, by kind (none means it runs on any processor):
-RUN_EXIT=0 (0: every expectation met; 3: one failed; 124: out of time)
+APK: 134181631 bytes
+SHA-256: c1caf99ca2bbed0e75bd53d5f9ba07a7d27cd6ed96218ecd3dd4f702adb2d4a3
+BROWSER_SHA256: &str = "c1caf99ca2bbed0e75bd53d5f9ba07a7d27cd6ed96218ecd3dd4f702adb2d4a3"
+RUN_EXIT=3 (0: every expectation met; 3: one failed; 124: out of time)
 gamedroid-run: Android booted; running the script
 gamedroid-run: saw `GD_UNLOCKED`
-gamedroid-run: APK installed (9359352 bytes)
+gamedroid-run: APK installed (134181631 bytes)
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 319 to browser.ppm
-gamedroid-run: saw `GD_BROWSER_FRONT`
+gamedroid-run: saved frame 544 to browser.ppm
+gamedroid-run: EXPECT FAILED: `GD_BROWSER_FRONT` did not appear within 40 s
 gamedroid-run: saw `GD_RESTARTED`
-gamedroid-run: saved frame 492 to browser-again.ppm
+gamedroid-run: saved frame 709 to browser-again.ppm
 gamedroid-run: script finished
 --- the default browser, and the files written
-GD_ROLE=net.slions.fulguris.full.fdroid
-console:/ $ if pm path net.slions.fulguris.full.fdroid >/dev/null 2>&1; then at.slions.fulguris.full.fdroid >/dev/null 2>&1; then a                         <
--rw------- 1 u0_a122 u0_a122 6833 2026-11-11 04:55 gamedroid-help.html
--rw-rw---- 1 u0_a122 u0_a122 405 2026-11-11 04:55 net.slions.fulguris.full.fdroid_preferences.xml
+GD_ROLE=org.mozilla.fennec_fdroid
+Starting: Intent { act=android.intent.action.VIEW dat=http://10.0.2.2/... cmp=org.mozilla.fennec_fdroid/org.mozilla.fenix.IntentReceiverActivity }
+console:/ $ if pm path org.mozilla.fennec_fdroid >/dev/null 2>&1; then am starg.mozilla.fennec_fdroid >/dev/null 2>&1; then am star                         <
+Starting: Intent { act=android.intent.action.VIEW dat=http://10.0.2.2/... cmp=org.mozilla.fennec_fdroid/org.mozilla.fenix.IntentReceiverActivity }
+-rw-rw---- 1 u0_a122 u0_a122  129 2026-11-13 19:07 fenix.onboarding.xml
+-rw-rw---- 1 u0_a122 u0_a122 2519 2026-11-13 19:07 fenix_preferences.xml
 --- trouble
-[    3.066672] init: Command 'write /dev/blkio/blkio.weight 1000' action=init (/system/etc/init/hw/init.rc:218) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.weight': open() failed: Permission denied
-[    3.068912] init: Command 'write /dev/blkio/background/blkio.weight 200' action=init (/system/etc/init/hw/init.rc:219) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.weight': open() failed: 
-[    3.072185] init: Command 'write /dev/blkio/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:221) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.group_idle': open() failed: Permission denie
-[    3.075334] init: Command 'write /dev/blkio/background/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:222) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.group_idle': open() fa
-[   11.739384] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ArtTest.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
-[   11.787227] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ProcessManagement.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
-[   11.810166] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/DisruptiveApp.o (uprobe_bind_service_locked) returned fd: -1 (Permission denied)
+[    3.200530] init: Command 'write /dev/blkio/blkio.weight 1000' action=init (/system/etc/init/hw/init.rc:218) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.weight': open() failed: Permission denied
+[    3.202941] init: Command 'write /dev/blkio/background/blkio.weight 200' action=init (/system/etc/init/hw/init.rc:219) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.weight': open() failed: 
+[    3.205608] init: Command 'write /dev/blkio/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:221) took 0ms and failed: Unable to write to file '/dev/blkio/blkio.group_idle': open() failed: Permission denie
+[    3.208497] init: Command 'write /dev/blkio/background/blkio.group_idle 0' action=init (/system/etc/init/hw/init.rc:222) took 0ms and failed: Unable to write to file '/dev/blkio/background/blkio.group_idle': open() fa
+[   10.271947] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ArtTest.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[   10.325843] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/ProcessManagement.o (uprobe_update_device_idle_temp_allowlist) returned fd: -1 (Permission denied)
+[   10.351689] UprobeStatsBpfLoad: BPF_PROG_LOAD call for /apex/com.android.uprobestats/etc/bpf/uprobestats/DisruptiveApp.o (uprobe_bind_service_locked) returned fd: -1 (Permission denied)
+console:/ $ [   70.053678] type=1400 audit(1794596836.091:216): avc:  denied  { bind } for  comm=4E65746C696E6B204D6F6E69746F72 scontext=u:r:untrusted_app:s0:c122,c256,c512,c768 tcontext=u:r:untrusted_app:s0:c122,c256,c5
+[  143.412773] type=1400 audit(1794596909.451:235): avc:  denied  { bind } for  comm=4E65746C696E6B204D6F6E69746F72 scontext=u:r:untrusted_app:s0:c122,c256,c512,c768 tcontext=u:r:untrusted_app:s0:c122,c256,c512,c768 tcla
