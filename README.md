@@ -40,7 +40,7 @@ device in CI. More below.*
 | GPU acceleration | Working in CI on Linux: Android draws through gfxstream on the host, and the app turns this on by itself when the graphics library it carries is shown to work (tried first in a separate process; a start that never boots is not repeated unasked; `--gpu on/off` overrides). CI has no GPU, so this proves the path, not the speed. Not yet run on Windows or on a real GPU ([plan and results](docs/engine/E8-gpu-plan.md)) |
 | Input engine: game profiles; keys to taps, a virtual joystick, mouse look | Started in `core/input`, tested on its own; not yet connected to the running Android |
 | One file that downloads Android, sets it up and starts it | Working in CI on both hosts: `gamedroid.exe` (3 MB, needs nothing installed) and a Linux binary. Started with no arguments it asks where to keep Android and how much room games may use, downloads Android (1.2 GB, checked against a pinned SHA-256, continued if interrupted), prepares it (under 20 seconds), boots it and shows it in its window. Not yet run on a real machine outside CI ([decision](docs/adr/0002-single-file.md)) |
-| A help page, and a real browser | Working in CI. "How to use this browser and OS" is stored on the phone after boot. When the Fulguris browser (free software, fetched from F-Droid) is installed, gameDroid makes that page its home page, skips its first-run screens and makes it Android's default browser. F3 in the window opens the page. Not yet done: gameDroid fetching and installing Fulguris by itself on first run; CI installs it by hand |
+| A help page, and a real browser | Working in CI on Linux. On first run gameDroid fetches Firefox (as Fennec, the free-software build from F-Droid, 128 MB, checked against a fixed SHA-256), installs it, makes it Android's default browser, skips its welcome screens and shows "How to use this browser and OS" as its first page. Firefox opens no files on the phone, so the page is served by the machine's own gateway at `http://10.0.2.2/help.html`, with or without internet. F3 in the window opens the page. Without internet at first run, Android keeps its stock test browser, which gets the page too |
 | Sound and microphone | Android has a sound card and plays into it (CI). The app connects the computer's speakers and, only while Android records, a microphone (`--microphone`, `--list-microphones`). No real device has been heard yet: CI has none |
 | Camera | Android has one camera, backed by the engine (CI): its camera app shows gameDroid's test picture, live. The app puts the computer's webcam behind it, opened only while Android's camera is in use (`--camera`, `--list-cameras`). No real webcam has been used yet: CI has none |
 | Firefox | Looked into. F-Droid's free build of Firefox (Fennec) has an x86-64 release; it installs and starts on gameDroid (CI). How to offer it is undecided ([notes](docs/research/firefox.md)) |
@@ -77,11 +77,11 @@ The same on Linux, after a mouse swipe unlocked it:
 
 ### The help page, inside Android
 
-"How to use this browser and OS", stored on the phone. Left: as the home
-page of the Fulguris browser, which gameDroid sets up. Right: in the stock
+"How to use this browser and OS". Left: in Firefox (Fennec), which
+gameDroid sets up, as its first page. Right: in the stock
 image's test browser (CI):
 
-<img src="docs/screenshots/browser-home.png" width="240" alt="The help page as Fulguris's home page"> <img src="docs/screenshots/help-page.png" width="240" alt="The gameDroid help page open in Android's stock browser">
+<img src="docs/screenshots/browser-home.png" width="240" alt="The help page in Firefox"> <img src="docs/screenshots/help-page.png" width="240" alt="The gameDroid help page open in Android's stock browser">
 
 ### Android on Windows
 

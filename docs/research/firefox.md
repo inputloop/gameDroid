@@ -56,3 +56,35 @@ keeps the help page where it is. If Firefox turns out to be what people
 reach for, B is one line away.
 
 **The question for the owner:** A, B or C.
+
+## Decision and outcome (2026-11-13)
+
+The owner chose **C**: Fennec replaces Fulguris. What was then settled:
+
+- **Telemetry (read in source, not measured on the wire).** F-Droid's
+  build recipe turns the telemetry and crash-reporting build flags off and
+  patches the settings to fixed "off" values; the libraries for Adjust,
+  Firebase and Play are replaced by empty stand-ins. The sentence on the
+  welcome screen is the ordinary Firefox's text, left in. F-Droid itself
+  still lists the app as connecting to "various Mozilla services".
+  gameDroid therefore skips the welcome screens rather than show a
+  sentence that is untrue of this build.
+- **Start page.** Firefox for Android has no home-page address, and
+  refuses `file:` addresses everywhere (address bar and intents alike);
+  `content:` is allowed for PDFs only. So the help page is served by the
+  machine's gateway at `http://10.0.2.2/help.html` (bvmm's NAT serves
+  fixed pages), shown as Firefox's first page, and Firefox is set to open
+  on its last page. Closing that tab loses it as the opening page; F3
+  brings it back.
+- **A surprise (live, CI).** Android 17 asks before an app may reach a
+  local-network address, and 10.0.2.2 is one: Firefox showed "Allow Fennec
+  to find, connect to ... nearby devices?" in place of the page. gameDroid
+  grants that permission at setup.
+- **Verified live in CI (Linux):** installed from the fixed file, default
+  browser, no welcome screens, help page shown, and shown again after the
+  browser is stopped and started from its icon.
+- **Not verified:** video playback and WebGL in it; the same on Windows;
+  what it actually sends on the wire. A one-time hint bubble ("Shake your
+  device to summarize this page") still appears on the first page.
+- No DRM module (Widevine) in this build: copy-protected video sites will
+  not play.
