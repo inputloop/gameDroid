@@ -46,25 +46,27 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 19 s
+gameDroid: setup finished in 13 s
 gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 98 to lock.ppm
+gamedroid-run: saved frame 152 to lock.ppm
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (49152 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (32768 bytes of sound)
+gameDroid: Android stopped playing (65536 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
+gameDroid: Android stopped playing (114688 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (520192 bytes of sound)
-gamedroid-run: saved frame 177 to after-swipe.ppm
+gamedroid-run: saved frame 206 to after-swipe.ppm
 gamedroid-run: saw `GD_SHELL_OK`
 gamedroid-run: saw `GD_DATA_KB=`
 gamedroid-run: saw `GD_CPUS=`
+gameDroid: Android stopped playing (335872 bytes of sound)
 gamedroid-run: help page stored and opened
-gamedroid-run: saved frame 330 to help.ppm
+gamedroid-run: saved frame 359 to help.ppm
 gamedroid-run: saw `GD_HELP_FRONT`
 gamedroid-run: saw `GD_WEB_END`
 gamedroid-run: saw `GD_AV_END`
@@ -72,42 +74,48 @@ gamedroid-run: saw `GD_CAM_END`
 gamedroid-run: saw `GD_CAM_STARTED`
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android started the camera (640x480, 30 frames a second)
-gameDroid: Android stopped playing (32768 bytes of sound)
+gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (81920 bytes of sound)
+gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (471040 bytes of sound)
-gamedroid-run: saved frame 912 to camera.ppm
+gameDroid: Android stopped playing (65536 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (212992 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (65536 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gameDroid: Android stopped playing (204800 bytes of sound)
+gamedroid-run: saved frame 915 to camera.ppm
 gamedroid-run: saw `GD_CAMTOP=`
 gameDroid: Android stopped the camera after 456 frames
 gamedroid-run: saw `GD_GPU_END`
 gamedroid-run: saw `GD_WIFI_ASKED`
-bvmm net: tcp 10.0.2.3:853 refused
-bvmm net: lookup connectivitycheck.gstatic.com type 1
-bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
 bvmm net: lookup www.google.com type 1
-bvmm net: www.google.com is [142.251.155.119, 142.251.151.119, 142.251.152.119, 142.251.154.119, 142.251.150.119, 142.251.156.119, 142.251.153.119, 142.251.157.119]
-bvmm net: tcp 142.251.150.120:80 opening
-bvmm net: lookup time.android.com type 1
-bvmm net: time.android.com is [216.239.35.12, 216.239.35.0, 216.239.35.4, 216.239.35.8]
-bvmm net: tcp 142.251.151.119:443 opening
+bvmm net: lookup connectivitycheck.gstatic.com type 1
 bvmm net: tcp 10.0.2.3:853 refused
-bvmm net: lookup g.co type 1
-bvmm net: g.co is [173.194.64.139, 173.194.64.102, 173.194.64.113, 173.194.64.138, 173.194.64.100, 173.194.64.101]
-bvmm net: tcp 173.194.64.139:443 opening
-bvmm net: lookup clientservices.googleapis.com type 1
-bvmm net: clientservices.googleapis.com is [172.253.155.100, 172.253.155.113, 172.253.155.101, 172.253.155.102, 172.253.155.139, 172.253.155.138]
-bvmm net: tcp 172.253.155.100:443 opening
+bvmm net: connectivitycheck.gstatic.com is [142.251.150.120]
+bvmm net: www.google.com is [142.251.151.119, 142.251.152.119, 142.251.150.119, 142.251.153.119, 142.251.157.119, 142.251.154.119, 142.251.156.119, 142.251.155.119]
+bvmm net: lookup time.android.com type 1
+bvmm net: time.android.com is [216.239.35.12, 216.239.35.8, 216.239.35.4, 216.239.35.0]
+bvmm net: tcp 142.251.154.119:443 opening
+bvmm net: tcp 142.251.150.120:80 opening
+bvmm net: tcp 10.0.2.3:853 refused
 bvmm net: lookup www.gstatic.com type 1
-bvmm net: www.gstatic.com is [142.251.154.120, 142.251.156.120, 142.251.150.120, 142.251.152.120, 142.251.157.120, 142.251.151.120, 142.251.153.120, 142.251.155.120]
-bvmm net: tcp 142.251.154.120:443 opening
+bvmm net: www.gstatic.com is [142.251.155.120, 142.251.150.120, 142.251.153.120, 142.251.151.120, 142.251.156.120, 142.251.152.120, 142.251.154.120, 142.251.157.120]
+bvmm net: tcp 142.251.155.120:443 opening
+bvmm net: lookup clientservices.googleapis.com type 1
+bvmm net: clientservices.googleapis.com is [142.251.16.102, 142.251.16.139, 142.251.16.138, 142.251.16.113, 142.251.16.101, 142.251.16.100]
+bvmm net: lookup g.co type 1
+bvmm net: tcp 142.251.16.102:443 opening
+bvmm net: g.co is [64.233.180.101, 64.233.180.113, 64.233.180.102, 64.233.180.138, 64.233.180.100, 64.233.180.139]
+bvmm net: tcp 64.233.180.101:443 opening
 bvmm net: lookup preprod-remoteprovisioning.googleapis.com type 1
-bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.118.4, 172.217.116.4, 172.217.114.4, 172.217.115.4, 172.217.117.4, 172.217.113.4, 172.217.112.4, 172.217.119.4]
-bvmm net: tcp 172.217.118.4:443 opening
-bvmm net: tcp 142.251.154.120:443 opening
-bvmm net: tcp 142.251.154.120:443 opening
-bvmm net: tcp 142.251.154.120:443 opening
-bvmm net: tcp 142.251.154.120:443 opening
+bvmm net: preprod-remoteprovisioning.googleapis.com is [172.217.113.4, 172.217.114.4, 172.217.115.4, 172.217.118.4, 172.217.119.4, 172.217.112.4, 172.217.117.4, 172.217.116.4]
+bvmm net: tcp 172.217.113.4:443 opening
+bvmm net: tcp 142.251.155.120:443 opening
+bvmm net: tcp 142.251.155.120:443 opening
+bvmm net: tcp 142.251.155.120:443 opening
+bvmm net: tcp 142.251.155.120:443 opening
 gamedroid-run: saw `GD_NET_END`
 bvmm net: lookup example.com type 28
 bvmm net: lookup example.com type 1
@@ -121,13 +129,11 @@ gamedroid-run: saw `GD_START_STATUS=0`
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (49152 bytes of sound)
+gameDroid: Android stopped playing (81920 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (65536 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (28672 bytes of sound)
+gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 1785 to game-1.ppm
-gamedroid-run: saved frame 2120 to game-2.ppm
+gamedroid-run: saved frame 1659 to game-1.ppm
+gamedroid-run: saved frame 1923 to game-2.ppm
 gamedroid-run: script finished
