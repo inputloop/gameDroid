@@ -41,6 +41,8 @@ jobs:
             echo "RUN_EXIT=$? (0: installed, started and in front; 3: an expectation failed; 124: out of time)"
             grep -E "gamedroid-run:" run.err | cut -c1-200
             grep -a -oE 'GD_[ABC]=[0-9]+' android.log | tr '\n' ' '; echo
+            echo "--- can the phone serve a page to itself"
+            sed -n '/^GD_SRV_BEGIN/,/^GD_SRV_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 20
             echo "--- its settings after first starts"
             sed -n '/^GD_PREFS_BEGIN/,/^GD_PREFS_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 40
             grep -a -E '^-rw.*t\.html' android.log | cut -c1-160
@@ -53,4 +55,4 @@ jobs:
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" firefox result.txt fx-0-first-start.png fx-1-own-files.png fx-2-downloads.png fx-3-http.png
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" firefox result.txt fx-0-first-start.png fx-3-http.png fx-4-after-continue.png fx-5-later.png

@@ -15,17 +15,21 @@ expect GD_STOPPED 20
 # A page in its own files, and one in shared storage.
 shell su 0 sh -c 'D=/data/data/org.mozilla.fennec_fdroid; mkdir -p $D/files; echo "<html><body><h1>LOCAL PAGE IN OWN FILES</h1></body></html>" > $D/files/t.html; chown -R $(stat -c %u:%g $D) $D/files/t.html; restorecon $D/files/t.html; mkdir -p /sdcard/Download; echo "<html><body><h1>LOCAL PAGE IN DOWNLOADS</h1></body></html>" > /sdcard/Download/t.html; ls -l $D/files/t.html /sdcard/Download/t.html'; echo GD_""PAGES
 expect GD_PAGES 30
-shell am start -a android.intent.action.VIEW -d file:///data/data/org.mozilla.fennec_fdroid/files/t.html org.mozilla.fennec_fdroid; echo GD_""A=$?
-expect GD_A= 30
-wait 25
-screenshot fx-1-own-files.ppm
-shell am force-stop org.mozilla.fennec_fdroid; am start -a android.intent.action.VIEW -d file:///sdcard/Download/t.html org.mozilla.fennec_fdroid; echo GD_""B=$?
-expect GD_B= 30
-wait 25
-screenshot fx-2-downloads.ppm
-shell am force-stop org.mozilla.fennec_fdroid; am start -a android.intent.action.VIEW -d "http://10.0.2.2/" org.mozilla.fennec_fdroid; echo GD_""C=$?
+# Can the phone serve a page to itself? toybox has a small web server.
+shell echo GD_""SRV_BEGIN; toybox --help | tr " " "\n" | grep -E "^(httpd|nc|netcat|wget)$" | tr "\n" " "; echo; su 0 sh -c 'mkdir -p /data/local/gamedroid-www; echo "<html><body><h1>SERVED BY THE PHONE</h1></body></html>" > /data/local/gamedroid-www/index.html; chmod -R a+rX /data/local/gamedroid-www; (toybox nc -s 127.0.0.1 -p 8017 -L toybox httpd /data/local/gamedroid-www >/dev/null 2>&1 &) ; sleep 2; printf "GET /index.html HTTP/1.0\r\n\r\n" | toybox nc -w 5 127.0.0.1 8017 | head -n 12'; echo GD_""SRV_END
+expect GD_SRV_END 40
+shell am force-stop org.mozilla.fennec_fdroid; am start -a android.intent.action.VIEW -d "http://127.0.0.1:8017/index.html" org.mozilla.fennec_fdroid; echo GD_""C=$?
 expect GD_C= 30
 wait 25
 screenshot fx-3-http.ppm
+# Past the welcome screens, to see the page behind them.
+tap 360 1096
+wait 6
+screenshot fx-4-after-continue.ppm
+tap 360 1096
+wait 6
+tap 360 1096
+wait 8
+screenshot fx-5-later.ppm
 shell echo GD_""PREFS_BEGIN; su 0 ls /data/data/org.mozilla.fennec_fdroid/shared_prefs/; su 0 grep -hE "telemetry|first_run|onboard|terms|marketing|crash|experiment|studies|start_on_home" /data/data/org.mozilla.fennec_fdroid/shared_prefs/fenix_preferences.xml | head -n 30; su 0 ls /data/data/org.mozilla.fennec_fdroid/files/mozilla 2>&1 | head -n 5; echo GD_""PREFS_END
 expect GD_PREFS_END 30
