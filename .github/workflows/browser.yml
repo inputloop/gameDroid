@@ -42,7 +42,7 @@ jobs:
             grep -E "gamedroid-run:" run.err | cut -c1-200
             echo "--- the default browser, and the files written"
             grep -a -m1 -oE 'GD_ROLE=.*' android.log | cut -c1-120
-            grep -aE 'fenix' android.log | grep -v 'sh -c' | cut -c1-160 | head -n 6
+            grep -aE 'fenix|granted=' android.log | grep -v 'sh -c' | cut -c1-160 | head -n 6
             echo "--- trouble"
             grep -aE "FATAL EXCEPTION|INSTALL_FAILED|Process: org.mozilla|Permission denied|avc: .*fennec" android.log | cut -c1-220 | head -n 10
           } | tee -a result.txt

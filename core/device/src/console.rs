@@ -140,9 +140,12 @@ pub fn help_page_commands() -> Vec<String> {
         "su 0 sh -c 'for p in READ_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO; \
          do pm grant {BROWSER} android.permission.$p 2>/dev/null; done; true'"
     ));
-    // Firefox, if it is installed: first settings, permission to show
-    // notifications (so it does not ask), the role of browser, and, the
-    // first time only, the help page as its first page.
+    // Firefox, if it is installed: first settings, the role of browser,
+    // and, the first time only, the help page as its first page. Two
+    // permissions are granted so that it does not ask: to show
+    // notifications, and to reach addresses on the local network, which
+    // this Android asks about before a browser may open one (the help
+    // page's own address is such an address).
     let p = FIREFOX;
     lines.push(format!(
         "su 0 sh -c 'D=/data/data/{p}; [ -d $D ] || exit 0; S=$D/shared_prefs; NEW=0; \
@@ -150,7 +153,8 @@ pub fn help_page_commands() -> Vec<String> {
          cp {welcomed} $S/fenix.onboarding.xml; \
          [ -e $S/fenix_preferences.xml ] || cp {settings} $S/fenix_preferences.xml; \
          chmod 660 $S/*.xml; chown -R $(stat -c %u:%g $D) $S; restorecon -R $D; fi; \
-         pm grant {p} android.permission.POST_NOTIFICATIONS 2>/dev/null; \
+         for g in POST_NOTIFICATIONS NEARBY_WIFI_DEVICES ACCESS_LOCAL_NETWORK; \
+         do pm grant {p} android.permission.$g 2>/dev/null; done; \
          cmd role add-role-holder --user 0 android.app.role.BROWSER {p}; \
          [ $NEW = 1 ] && am start -n {FIREFOX_OPENER} -a android.intent.action.VIEW -d {HELP_ADDRESS}; \
          echo GD_BROWSER_SET'"

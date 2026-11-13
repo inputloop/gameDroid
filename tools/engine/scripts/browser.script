@@ -10,7 +10,7 @@ install
 help
 wait 30
 screenshot browser.ppm
-shell echo GD_""ROLE=$(su 0 cmd role get-role-holders --user 0 android.app.role.BROWSER); su 0 ls -l /data/data/org.mozilla.fennec_fdroid/shared_prefs/; dumpsys activity activities | grep -q "ResumedActivity.*fennec" && echo GD_""BROWSER_FRONT
+shell echo GD_""ROLE=$(su 0 cmd role get-role-holders --user 0 android.app.role.BROWSER); su 0 ls -l /data/data/org.mozilla.fennec_fdroid/shared_prefs/; dumpsys package org.mozilla.fennec_fdroid | grep -E "(NEARBY_WIFI|LOCAL_NETWORK|POST_NOTIF).*granted" | tr -s " "; dumpsys activity activities | grep -q "ResumedActivity.*fennec" && echo GD_""BROWSER_FRONT
 expect GD_BROWSER_FRONT 40
 # Away and back by Android's own icon route: Home, then start it afresh.
 key 172
