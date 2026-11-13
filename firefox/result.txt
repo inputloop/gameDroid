@@ -12,31 +12,41 @@ gamedroid-run: Android booted; running the script
 gamedroid-run: saw `GD_UNLOCKED`
 gamedroid-run: APK installed (134181631 bytes)
 gamedroid-run: saw `GD_START_STATUS=0`
-gamedroid-run: saved frame 409 to fx-0-first-start.ppm
+gamedroid-run: saved frame 385 to fx-0-first-start.ppm
 gamedroid-run: saw `GD_STOPPED`
 gamedroid-run: saw `GD_PAGES`
-gamedroid-run: saw `GD_A=`
-gamedroid-run: saved frame 707 to fx-1-own-files.ppm
-gamedroid-run: saw `GD_B=`
-gamedroid-run: saved frame 708 to fx-2-downloads.ppm
+gamedroid-run: saw `GD_SRV_END`
 gamedroid-run: saw `GD_C=`
-gamedroid-run: saved frame 774 to fx-3-http.ppm
+gamedroid-run: saved frame 530 to fx-3-http.ppm
+gamedroid-run: saved frame 614 to fx-4-after-continue.ppm
+gamedroid-run: saved frame 614 to fx-5-later.ppm
 gamedroid-run: saw `GD_PREFS_END`
 gamedroid-run: script finished
-GD_A=1 GD_B=1 GD_C=0 
+GD_C=0 
+--- can the phone serve a page to itself
+GD_SRV_BEGIN
+
+GD_SRV_END
 --- its settings after first starts
 GD_PREFS_BEGIN
-core_prefs_kp_post_m.xml   fxaStateAC_kp_pre_m.xml
-core_prefs_kp_pre_m.xml    loginsCrypto.xml
-custom-search-engines.xml  mozac_feature_search_metadata.xml
-fenix_preferences.xml      mozac_feature_search_region.xml
+core_prefs_kp_post_m.xml
+core_prefs_kp_pre_m.xml
+custom-search-engines.xml
+fenix_preferences.xml
+fxaStateAC_kp_pre_m.xml
+loginsCrypto.xml
+mozac_feature_search_metadata.xml
+mozac_feature_search_region.xml
+mozilla.telemetry.glean.scheduler.MetricsPingScheduler.xml
+    <int name="pref_key_terms_accepted_version" value="5" />
     <boolean name="pref_key_is_first_run" value="false" />
-    <int name="pref_key_onboarding_current_page_index" value="0" />
-    <boolean name="pref_key_terms_accepted" value="false" />
-    <boolean name="pref_key_app_is_onboarding_set_as_default_displayed" value="false" />
-g7h7v7lu.default
+    <int name="pref_key_onboarding_current_page_index" value="1" />
+    <boolean name="pref_key_terms_accepted" value="true" />
+    <boolean name="pref_key_app_is_onboarding_set_as_default_displayed" value="true" />
+    <long name="pref_key_terms_accepted_date" value="1794596315035" />
+49jyqynb.default
 profiles.ini
 GD_PREFS_END
--rw------- 1 u0_a122 u0_a122  59 2026-11-13 18:53 /data/data/org.mozilla.fennec_fdroid/files/t.html
--rw-rw---- 1 u0_a113 media_rw 59 2026-11-13 18:53 /sdcard/Download/t.html
+-rw------- 1 u0_a122 u0_a122  59 2026-11-13 18:58 /data/data/org.mozilla.fennec_fdroid/files/t.html
+-rw-rw---- 1 u0_a105 media_rw 59 2026-11-13 18:58 /sdcard/Download/t.html
 --- trouble
