@@ -1,17 +1,17 @@
 window 383x680 at 158,110: gameDroid - direct
 RESULT: Android booted behind the window
 RESULT: graphics card mode was chosen
-lock and after-swipe differ by 259197 pixels
+lock and after-swipe differ by 259510 pixels
 RESULT: the browser was installed and set up
 RESULT: F3 opened the browser
-after-swipe and help differ by 257417 pixels
+after-swipe and help differ by 247401 pixels
 gameDroid: unpacking vbmeta_system.img
 gameDroid: unpacking vbmeta_vendor_dlkm.img
 gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 13 s
+gameDroid: setup finished in 15 s
 gameDroid: fetching the Firefox browser (Fennec) from F-Droid (128 MB)
 gameDroid: Android will draw with the graphics card.
 ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
