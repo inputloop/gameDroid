@@ -53,22 +53,48 @@ fn base64(bytes: &[u8]) -> String {
     out
 }
 
-/// The browser gameDroid installs: Fulguris (MPL-2.0), a full browser with
-/// no native code, so it runs on any processor kind. Its home page is a
-/// setting, which the stock browser's is not.
-pub const FULGURIS: &str = "net.slions.fulguris.full.fdroid";
+/// The browser gameDroid installs: Fennec, F-Droid's build of Firefox
+/// (MPL-2.0), made without Mozilla's usage reporting.
+pub const FIREFOX: &str = "org.mozilla.fennec_fdroid";
+/// What takes an address to open, for Firefox.
+const FIREFOX_OPENER: &str = "org.mozilla.fennec_fdroid/org.mozilla.fenix.IntentReceiverActivity";
+/// The help page for Firefox, which opens no files on the phone at all:
+/// the machine's own gateway serves it, with or without internet.
+pub const HELP_ADDRESS: &str = "http://10.0.2.2/help.html";
 
-/// Fulguris's settings as gameDroid first writes them: the help page as the
-/// home page, and none of the first-run screens. `VERSIONCODE` is replaced
-/// with the installed version on the phone, which is how Fulguris decides
-/// whether to show its welcome.
-const FULGURIS_SETTINGS: &str = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>
+/// The pages the machine's gateway serves to Android: the help page, as
+/// [`HELP_ADDRESS`] and as the gateway's front page.
+pub fn gateway_pages() -> Vec<bvmm::net::nat::Page> {
+    ["/help.html", "/"]
+        .into_iter()
+        .map(|path| bvmm::net::nat::Page {
+            path: path.to_string(),
+            content_type: "text/html; charset=utf-8".to_string(),
+            body: HELP_PAGE.as_bytes().to_vec(),
+        })
+        .collect()
+}
+
+/// Tells Firefox its welcome screens have been seen. They are skipped
+/// because one of them says usage data is sent to Mozilla, which is the
+/// ordinary Firefox's text and not true of this build.
+const FIREFOX_WELCOMED: &str = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
 <map>
-    <string name=\"home\">file:///data/data/net.slions.fulguris.full.fdroid/files/gamedroid-help.html</string>
-    <boolean name=\"pref_key_accept_terms\" value=\"true\" />
-    <int name=\"pref_key_version_code\" value=\"VERSIONCODE\" />
-    <boolean name=\"pref_key_analytics\" value=\"false\" />
-    <boolean name=\"pref_key_crash_report\" value=\"false\" />
+    <int name=\"fenix.onboarding.last_version\" value=\"1\" />
+</map>
+";
+
+/// Firefox's settings as gameDroid first writes them: open on the last
+/// page (so the help page it is first shown stays its opening page until
+/// closed), and no pop-up hints.
+const FIREFOX_SETTINGS: &str = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name=\"pref_key_start_on_home_never\" value=\"true\" />
+    <boolean name=\"pref_key_start_on_home_always\" value=\"false\" />
+    <boolean name=\"pref_key_start_on_home_after_four_hours\" value=\"false\" />
+    <boolean name=\"pref_cfr_popups_enabled\" value=\"false\" />
+    <boolean name=\"pref_key_wallpapers_onboarding\" value=\"false\" />
+    <boolean name=\"pref_key_rollouts\" value=\"false\" />
 </map>
 ";
 
@@ -87,20 +113,22 @@ fn push_file(bytes: &[u8], to: &str) -> Vec<String> {
 }
 
 /// Shell command lines, to be typed in order at Android's root shell, that
-/// store the help page on the phone where each browser can read it, and
-/// make it the home page of the browser gameDroid installs.
+/// store the help page on the phone for the stock browser, and set up the
+/// browser gameDroid installs.
 ///
-/// Each browser gets the page in its own files, the one place it may always
-/// read, with its own user and security label. Safe to repeat: Fulguris's
-/// settings are written only if it has none yet, so a person's own choices
-/// are never overwritten.
+/// The stock browser gets the page in its own files, the one place it may
+/// always read. Firefox reads it from the gateway. Safe to repeat:
+/// Firefox's settings are written, and the page first shown, only if it
+/// has never been set up, so a person's own choices are never overwritten.
 pub fn help_page_commands() -> Vec<String> {
-    let (page, settings) = (
+    let (page, welcomed, settings) = (
         "/data/local/tmp/gd-help.html",
-        "/data/local/tmp/gd-fulguris.xml",
+        "/data/local/tmp/gd-firefox-welcomed.xml",
+        "/data/local/tmp/gd-firefox.xml",
     );
     let mut lines = push_file(HELP_PAGE.as_bytes(), page);
-    lines.extend(push_file(FULGURIS_SETTINGS.as_bytes(), settings));
+    lines.extend(push_file(FIREFOX_WELCOMED.as_bytes(), welcomed));
+    lines.extend(push_file(FIREFOX_SETTINGS.as_bytes(), settings));
     let dir = "/data/data/org.chromium.webview_shell";
     lines.push(format!(
         "su 0 sh -c 'mkdir -p {dir}/files && cp {page} {HELP_FILE} && \
@@ -112,29 +140,31 @@ pub fn help_page_commands() -> Vec<String> {
         "su 0 sh -c 'for p in READ_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO; \
          do pm grant {BROWSER} android.permission.$p 2>/dev/null; done; true'"
     ));
-    // Fulguris, if it is installed: the page, first settings, permission to
-    // show notifications (so it does not ask), and the role of browser.
-    let p = FULGURIS;
+    // Firefox, if it is installed: first settings, permission to show
+    // notifications (so it does not ask), the role of browser, and, the
+    // first time only, the help page as its first page.
+    let p = FIREFOX;
     lines.push(format!(
-        "su 0 sh -c 'D=/data/data/{p}; [ -d $D ] || exit 0; mkdir -p $D/files $D/shared_prefs; \
-         cp {page} $D/files/gamedroid-help.html; F=$D/shared_prefs/{p}_preferences.xml; \
-         if [ ! -e $F ]; then am force-stop {p}; \
-         V=$(dumpsys package {p} | grep -m1 -o versionCode=[0-9]* | cut -d= -f2); \
-         sed s/VERSIONCODE/$V/ {settings} > $F; chmod 660 $F; fi; \
-         chown -R $(stat -c %u:%g $D) $D/files $D/shared_prefs; restorecon -R $D; \
+        "su 0 sh -c 'D=/data/data/{p}; [ -d $D ] || exit 0; S=$D/shared_prefs; NEW=0; \
+         if [ ! -e $S/fenix.onboarding.xml ]; then NEW=1; am force-stop {p}; mkdir -p $S; \
+         cp {welcomed} $S/fenix.onboarding.xml; \
+         [ -e $S/fenix_preferences.xml ] || cp {settings} $S/fenix_preferences.xml; \
+         chmod 660 $S/*.xml; chown -R $(stat -c %u:%g $D) $S; restorecon -R $D; fi; \
          pm grant {p} android.permission.POST_NOTIFICATIONS 2>/dev/null; \
-         cmd role add-role-holder --user 0 android.app.role.BROWSER {p}; echo GD_BROWSER_SET'"
+         cmd role add-role-holder --user 0 android.app.role.BROWSER {p}; \
+         [ $NEW = 1 ] && am start -n {FIREFOX_OPENER} -a android.intent.action.VIEW -d {HELP_ADDRESS}; \
+         echo GD_BROWSER_SET'"
     ));
-    lines.push(format!("su 0 rm -f {page} {settings}"));
+    lines.push(format!("su 0 rm -f {page} {welcomed} {settings}"));
     lines
 }
 
-/// A shell command line that shows the help page: Fulguris if it is
-/// installed (the page is its home page), else the stock browser.
+/// A shell command line that shows the help page: in Firefox if it is
+/// installed, else in the stock browser.
 pub fn open_help_command() -> String {
     format!(
-        "if pm path {FULGURIS} >/dev/null 2>&1; then \
-         am start -n $(cmd package resolve-activity --brief -c android.intent.category.LAUNCHER {FULGURIS} | tail -n 1); \
+        "if pm path {FIREFOX} >/dev/null 2>&1; then \
+         am start -n {FIREFOX_OPENER} -a android.intent.action.VIEW -d {HELP_ADDRESS}; \
          else am start -n {BROWSER_ACTIVITY} -a android.intent.action.VIEW -d {HELP_URL}; fi"
     )
 }
@@ -145,7 +175,7 @@ pub fn open_help_command() -> String {
 pub fn install_browser_command(bytes: u64) -> String {
     let apk = "/data/local/tmp/gd-browser.apk";
     format!(
-        "su 0 sh -c 'pm path {FULGURIS} >/dev/null 2>&1 || {{ head -c {bytes} /dev/block/vdb > {apk}; \
+        "su 0 sh -c 'pm path {FIREFOX} >/dev/null 2>&1 || {{ head -c {bytes} /dev/block/vdb > {apk}; \
          chmod 644 {apk}; pm install -r {apk}; rm -f {apk}; }}; echo GD_MARK_BROWSER'"
     )
 }
@@ -175,7 +205,8 @@ pub fn after_boot(
         std::thread::sleep(Duration::from_secs(5));
         if let Some(bytes) = browser_apk {
             send(&install_browser_command(bytes));
-            for _ in 0..360 {
+            // A large app on a slow machine: up to ten minutes.
+            for _ in 0..1200 {
                 if marks.lock().unwrap().iter().any(|m| m == "GD_MARK_BROWSER") {
                     break;
                 }
@@ -341,9 +372,10 @@ mod tests {
             .all(|c| c.is_ascii_alphanumeric() || "+/=".contains(c)));
         let all = lines.join("\n");
         assert!(all.contains("pm grant org.chromium.webview_shell"));
-        assert!(all.contains("android.app.role.BROWSER net.slions.fulguris.full.fdroid"));
+        assert!(all.contains("android.app.role.BROWSER org.mozilla.fennec_fdroid"));
         assert!(
-            all.contains("if [ ! -e $F ]"),
+            all.contains("if [ ! -e $S/fenix.onboarding.xml ]")
+                && all.contains("[ -e $S/fenix_preferences.xml ] ||"),
             "a person's settings are not overwritten"
         );
         // Nothing inside a quoted command can end its quoting.
@@ -352,7 +384,10 @@ mod tests {
                 assert!(!inner.trim_end_matches('\'').contains('\''), "{l}");
             }
         }
-        assert!(FULGURIS_SETTINGS.contains("<string name=\"home\">file:///data/data/net.slions"));
+        assert!(FIREFOX_WELCOMED.contains("fenix.onboarding.last_version"));
+        let pages = gateway_pages();
+        assert!(pages.iter().any(|p| HELP_ADDRESS.ends_with(&p.path)));
+        assert!(pages.iter().all(|p| p.body == HELP_PAGE.as_bytes()));
         // The page itself: complete, and it reaches nothing outside itself.
         assert!(
             HELP_PAGE.starts_with("<!doctype html>") && HELP_PAGE.trim_end().ends_with("</html>")
@@ -363,7 +398,8 @@ mod tests {
                 && !HELP_PAGE.contains("https://")
                 && !HELP_PAGE.contains("src=")
         );
-        assert!(open_help_command().contains(HELP_URL) && open_help_command().contains(FULGURIS));
+        let open = open_help_command();
+        assert!(open.contains(HELP_URL) && open.contains(HELP_ADDRESS) && open.contains(FIREFOX));
     }
 
     #[test]

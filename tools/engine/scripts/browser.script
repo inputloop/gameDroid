@@ -1,20 +1,21 @@
-# Install the browser the runner was given (Fulguris), make the help page
-# its home page, open it, and look.
+# Install the browser the runner was given (Firefox, as Fennec), set it up as
+# the app does, and look: the help page, with no welcome screens.
 wait 20
-# As the app does after boot: no lock screen.
-shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard'; echo GD_""UNLOCKED
-expect GD_UNLOCKED 30
-wait 3
+# As the app does after boot: no lock screen, and on Wi-Fi (the help page
+# comes from the machine's gateway).
+shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard; [ -e /sys/class/net/wlan0 ] || { ip link add link buried_eth2 name wlan0 type virt_wifi; ip link set buried_eth2 up; }; cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""UNLOCKED
+expect GD_UNLOCKED 40
+wait 8
 install
 help
-wait 15
+wait 30
 screenshot browser.ppm
-shell echo GD_""ROLE=$(su 0 cmd role get-role-holders --user 0 android.app.role.BROWSER); su 0 ls -l /data/data/net.slions.fulguris.full.fdroid/files/ /data/data/net.slions.fulguris.full.fdroid/shared_prefs/; dumpsys activity activities | grep -q "ResumedActivity.*fulguris" && echo GD_""BROWSER_FRONT
+shell echo GD_""ROLE=$(su 0 cmd role get-role-holders --user 0 android.app.role.BROWSER); su 0 ls -l /data/data/org.mozilla.fennec_fdroid/shared_prefs/; dumpsys activity activities | grep -q "ResumedActivity.*fennec" && echo GD_""BROWSER_FRONT
 expect GD_BROWSER_FRONT 40
 # Away and back by Android's own icon route: Home, then start it afresh.
 key 172
 wait 3
-shell am force-stop net.slions.fulguris.full.fdroid; am start -n $(cmd package resolve-activity --brief -c android.intent.category.LAUNCHER net.slions.fulguris.full.fdroid | tail -n 1); echo GD_""RESTARTED
+shell am force-stop org.mozilla.fennec_fdroid; am start -n $(cmd package resolve-activity --brief -c android.intent.category.LAUNCHER org.mozilla.fennec_fdroid | tail -n 1); echo GD_""RESTARTED
 expect GD_RESTARTED 30
-wait 12
+wait 20
 screenshot browser-again.ppm

@@ -124,7 +124,7 @@ pub fn download(
             std::fs::remove_file(&part).map_err(|e| io("removing", &part, e))?;
             return download(url, to, progress);
         }
-        Err(e) => return Err(format!("downloading the Android image: {e}")),
+        Err(e) => return Err(format!("downloading: {e}")),
     };
     let resumed = have > 0 && response.status() == 206;
     let length = response
@@ -568,15 +568,20 @@ fn plan() -> Result<Plan, String> {
     Ok(plan)
 }
 
-/// The browser gameDroid installs in Android: Fulguris, this version, from
-/// F-Droid's repository. Android checks the APK's signature when it
+/// The browser gameDroid installs in Android: Fennec, F-Droid's build of
+/// Firefox, this version (the one for 64-bit Intel and AMD processors),
+/// from F-Droid's repository. Android checks the APK's signature when it
 /// installs it.
-pub const BROWSER_VERSION: u32 = 265;
-/// That file's SHA-256, as both CI hosts fetched it on 2026-11-11.
-pub const BROWSER_SHA256: &str = "72a95ef9111837e6a557cefac53744e9a8b4f8413fce199e485e249d04c886cc";
+pub const BROWSER_VERSION: u32 = 1590110;
+/// That file's SHA-256, as fetched from F-Droid on 2026-11-13.
+pub const BROWSER_SHA256: &str = "c1caf99ca2bbed0e75bd53d5f9ba07a7d27cd6ed96218ecd3dd4f702adb2d4a3";
 
-fn browser_url() -> String {
-    format!("https://f-droid.org/repo/net.slions.fulguris.full.fdroid_{BROWSER_VERSION}.apk")
+/// Where the file is: F-Droid's repository, and its archive, where a
+/// version is moved once newer ones have come out.
+fn browser_urls() -> [String; 2] {
+    ["repo", "archive"].map(|shelf| {
+        format!("https://f-droid.org/{shelf}/org.mozilla.fennec_fdroid_{BROWSER_VERSION}.apk")
+    })
 }
 
 /// The folder Android is kept in, as chosen at setup.
@@ -590,27 +595,30 @@ pub fn data_folder() -> Option<PathBuf> {
 pub fn browser_apk() -> Option<PathBuf> {
     let data = plan().ok()?.data;
     let apps = data.join("apps");
-    let apk = apps.join(format!("fulguris-{BROWSER_VERSION}.apk"));
+    let apk = apps.join(format!("firefox-{BROWSER_VERSION}.apk"));
     if apk.exists() {
         return Some(apk);
     }
     std::fs::create_dir_all(&apps).ok()?;
-    eprintln!("gameDroid: fetching the Fulguris browser from F-Droid (9 MB)");
-    match download(&browser_url(), &apk, &mut |_| {}) {
-        Ok(sha256) if sha256 == BROWSER_SHA256 => Some(apk),
-        Ok(sha256) => {
-            let _ = std::fs::remove_file(&apk);
-            eprintln!(
-                "gameDroid: the browser that arrived is not the expected file (SHA-256 {sha256}); \
-                 it was deleted, and Android keeps its stock browser"
-            );
-            None
-        }
-        Err(e) => {
-            eprintln!("gameDroid: the browser could not be fetched ({e}); carrying on without it");
-            None
+    eprintln!("gameDroid: fetching the Firefox browser (Fennec) from F-Droid (128 MB)");
+    let mut why = String::new();
+    for url in browser_urls() {
+        match download(&url, &apk, &mut |_| {}) {
+            Ok(sha256) if sha256 == BROWSER_SHA256 => return Some(apk),
+            Ok(sha256) => {
+                let _ = std::fs::remove_file(&apk);
+                why = format!(
+                    "what arrived is not the expected file (SHA-256 {sha256}); it was deleted"
+                );
+            }
+            Err(e) => why = e,
         }
     }
+    eprintln!(
+        "gameDroid: the browser could not be fetched ({why}); \
+         Android keeps its stock browser, and this is tried again at the next start"
+    );
+    None
 }
 
 /// [`ensure`] in the place the person chose, reporting progress as lines

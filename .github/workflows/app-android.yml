@@ -57,10 +57,10 @@ jobs:
           echo "lock and after-swipe differ by $(compare -metric AE -fuzz 5% 1-lock.png 2-after-swipe.png null: 2>&1) pixels"
           # gameDroid installs its browser and gives it the help page by
           # itself; then F3 in the window must bring the page up.
-          for _ in $(seq 200); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
+          for _ in $(seq 400); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
           grep -qa '^GD_BROWSER_SET' android.log && echo "RESULT: the browser was installed and set up" || echo "RESULT: the browser was not set up in time"
-          sleep 3; xdotool windowfocus "$win" 2>/dev/null; xdotool key F3; sleep 12; import -window root 3-help.png
-          grep -qa 'Starting: Intent.*fulguris' android.log && echo "RESULT: F3 opened the browser" || echo "RESULT: F3 did not open the browser"
+          sleep 3; xdotool windowfocus "$win" 2>/dev/null; xdotool key F3; sleep 20; import -window root 3-help.png
+          grep -qa 'Starting: Intent.*fennec' android.log && echo "RESULT: F3 opened the browser" || echo "RESULT: F3 did not open the browser"
           echo "after-swipe and help differ by $(compare -metric AE -fuzz 5% 2-after-swipe.png 3-help.png null: 2>&1) pixels"
           pkill gamedroid
           DRIVE
@@ -118,7 +118,7 @@ jobs:
           grep -qE 'the graphics card (cannot|could not) be used here' app.err && echo "RESULT: fell back from the graphics card" || echo "RESULT: no fallback message"
           sleep 10
           powershell -ExecutionPolicy Bypass -File shot.ps1 1-screen.png
-          for _ in $(seq 300); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
+          for _ in $(seq 600); do grep -qa '^GD_BROWSER_SET' android.log && break; sleep 1; done
           grep -qa '^GD_BROWSER_SET' android.log && echo "RESULT: the browser was installed and set up" || echo "RESULT: the browser was not set up in time"
           taskkill //IM gamedroid.exe //F
           echo "--- program messages"; grep -v 'downloading,' app.err | cut -c1-200 | tail -n 20

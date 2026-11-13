@@ -281,7 +281,11 @@ pub fn machine(dir: &Path, options: &Options) -> Result<(VmConfig, Handles), Str
         nets: if options.network {
             let (modem, _) = bvmm::virtio::net::Net::new(mac(0x01), |_| {});
             let (ethernet, _) = bvmm::virtio::net::Net::new(mac(0x02), |_| {});
-            vec![modem, ethernet, bvmm::net::user_nat(mac(0x15))]
+            let online = bvmm::net::nat::Options {
+                pages: crate::console::gateway_pages(),
+                ..Default::default()
+            };
+            vec![modem, ethernet, bvmm::net::user_nat_with(mac(0x15), online)]
         } else {
             Vec::new()
         },
