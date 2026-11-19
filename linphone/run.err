@@ -46,38 +46,22 @@ gameDroid: unpacking vbmeta_system_dlkm.img
 gameDroid: unpacking super.img
 gameDroid: unpacking userdata.img
 gameDroid: preparing the boot files
-gameDroid: setup finished in 10 s
+gameDroid: setup finished in 18 s
 gamedroid-run: Android booted; running the script
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (32768 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (147456 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (16384 bytes of sound)
-gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gamedroid-run: saw `GD_UNLOCKED`
-gameDroid: Android stopped playing (180224 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (49152 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
 gameDroid: Android stopped playing (16384 bytes of sound)
 gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
-gameDroid: Android stopped playing (176128 bytes of sound)
+gameDroid: Android stopped playing (114688 bytes of sound)
+gameDroid: Android is playing sound (48000 Hz, 2 channel(s))
+gamedroid-run: saw `GD_UNLOCKED`
+gameDroid: Android stopped playing (733184 bytes of sound)
 gamedroid-run: APK installed (61408686 bytes)
 gamedroid-run: saw `GD_LINPHONE_SET`
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 511 to linphone-1.ppm
+gamedroid-run: saved frame 484 to linphone-1.ppm
 gamedroid-run: saw `GD_LP_END`
 gamedroid-run: saw `GD_UI_END`
 gamedroid-run: script finished

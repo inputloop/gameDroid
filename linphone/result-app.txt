@@ -1,0 +1,13 @@
+RESULT: Android booted
+RESULT: the browser's turn finished
+RESULT: Linphone's turn finished
+installs that Android reported as done: 2 (2 expected)
+RESULT: Linphone is installed and was readied
+gameDroid: first run. Setting up Android (build 16644040) in /home/runner/work/_temp/gd-data-app
+gameDroid: this downloads about 1.2 GB; games and data may use up to 8 GB.
+gameDroid: the archive's SHA-256 is eccdb248e171af6cb98711a6f2fbd5e5017e9c3a6e82337580181bbd4bb2c41b
+gameDroid: preparing the boot files
+gameDroid: setup finished in 13 s
+gameDroid: fetching the Firefox browser (Fennec) from F-Droid (128 MB)
+gameDroid: Android will draw with the processor, as asked.
+gameDroid: no sound will be heard: The requested device is no longer available. For example, it has been unplugged.

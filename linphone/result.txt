@@ -8,12 +8,12 @@ Computed git version: 6.2.10
 Linphone SDK used is 5.5.39
 Signing config release is using keystore [/home/runner/work/_temp/linphone.jks]
 APK: linphone-6.2.10-gamedroid1-x86_64.apk, 61408686 bytes (built as linphone-android-release-6.2.10.apk)
-SHA256: 2f1450431517573b56e96751c0958f89b105c0c9047031ac5c823a5413942226
+SHA256: cb667a0319cdbccdb287735d874d9edacd9db50279e041a32eed95d4596e1188
 --- native code in the APK, by kind
      14 lib/x86_64/
 --- signed by
 V2 Signer: certificate DN: CN=gameDroid CI throwaway key
-V2 Signer: certificate SHA-256 digest: e8a644b87b33c1f1af0ad119467de0100035888262ddf16b32ebdb2968f882eb
+V2 Signer: certificate SHA-256 digest: 238b24588b4ad3f43bbc19dfb458e260b62de925495abf51841005db21c81bfe
 --- Google's libraries left inside (classes defined; 0 is the aim)
 firebase/gms packages defined: 0
 RUN_EXIT=0 (0: installed, readied, started and in front; 3: an expectation failed; 124: out of time)
@@ -23,7 +23,7 @@ gamedroid-run: APK installed (61408686 bytes)
 gamedroid-run: saw `GD_LINPHONE_SET`
 gamedroid-run: saw `GD_START_STATUS=0`
 gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 511 to linphone-1.ppm
+gamedroid-run: saved frame 484 to linphone-1.ppm
 gamedroid-run: saw `GD_LP_END`
 gamedroid-run: saw `GD_UI_END`
 gamedroid-run: script finished
@@ -39,8 +39,9 @@ user,org.linphone,10122
 0
 GD_LP_END
 --- what its first screen says
-GD_UI_BEGIN
+GD_UI_BEGIN[   99.763373] init: Untracked process (pid: 5731 name: (crash_dump64) ppid: 1 pgrp: 5730 state: Z) did not have an associated service entry and will
+
 cat: /data/local/tmp/ui.xml: No such file or directory
 GD_UI_END
 --- crashes and native-library trouble
-console:/ $ echo GD_""LP_BEGIN; dumpsys package org.linphone | grep -E "versioBEGIN; dumpsys package org.linphone | grep -E "versio                         <nName|versionCode|(RECORDg.linphone | grep -E "versionN
+-E "versioBEGIN; dumpsys package org.linphone | grep -E "versio                         <nName|versionCode|(RECORDg.linphone | grep -E "versionName|versionCode|(RECORD                         <

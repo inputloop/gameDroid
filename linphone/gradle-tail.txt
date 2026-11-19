@@ -36,5 +36,5 @@ w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/LinphoneUti
 
 [Incubating] Problems report is available at: file:///home/runner/linphone/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 5m 4s
+BUILD SUCCESSFUL in 6m 37s
 58 actionable tasks: 58 executed
