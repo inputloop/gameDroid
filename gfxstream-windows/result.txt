@@ -18,5 +18,5 @@ CMAKE_EXIT=0
 	DLL Name: api-ms-win-crt-string-l1-1-0.dll
 	DLL Name: api-ms-win-crt-time-l1-1-0.dll
 123930 ./host/Release/gfxstream_backend.lib
-12613890 ./host/Release/gfxstream_backend_static.lib
-6689792 ./Release/gfxstream_backend.dll
+12609950 ./host/Release/gfxstream_backend_static.lib
+6715392 ./Release/gfxstream_backend.dll
