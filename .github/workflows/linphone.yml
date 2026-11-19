@@ -23,8 +23,9 @@ permissions:
 env:
   LINPHONE_TAG: "6.2.10"
   LINPHONE_COMMIT: dd257eb73044be41f752109e11c7bda3a3de30d1
-  # The newest SDK release on the day that tag was made (2026-11-05).
-  LINPHONE_SDK_VERSION: "5.5.40"
+  # The newest finished SDK release in Linphone's package store on the day
+  # that tag was made (2026-11-05); 5.5.40 and 5.5.41 were never put there.
+  LINPHONE_SDK_VERSION: "5.5.39"
   # Raised when gameDroid rebuilds the same Linphone release.
   GAMEDROID_BUILD: "1"
 jobs:
