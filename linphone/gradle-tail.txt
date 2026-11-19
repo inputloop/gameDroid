@@ -1,35 +1,34 @@
-     Searched in the following locations:
-       - https://dl.google.com/dl/android/maven2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
-       - https://repo.maven.apache.org/maven2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
-       - https://plugins.gradle.org/m2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
-     Required by:
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > androidx.databinding:databinding-compiler-common:9.5.0
-         buildscript of root project 'Linphone' > androidx.navigation.safeargs.kotlin:androidx.navigation.safeargs.kotlin.gradle.plugin:2.10.2 > androidx.navigation:navigation-safe-args-gradle-plugin:2.10.2 > androidx.navigation:navigation-safe-args-generator:2.10.2
-   > Could not find com.google.protobuf:protobuf-java-util:3.25.5.
-     Searched in the following locations:
-       - https://dl.google.com/dl/android/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-       - https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-       - https://plugins.gradle.org/m2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-     Required by:
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0
-   > Could not find org.bouncycastle:bcpkix-jdk18on:1.80.2.
-     Searched in the following locations:
-       - https://dl.google.com/dl/android/maven2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
-       - https://repo.maven.apache.org/maven2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
-       - https://plugins.gradle.org/m2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
-     Required by:
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools:sdk-common:32.5.0
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:builder:9.5.0
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:builder:9.5.0 > com.android.tools.build:apkzlib:9.5.0
-   > Could not find com.google.protobuf:protobuf-java-util:3.25.5.
-     Searched in the following locations:
-       - https://dl.google.com/dl/android/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-       - https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-       - https://plugins.gradle.org/m2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
-     Required by:
-         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:bundletool:1.18.3
-> There are 6 more failures with identical causes.
+> Task :app:mergeReleaseAssets
+> Task :app:processReleaseManifestForPackage
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources
+> Task :app:kaptGenerateStubsReleaseKotlin
+> Task :app:kaptReleaseKotlin
+
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/CancelMeetingViewModel.kt:79:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/ScheduleMeetingViewModel.kt:156:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+
+[Incubating] Problems report is available at: file:///home/runner/linphone/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin' (registered by plugin 'org.jetbrains.kotlin.android').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Kotlin compiler: NOTHING_TO_OVERRIDE
+       Kotlin compiler error
+         'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+         fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+         Location: /home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/CancelMeetingViewModel.kt line 79
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -37,4 +36,5 @@
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 30s
+BUILD FAILED in 3m
+43 actionable tasks: 43 executed

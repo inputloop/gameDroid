@@ -1,9 +1,20 @@
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/CancelMeetingViewModel.kt:79:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/ScheduleMeetingViewModel.kt:156:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+
+[Incubating] Problems report is available at: file:///home/runner/linphone/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
 * What went wrong:
-A problem occurred configuring root project 'Linphone'.
-> Could not resolve all artifacts for configuration 'classpath'.
-   > Could not resolve org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21.
-     Required by:
-         buildscript of root project 'Linphone' > org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin:2.4.21
-         buildscript of root project 'Linphone' > org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:2.4.21
+Execution failed for task ':app:compileReleaseKotlin' (registered by plugin 'org.jetbrains.kotlin.android').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Kotlin compiler: NOTHING_TO_OVERRIDE
+       Kotlin compiler error
+         'onInvitationsSent' overrides nothing. Potential signatures for overriding:
+         fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
 --
-BUILD FAILED in 30s
+BUILD FAILED in 3m
+43 actionable tasks: 43 executed
