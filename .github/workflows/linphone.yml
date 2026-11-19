@@ -120,11 +120,36 @@ jobs:
           } | tee -a result.txt
           for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
           grep -q '^RUN_EXIT=0 ' result.txt
+      - name: The app itself installs it, beside the browser
+        run: |
+          set +e
+          name="$(cat "$HOME/out/name.txt" 2>/dev/null)"; [ -n "$name" ] || exit 1
+          sudo apt-get install -y -qq xvfb xdotool imagemagick libx11-dev libxkbcommon-dev >/dev/null
+          cargo build --release -p gamedroid 2>&1 | tail -n 1
+          # A fresh Android: the one above already has Linphone in it.
+          export GAMEDROID_DATA="$RUNNER_TEMP/gd-data-app" GAMEDROID_STORAGE_GB=8 GAMEDROID_LINPHONE_APK="$HOME/$name"
+          mkdir -p "$HOME/out/app" && cd "$HOME/out/app"
+          cat > drive.sh <<'DRIVE'
+          "$GITHUB_WORKSPACE/target/release/gamedroid" --gpu off --console android.log --frames 60000 2> app.err &
+          for _ in $(seq 240); do grep -q 'sys.boot_completed=1' android.log 2>/dev/null && break; sleep 1; done
+          grep -q 'sys.boot_completed=1' android.log && echo "RESULT: Android booted" || echo "RESULT: Android did not boot in time"
+          for _ in $(seq 600); do grep -qa '^GD_LINPHONE_SET' android.log && break; sleep 1; done
+          grep -qa '^GD_MARK_INSTALLED_ORG_MOZILLA_FENNEC_FDROID' android.log && echo "RESULT: the browser's turn finished" || echo "RESULT: the browser's turn did not finish"
+          grep -qa '^GD_MARK_INSTALLED_ORG_LINPHONE' android.log && echo "RESULT: Linphone's turn finished" || echo "RESULT: Linphone's turn did not finish"
+          echo "installs that Android reported as done: $(grep -ac '^Success' android.log) (2 expected)"
+          grep -qa '^GD_LINPHONE_SET' android.log && echo "RESULT: Linphone is installed and was readied" || echo "RESULT: Linphone was not readied"
+          sleep 5; import -window root window.png
+          pkill gamedroid
+          DRIVE
+          xvfb-run -a -s "-screen 0 700x900x24" bash drive.sh 2>&1 | tee result-app.txt
+          grep -v 'downloading,\|ALSA\|unpacking' app.err | cut -c1-200 | tail -n 12 | tee -a result-app.txt
+          cp result-app.txt window.png "$HOME/out/" 2>/dev/null
+          grep -q "RESULT: Linphone is installed and was readied" result-app.txt && grep -q "(2 expected)" result-app.txt && grep -q "done: 2 " result-app.txt
       - name: Publish the logs
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" linphone result.txt changes.patch gradle-errors.txt gradle-tail.txt run.err linphone-1.png
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" linphone result.txt result-app.txt window.png changes.patch gradle-errors.txt gradle-tail.txt run.err linphone-1.png
       - name: Publish the build as a release
         if: success() && github.event_name == 'workflow_dispatch' && inputs.publish
         env:
