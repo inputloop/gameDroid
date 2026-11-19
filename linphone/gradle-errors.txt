@@ -1,0 +1,9 @@
+* What went wrong:
+A problem occurred configuring root project 'Linphone'.
+> Could not resolve all artifacts for configuration 'classpath'.
+   > Could not resolve org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21.
+     Required by:
+         buildscript of root project 'Linphone' > org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin:2.4.21
+         buildscript of root project 'Linphone' > org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:2.4.21
+--
+BUILD FAILED in 30s

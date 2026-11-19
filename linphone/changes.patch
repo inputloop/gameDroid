@@ -1,0 +1,320 @@
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 4934952..341e159 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -1,7 +1,4 @@
+ import com.android.build.gradle.internal.tasks.factory.dependsOn
+-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsPlugin
+-import com.google.gms.googleservices.GoogleServicesPlugin
+ import java.io.BufferedReader
+ import java.io.FileInputStream
+ import java.util.Properties
+@@ -26,13 +23,11 @@ val crashlyticsAvailable = googleServices.exists() && linphoneLibs.exists() && l
+ 
+ if (firebaseCloudMessagingAvailable) {
+     println("google-services.json found, enabling Firebase CloudMessaging feature")
+-    apply<GoogleServicesPlugin>()
+ } else {
+     println("google-services.json not found, disabling Firebase CloudMessaging feature")
+ }
+ if (crashlyticsAvailable) {
+     println("google-services.json found and Linphone SDK libs-debug folder found, enabling Crashlytics feature")
+-    apply<CrashlyticsPlugin>()
+ } else {
+     println("Crashlytics has been disabled because either google-services.json file wasn't found or local Linphone SDK build folder isn't configured")
+ }
+@@ -113,7 +108,7 @@ android {
+ 
+         ndk {
+             //noinspection ChromeOsAbiSupport
+-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
++            abiFilters += listOf("x86_64")
+         }
+     }
+ 
+@@ -165,14 +160,6 @@ android {
+                 resValue("string", "file_provider", "$packageName.fileprovider")
+             }
+             resValue("string", "linphone_openid_callback_scheme", packageName)
+-
+-            if (crashlyticsAvailable) {
+-                val path = File("$sdkPath/libs-debug/").toString()
+-                configure<CrashlyticsExtension> {
+-                    nativeSymbolUploadEnabled = true
+-                    unstrippedNativeLibsDir = path
+-                }
+-            }
+             buildConfigField("Boolean", "CRASHLYTICS_ENABLED", crashlyticsAvailable.toString())
+         }
+ 
+@@ -192,14 +179,6 @@ android {
+             resValue("string", "linphone_app_branch", appBranch)
+             resValue("string", "file_provider", "$packageName.fileprovider")
+             resValue("string", "linphone_openid_callback_scheme", packageName)
+-
+-            if (crashlyticsAvailable) {
+-                val path = File("$sdkPath/libs-debug/").toString()
+-                configure<CrashlyticsExtension> {
+-                    nativeSymbolUploadEnabled = true
+-                    unstrippedNativeLibsDir = path
+-                }
+-            }
+             buildConfigField("Boolean", "CRASHLYTICS_ENABLED", crashlyticsAvailable.toString())
+         }
+     }
+@@ -246,14 +225,6 @@ dependencies {
+     // To be able to parse native crash tombstone and print them with SDK logs the next time the app will start
+     implementation(libs.google.protobuf)
+ 
+-    implementation(platform(libs.google.firebase.bom))
+-    implementation(libs.google.firebase.messaging)
+-    if (crashlyticsAvailable) {
+-        implementation(libs.google.firebase.crashlytics)
+-    } else {
+-        compileOnly(libs.google.firebase.crashlytics)
+-    }
+-
+     // https://github.com/coil-kt/coil/blob/main/LICENSE.txt Apache v2.0
+     implementation(libs.coil)
+     implementation(libs.coil.gif)
+@@ -310,7 +281,6 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+         )
+     )
+ }
+-project.tasks.preBuild.dependsOn("ktlintFormat")
+ 
+ if (crashlyticsAvailable) {
+     afterEvaluate {
+diff --git a/app/google-services.json b/app/google-services.json
+deleted file mode 100644
+index c26aa77..0000000
+--- a/app/google-services.json
++++ /dev/null
+@@ -1,57 +0,0 @@
+-{
+-  "project_info": {
+-    "project_number": "929724111839",
+-    "firebase_url": "https://linphone-android-8a563.firebaseio.com",
+-    "project_id": "linphone-android-8a563",
+-    "storage_bucket": "linphone-android-8a563.appspot.com"
+-  },
+-  "client": [
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:929724111839:android:4662ea9a056188c4",
+-        "android_client_info": {
+-          "package_name": "org.linphone"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "929724111839-co5kffto4j7dets7oolvfv0056cvpfbl.apps.googleusercontent.com",
+-          "client_type": 1,
+-          "android_info": {
+-            "package_name": "org.linphone",
+-            "certificate_hash": "85463a95603f7b6331899b74b85d53d043dcd500"
+-          }
+-        },
+-        {
+-          "client_id": "929724111839-v5so1tcd65iil7dd7sde8jgii44h8luf.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyCKrwWhkbA7Iy3wpEI8_ZvKOMp5jf6vV6A"
+-        }
+-      ]
+-    },
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:929724111839:android:3cf90ee1d2f8fcb6",
+-        "android_client_info": {
+-          "package_name": "org.linphone.debug"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "929724111839-v5so1tcd65iil7dd7sde8jgii44h8luf.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyCKrwWhkbA7Iy3wpEI8_ZvKOMp5jf6vV6A"
+-        }
+-      ]
+-    }
+-  ],
+-  "configuration_version": "1"
+-}
+\ No newline at end of file
+diff --git a/app/proguard-rules.pro b/app/proguard-rules.pro
+index ff59496..abc7c8e 100644
+--- a/app/proguard-rules.pro
++++ b/app/proguard-rules.pro
+@@ -18,4 +18,6 @@
+ 
+ # If you keep the line number information, uncomment this to
+ # hide the original source file name.
+-#-renamesourcefileattribute SourceFile
+\ No newline at end of file
++#-renamesourcefileattribute SourceFile
++-dontwarn com.google.firebase.**
++-dontwarn com.google.android.gms.**
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index 463bc54..e068c12 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -193,14 +193,6 @@
+             android:stopWithTask="false"
+             android:label="@string/app_name" />
+ 
+-        <service android:name="org.linphone.core.tools.firebase.FirebaseMessaging"
+-            android:enabled="true"
+-            android:exported="false">
+-            <intent-filter>
+-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+-            </intent-filter>
+-        </service>
+-
+         <service
+             android:name=".core.CoreKeepAliveThirdPartyAccountsService"
+             android:exported="false"
+diff --git a/app/src/main/java/org/linphone/core/CoreContext.kt b/app/src/main/java/org/linphone/core/CoreContext.kt
+index 21fe8ee..e7f143b 100644
+--- a/app/src/main/java/org/linphone/core/CoreContext.kt
++++ b/app/src/main/java/org/linphone/core/CoreContext.kt
+@@ -43,7 +43,6 @@ import androidx.annotation.UiThread
+ import androidx.annotation.WorkerThread
+ import androidx.core.text.isDigitsOnly
+ import androidx.lifecycle.MutableLiveData
+-import com.google.firebase.crashlytics.FirebaseCrashlytics
+ import kotlin.system.exitProcess
+ import org.linphone.BuildConfig
+ import org.linphone.LinphoneApplication.Companion.coreContext
+@@ -612,7 +611,6 @@ class CoreContext
+                 }
+             }
+             if (crashlyticsAvailable && crashlyticsEnabled) {
+-                FirebaseCrashlytics.getInstance().log("[$domain] [${level.name}] $message")
+             }
+         }
+     }
+@@ -647,7 +645,6 @@ class CoreContext
+         if (BuildConfig.CRASHLYTICS_ENABLED) {
+             Log.i("$TAG Crashlytics is enabled, registering logging service listener")
+             try {
+-                FirebaseCrashlytics.getInstance()
+                 Factory.instance().loggingService.addListener(loggingServiceListener)
+             } catch (e: Exception) {
+                 Log.e("$TAG Failed to instantiate Crashlytics: $e")
+diff --git a/app/src/main/java/org/linphone/ui/main/help/viewmodel/HelpViewModel.kt b/app/src/main/java/org/linphone/ui/main/help/viewmodel/HelpViewModel.kt
+index 2bb2884..235005f 100644
+--- a/app/src/main/java/org/linphone/ui/main/help/viewmodel/HelpViewModel.kt
++++ b/app/src/main/java/org/linphone/ui/main/help/viewmodel/HelpViewModel.kt
+@@ -23,7 +23,6 @@ import androidx.annotation.UiThread
+ import androidx.annotation.WorkerThread
+ import androidx.lifecycle.MutableLiveData
+ import androidx.lifecycle.viewModelScope
+-import com.google.firebase.FirebaseApp
+ import kotlinx.coroutines.launch
+ import org.linphone.BuildConfig
+ import org.linphone.LinphoneApplication.Companion.coreContext
+@@ -54,7 +53,6 @@ class HelpViewModel
+ 
+     val sdkVersion = MutableLiveData<String>()
+ 
+-    val firebaseProjectId = MutableLiveData<String>()
+ 
+     val checkUpdateAvailable = MutableLiveData<Boolean>()
+ 
+@@ -154,10 +152,8 @@ class HelpViewModel
+         logsUploadInProgress.value = false
+ 
+         try {
+-            firebaseProjectId.value = FirebaseApp.getInstance().options.projectId
+         } catch (e: Exception) {
+             Log.e("$TAG Failed to get FirebaseApp instance: $e")
+-            firebaseProjectId.value = "unknown"
+         }
+ 
+         versionClickCount = if (corePreferences.showDeveloperSettings) {
+diff --git a/app/src/main/res/layout/help_debug_fragment.xml b/app/src/main/res/layout/help_debug_fragment.xml
+index d3f54ce..97f41c5 100644
+--- a/app/src/main/res/layout/help_debug_fragment.xml
++++ b/app/src/main/res/layout/help_debug_fragment.xml
+@@ -273,47 +273,11 @@
+                             app:layout_constraintStart_toEndOf="@id/sdk_version_subtitle"
+                             app:layout_constraintEnd_toEndOf="parent"/>
+ 
+-                        <ImageView
+-                            android:id="@+id/firebase_project_icon"
+-                            android:layout_width="32dp"
+-                            android:layout_height="32dp"
+-                            android:layout_marginStart="16dp"
+-                            android:src="@drawable/firebase"
+-                            android:contentDescription="@null"
+-                            app:tint="?attr/color_main1_500"
+-                            app:layout_constraintStart_toStartOf="parent"
+-                            app:layout_constraintEnd_toStartOf="@id/firebase_project_title"
+-                            app:layout_constraintTop_toTopOf="@id/firebase_project_title"
+-                            app:layout_constraintBottom_toBottomOf="@id/firebase_project_title" />
++                        
+ 
+-                        <androidx.appcompat.widget.AppCompatTextView
+-                            style="@style/header_style"
+-                            android:id="@+id/firebase_project_title"
+-                            android:layout_width="0dp"
+-                            android:layout_height="wrap_content"
+-                            android:layout_marginStart="16dp"
+-                            android:layout_marginEnd="16dp"
+-                            android:layout_marginTop="20dp"
+-                            android:text="@string/help_troubleshooting_firebase_project_title"
+-                            app:layout_constraintTop_toBottomOf="@id/sdk_version_subtitle"
+-                            app:layout_constraintStart_toEndOf="@id/firebase_project_icon"
+-                            app:layout_constraintEnd_toEndOf="parent"/>
++                        
+ 
+-                        <androidx.appcompat.widget.AppCompatTextView
+-                            style="@style/default_text_style"
+-                            android:id="@+id/firebase_project_subtitle"
+-                            android:layout_width="0dp"
+-                            android:layout_height="wrap_content"
+-                            android:layout_marginStart="16dp"
+-                            android:layout_marginEnd="16dp"
+-                            android:layout_marginBottom="16dp"
+-                            android:text="@{viewModel.firebaseProjectId, default=`linphone-android-8a563`}"
+-                            android:textSize="14sp"
+-                            android:textColor="?attr/color_main2_600"
+-                            app:layout_constraintTop_toBottomOf="@id/firebase_project_title"
+-                            app:layout_constraintBottom_toBottomOf="parent"
+-                            app:layout_constraintStart_toEndOf="@id/firebase_project_icon"
+-                            app:layout_constraintEnd_toEndOf="parent" />
++                        
+ 
+                     </androidx.constraintlayout.widget.ConstraintLayout>
+ 
+diff --git a/build.gradle.kts b/build.gradle.kts
+index d0757ec..b2638f2 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -3,6 +3,4 @@ plugins {
+     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+     alias(libs.plugins.kapt) apply false
+     alias(libs.plugins.navigation) apply false
+-    alias(libs.plugins.googleGmsServices) apply false
+-    alias(libs.plugins.crashlytics) apply false
+ }
+\ No newline at end of file
+diff --git a/keystore.properties b/keystore.properties
+index 3612cab..ae9bd44 100644
+--- a/keystore.properties
++++ b/keystore.properties
+@@ -1,4 +1,4 @@
+-keyAlias=
+-storeFile=bc-android.keystore
+\ No newline at end of file
++storeFile=/home/runner/work/_temp/linphone.jks
++keyAlias=gamedroid

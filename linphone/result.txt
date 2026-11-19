@@ -1,22 +1,38 @@
-linphone-android commit: 92318a248f8fe3ba3b6787b97874c6f2bd9bf616 (2026-11-09)
-116:            abiFilters += listOf("x86_64")
-keystore.properties
-GRADLE_EXIT=0
-APK: 114770280 bytes
---- native code in the APK, by kind
-     15 lib/x86_64/
-package: org.linphone
-RUN_EXIT=0 (0: installed, started and in front; 3: an expectation failed; 124: out of time)
-gamedroid-run: Android booted; running the script
-gamedroid-run: saved frame 134 to lock.ppm
-gamedroid-run: saved frame 248 to after-swipe.ppm
-gamedroid-run: saw `GD_SHELL_OK`
-gamedroid-run: saw `GD_DATA_KB=`
-gamedroid-run: saw `GD_CPUS=`
-gamedroid-run: APK installed (114770280 bytes)
-gamedroid-run: saw `GD_START_STATUS=0`
-gamedroid-run: saw `GD_FRONT_OK`
-gamedroid-run: saved frame 435 to game-1.ppm
-gamedroid-run: saved frame 436 to game-2.ppm
-gamedroid-run: script finished
---- crashes and native-library trouble
+warning: refs/tags/6.2.10 3d25a47ad55bc1d6d9429da2e3ec8454ed4a8417 is not a commit!
+Note: switching to 'dd257eb73044be41f752109e11c7bda3a3de30d1'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+linphone-android 6.2.10, commit dd257eb73044be41f752109e11c7bda3a3de30d1 (2026-11-05)
+KEY: a throwaway made for this run; this build is for testing only
+prepare: build.gradle.kts: 1 x 'abiFilters \\+= listOf\\([^)]*\\)'
+prepare: build.gradle.kts: 3 x '^import com\\.google\\.(firebase|gms)\\.[^\\n]*\\n'
+prepare: build.gradle.kts: 2 x '^\\s*apply<(GoogleServicesPlugin|CrashlyticsPlugin)>\\(\\)\\n'
+prepare: build.gradle.kts: 2 x '^\\s*if \\(crashlyticsAvailable\\) \\{\\s*val path = [^\\n]*\\n\\s*c'
+prepare: build.gradle.kts: 1 x '^\\s*implementation\\(platform\\(libs\\.google\\.firebase\\.bom\\)\\'
+prepare: build.gradle.kts: 1 x '^\\s*implementation\\(libs\\.google\\.firebase\\.messaging\\)\\n'
+prepare: build.gradle.kts: 1 x '^\\s*if \\(crashlyticsAvailable\\) \\{\\s*implementation\\(libs\\.g'
+prepare: build.gradle.kts: 1 x '^project\\.tasks\\.preBuild\\.dependsOn\\("ktlintFormat"\\)\\n'
+prepare: build.gradle.kts: 2 x '^\\s*alias\\(libs\\.plugins\\.(googleGmsServices|crashlytics)\\) '
+prepare: AndroidManifest.xml: 1 x '\\s*<service android:name="org\\.linphone\\.core\\.tools\\.fireba'
+prepare: CoreContext.kt: 3 x '^[^\\n]*FirebaseCrashlytics[^\\n]*\\n'
+prepare: HelpViewModel.kt: 4 x '^[^\\n]*firebase[^\\n]*\\n'
+prepare: help_debug_fragment.xml: 3 x '<[^<]+firebase[^<]+/>'
+prepare: done; nothing in the app's build names Firebase any more
+GRADLE_EXIT=1
+find: ‘app/build/outputs/apk/release’: No such file or directory
+RESULT: no APK was produced
+RESULT: nothing to try

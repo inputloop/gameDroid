@@ -1,12 +1,40 @@
-Using CI built SDK from maven repository at https://download.linphone.org/maven_repository
-google-services.json found, enabling Firebase CloudMessaging feature
-Crashlytics has been disabled because either google-services.json file wasn't found or local Linphone SDK build folder isn't configured
-Git describe: 6.3.0-alpha
-Git commits count: 100
-Git commit hash: 92318a248
-Git branch name: master
-Computed git version: 6.3.0-alpha.100+92318a248
-Keystore [null] doesn't exists!
-Debug flavor app version is [6.3.0-alpha.100+92318a248], app branch is [master]
-Release flavor app version is [6.3.0-alpha.100+92318a248], app branch is [master]
-Linphone SDK used is 5.6.0-alpha.219+f766649e29
+     Searched in the following locations:
+       - https://dl.google.com/dl/android/maven2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
+       - https://repo.maven.apache.org/maven2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
+       - https://plugins.gradle.org/m2/com/squareup/javapoet/1.13.0/javapoet-1.13.0.pom
+     Required by:
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > androidx.databinding:databinding-compiler-common:9.5.0
+         buildscript of root project 'Linphone' > androidx.navigation.safeargs.kotlin:androidx.navigation.safeargs.kotlin.gradle.plugin:2.10.2 > androidx.navigation:navigation-safe-args-gradle-plugin:2.10.2 > androidx.navigation:navigation-safe-args-generator:2.10.2
+   > Could not find com.google.protobuf:protobuf-java-util:3.25.5.
+     Searched in the following locations:
+       - https://dl.google.com/dl/android/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+       - https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+       - https://plugins.gradle.org/m2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+     Required by:
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0
+   > Could not find org.bouncycastle:bcpkix-jdk18on:1.80.2.
+     Searched in the following locations:
+       - https://dl.google.com/dl/android/maven2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
+       - https://repo.maven.apache.org/maven2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
+       - https://plugins.gradle.org/m2/org/bouncycastle/bcpkix-jdk18on/1.80.2/bcpkix-jdk18on-1.80.2.pom
+     Required by:
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools:sdk-common:32.5.0
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:builder:9.5.0
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:builder:9.5.0 > com.android.tools.build:apkzlib:9.5.0
+   > Could not find com.google.protobuf:protobuf-java-util:3.25.5.
+     Searched in the following locations:
+       - https://dl.google.com/dl/android/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+       - https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+       - https://plugins.gradle.org/m2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.pom
+     Required by:
+         buildscript of root project 'Linphone' > com.android.application:com.android.application.gradle.plugin:9.5.0 > com.android.tools.build:gradle:9.5.0 > com.android.tools.build:bundletool:1.18.3
+> There are 6 more failures with identical causes.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 30s
