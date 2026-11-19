@@ -1,8 +1,9 @@
 linphone-android 6.2.10, commit dd257eb73044be41f752109e11c7bda3a3de30d1 (2026-11-05)
 KEY: a throwaway made for this run; this build is for testing only
 GRADLE_EXIT=1 (attempt 1)
+GRADLE_EXIT=1 (attempt 2)
+GRADLE_EXIT=1 (attempt 3)
 Computed git version: 6.2.10
-Linphone SDK used is 5.5.42-pre.8+e7340d7274
 Signing config release is using keystore [/home/runner/work/_temp/linphone.jks]
 find: ‘app/build/outputs/apk/release’: No such file or directory
 RESULT: no APK was produced

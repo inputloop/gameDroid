@@ -1,20 +1,16 @@
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/CancelMeetingViewModel.kt:79:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
-fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
-e: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/main/meetings/viewmodel/ScheduleMeetingViewModel.kt:156:9 'onInvitationsSent' overrides nothing. Potential signatures for overriding:
-fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+> Task :app:mergeReleaseNativeLibs FAILED
 
 [Incubating] Problems report is available at: file:///home/runner/linphone/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileReleaseKotlin' (registered by plugin 'org.jetbrains.kotlin.android').
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
-   > Kotlin compiler: NOTHING_TO_OVERRIDE
-       Kotlin compiler error
-         'onInvitationsSent' overrides nothing. Potential signatures for overriding:
-         fun onInvitationsSent(p0: ConferenceScheduler, p1: Array<(out) Address!>): Unit
+Execution failed for task ':app:mergeReleaseNativeLibs' (registered by plugin 'com.android.internal.application').
+> Could not resolve all files for configuration ':app:releaseRuntimeClasspath'.
+   > Could not find org.linphone:linphone-sdk-android:5.5.40.
+     Required by:
+         project ':app'
+
 --
-BUILD FAILED in 3m
-43 actionable tasks: 43 executed
+BUILD FAILED in 7s
+3 actionable tasks: 2 executed, 1 up-to-date

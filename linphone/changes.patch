@@ -308,6 +308,19 @@ index d0757ec..b2638f2 100644
 -    alias(libs.plugins.crashlytics) apply false
  }
 \ No newline at end of file
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+index 869a86d..36e310a 100644
+--- a/gradle/libs.versions.toml
++++ b/gradle/libs.versions.toml
+@@ -31,7 +31,7 @@ coil = "3.6.3"
+ dotsIndicator = "5.1.2"
+ photoview = "2.3.0"
+ openidAppauth = "0.11.1"
+-linphone = "5.5.+"
++linphone = "5.5.40"
+ 
+ [libraries]
+ androidx-annotations = { group = "androidx.annotation", name = "annotation", version.ref = "annotations" }
 diff --git a/keystore.properties b/keystore.properties
 index 3612cab..ae9bd44 100644
 --- a/keystore.properties
