@@ -1,40 +1,40 @@
-Crashlytics has been disabled because either google-services.json file wasn't found or local Linphone SDK build folder isn't configured
-Git describe: 6.2.10
-Git commits count: 0
-Git commit hash: dd257eb
-Git branch name: tags/6.2.10^0
-Computed git version: 6.2.10
-Signing config release is using keystore [/home/runner/work/_temp/linphone.jks]
-Debug flavor app version is [6.2.10], app branch is [tags/6.2.10^0]
-Release flavor app version is [6.2.10], app branch is [tags/6.2.10^0]
-w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
-The 'org.jetbrains.kotlin.android' plugin in project ':app' is no longer required for Kotlin support since AGP 9.0.
-Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
-See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/ui/sso/SingleSignOnActivity.kt:92:21 'fun startActivityForResult(p0: Intent, p1: Int): Unit' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AndroidUtils.kt:103:36 'val defaultDisplay: Display!' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AndroidUtils.kt:103:51 'fun getMetrics(p0: DisplayMetrics!): Unit' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:251:77 'class AudioFocusRequestCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:253:30 'class AudioAttributesCompat : Any, VersionedParcelable' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:253:52 'constructor(): AudioAttributesCompat.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:254:27 'class AudioAttributesCompat : Any, VersionedParcelable' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:255:33 'class AudioAttributesCompat : Any, VersionedParcelable' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:259:17 'class AudioFocusRequestCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:259:41 'constructor(p0: Int): AudioFocusRequestCompat.Builder' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:260:21 'class AudioManagerCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:265:19 'class AudioManagerCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:282:22 'class AudioFocusRequestCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/AudioUtils.kt:285:13 'class AudioManagerCompat : Any' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/DialogUtils.kt:647:61 'static field SOFT_INPUT_ADJUST_RESIZE: Int' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/LinphoneUtils.kt:782:30 'var isEphemeralEnabled: Boolean' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/LinphoneUtils.kt:787:30 'var isEphemeralEnabled: Boolean' is deprecated. Deprecated in Java.
+w: file:///home/runner/linphone/app/src/main/java/org/linphone/utils/LinphoneUtils.kt:792:30 'var ephemeralLifetime: Long' is deprecated. Deprecated in Java.
 
-
-> Task :app:linphoneSdkSource
-> Task :app:preBuild
-> Task :app:preReleaseBuild
-> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
-> Task :app:mergeReleaseNativeLibs FAILED
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:mergeReleaseGeneratedProguardFiles
+> Task :app:compressReleaseJavaRes
+> Task :app:mergeReleaseJavaResource
+> Task :app:expandReleaseArtProfileWildcards
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:minifyReleaseWithR8
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:convertShrunkResourcesToBinaryRelease
+> Task :app:optimizeReleaseResources
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
 
 [Incubating] Problems report is available at: file:///home/runner/linphone/build/reports/problems/problems-report.html
 
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:mergeReleaseNativeLibs' (registered by plugin 'com.android.internal.application').
-> Could not resolve all files for configuration ':app:releaseRuntimeClasspath'.
-   > Could not find org.linphone:linphone-sdk-android:5.5.40.
-     Required by:
-         project ':app'
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights from a Build Scan (powered by Develocity).
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 8s
-3 actionable tasks: 2 executed, 1 up-to-date
+BUILD SUCCESSFUL in 5m 4s
+58 actionable tasks: 58 executed
