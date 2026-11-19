@@ -69,9 +69,9 @@ What that commits to, in order:
 |---|---|---|
 | L1 | Build the app for x86-64 from its source; see it install and start on gameDroid | **Done in CI, 2026-11-11** (below) |
 | L2 | Network in the guest (roadmap E4) | **Done in CI, 2026-11-11** (`docs/engine/results/2026-11-11-network.md`). Linphone itself has not been tried on it yet |
-| L3 | Sound out and microphone in the guest (roadmap E9) | Not started |
+| L3 | Sound out and microphone in the guest (roadmap E9) | **Done** (sound card and camera in CI; host speakers, microphone and webcam not testable there) |
 | L4 | A call between two Linphone instances, heard and spoken | Needs L2 and L3 |
-| L5 | gameDroid offers to install it, from a build gameDroid publishes with its source | Needs L1; licence notes to write |
+| L5 | gameDroid installs it, from a build gameDroid publishes with its source | **Built and installed by the app in CI, 2026-11-19** (below). Publishing waits for a signing key |
 
 ## Sources
 
@@ -104,3 +104,52 @@ Two things to settle before gameDroid offers this build to anyone (L5):
 - **It is a debug build, signed with a throwaway key,** from the tip of the
   development branch. A published build should come from a release tag and
   carry a key gameDroid keeps.
+
+## L5 result, 2026-11-19: a clean build, installed by gameDroid itself
+
+Live-verified in CI on Linux (gameDroid d30708e).
+
+**The build** (`.github/workflows/linphone.yml`, `tools/linphone/prepare.py`):
+Linphone's release 6.2.10 (commit dd257eb7), unchanged but for:
+
+- built for x86-64 instead of ARM;
+- Firebase taken out, following F-Droid's recipe. The finished APK defines
+  no `com.google.firebase` or `com.google.android.gms` class;
+- the Linphone SDK named exactly: **5.5.39**. The source asks for "the
+  newest 5.5", which by now is a pre-release of 5.5.42 that this release of
+  the app no longer compiles against. 5.5.39 is the newest finished
+  release in Linphone's package store from before the app's release;
+- a release build (61 MB against the debug build's 115 MB), signed.
+
+The native libraries are Belledonne's own, as published in their package
+store, not rebuilt by gameDroid. (F-Droid rebuilds them from source; that
+takes hours and was not attempted.)
+
+**In gameDroid:** the app carries Linphone to Android on the same second
+disk as the browser, installs it if it is not installed, grants it the
+microphone, the camera and notifications, and exempts it from battery
+saving (with no Google services there is no push message to wake it, so it
+must stay running to be rung). In CI the app did this unaided, beside
+Firefox, on a fresh Android; Linphone starts, shows its welcome screen,
+and nothing crashed.
+
+<img src="../screenshots/linphone-welcome.png" width="240" alt="gameDroid's build of Linphone on its welcome screen">
+
+**Not tested:** registering an account, and a call (L4). CI has no SIP
+account and no sound hardware.
+
+### What publishing still needs
+
+- **A signing key that the owner keeps.** CI signs with a throwaway key
+  made for each run, which is no use to anyone else: Android will only
+  update an app with a build signed by the same key. The workflow takes
+  the real key from two repository secrets, `LINPHONE_KEYSTORE_B64` and
+  `LINPHONE_KEYSTORE_PASSWORD` (key alias `gamedroid`), and when run by
+  hand with "publish" ticked, publishes the APK as a pre-release with its
+  patch and SHA-256. gameDroid's `LINPHONE_PUBLISHED` constant is then
+  given that address and SHA-256, and every copy fetches it.
+- **The name.** "Linphone" is Belledonne's trademark. F-Droid distributes
+  its own build under the name; whether gameDroid may is the owner's call.
+  The release notes say plainly that it is not Belledonne's build.
+- **Licence.** The app is GPLv3 and its SDK AGPLv3; the release names the
+  exact source for both and attaches the patch.

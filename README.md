@@ -44,7 +44,7 @@ device in CI. More below.*
 | Sound and microphone | Android has a sound card and plays into it (CI). The app connects the computer's speakers and, only while Android records, a microphone (`--microphone`, `--list-microphones`). No real device has been heard yet: CI has none |
 | Camera | Android has one camera, backed by the engine (CI): its camera app shows gameDroid's test picture, live. The app puts the computer's webcam behind it, opened only while Android's camera is in use (`--camera`, `--list-cameras`). No real webcam has been used yet: CI has none |
 | Firefox | Looked into. F-Droid's free build of Firefox (Fennec) has an x86-64 release; it installs and starts on gameDroid (CI). How to offer it is undecided ([notes](docs/research/firefox.md)) |
-| Linphone (voice calls) as an app gameDroid offers | Decided. Steps 1 and 2 of 5 done in CI: an x86-64 build made from Linphone's source installs and starts on gameDroid, and Android has a network. Calls still need sound and a microphone in the guest ([notes](docs/research/linphone.md)) |
+| Linphone (voice and video calls), installed by gameDroid | Working in CI on Linux, not yet published. gameDroid builds Linphone 6.2.10 for x86-64 from its makers' release source (they publish for ARM only), without Google's libraries; the app then installs it beside the browser on first run, allows it the microphone, camera and notifications, and keeps Android from putting it to sleep. Until a signed build is published, a build is named with `GAMEDROID_LINPHONE_APK`; `--no-linphone` leaves it out. Not yet tested: an actual call ([notes](docs/research/linphone.md)) |
 | A launcher, a game library | Not started |
 | Key mapping editor | Not started |
 
