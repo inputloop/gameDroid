@@ -1,0 +1,22 @@
+# Install gameDroid's build of Linphone, ready it as the app does, start
+# it, and look: does it run, and what does it ask of a new person?
+wait 20
+# As the app does after boot: no lock screen, and on Wi-Fi.
+shell su 0 sh -c 'locksettings set-disabled true; svc power stayon true; wm dismiss-keyguard; [ -e /sys/class/net/wlan0 ] || { ip link add link buried_eth2 name wlan0 type virt_wifi; ip link set buried_eth2 up; }; cmd wifi set-wifi-enabled enabled; sleep 3; cmd wifi connect-network VirtWifi open'; echo GD_""UNLOCKED
+expect GD_UNLOCKED 40
+wait 8
+install
+linphone
+expect GD_LINPHONE_SET 30
+start org.linphone
+expect GD_START_STATUS=0 60
+wait 30
+shell dumpsys activity activities | grep -q "ResumedActivity.*org.linphone" && echo GD_""FRONT_OK
+expect GD_FRONT_OK 30
+screenshot linphone-1.ppm
+# What it was given, what it is made of, and whether anything went wrong.
+shell echo GD_""LP_BEGIN; dumpsys package org.linphone | grep -E "versionName|versionCode|(RECORD_AUDIO|CAMERA|POST_NOTIFICATIONS): granted" | tr -s " "; dumpsys deviceidle whitelist | grep linphone; logcat -d -s AndroidRuntime:E | grep -c "FATAL EXCEPTION"; logcat -d | grep -iE "NoClassDefFoundError|ClassNotFoundException.*firebase|UnsatisfiedLinkError" | head -n 5 | cut -c1-200; echo GD_""LP_END
+expect GD_LP_END 40
+# The screen's own words, to steer by: every label and where it is.
+shell su 0 uiautomator dump /data/local/tmp/ui.xml >/dev/null 2>&1; echo GD_""UI_BEGIN; su 0 cat /data/local/tmp/ui.xml | tr ">" "\n" | grep -E 'text="[^"]' | sed -E 's/.*text="([^"]*)".*bounds="([^"]*)".*/\2 \1/' | cut -c1-120 | head -n 30; echo GD_""UI_END
+expect GD_UI_END 40

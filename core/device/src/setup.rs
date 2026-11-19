@@ -593,31 +593,78 @@ pub fn data_folder() -> Option<PathBuf> {
 /// `None` if it cannot be had (no internet, say): Android then keeps only
 /// its stock test browser, and this is tried again at the next start.
 pub fn browser_apk() -> Option<PathBuf> {
-    let data = plan().ok()?.data;
-    let apps = data.join("apps");
-    let apk = apps.join(format!("firefox-{BROWSER_VERSION}.apk"));
+    fetch_app(
+        "the Firefox browser (Fennec) from F-Droid (128 MB)",
+        &format!("firefox-{BROWSER_VERSION}.apk"),
+        &browser_urls(),
+        BROWSER_SHA256,
+        "Android keeps its stock browser",
+    )
+}
+
+/// gameDroid's own build of Linphone, as published: where it is, and its
+/// SHA-256. Linphone's makers publish the app for ARM processors only, so
+/// gameDroid builds it for this kind (`tools/linphone`, and the `linphone`
+/// workflow). `None` until a build has been published.
+pub const LINPHONE_PUBLISHED: Option<(&str, &str)> = None;
+
+/// Linphone's APK: the file `GAMEDROID_LINPHONE_APK` names, if it is set
+/// (a build of one's own), else gameDroid's published build, fetched into
+/// its data if it is not there yet. `None` if there is none to be had.
+pub fn linphone_apk() -> Option<PathBuf> {
+    if let Some(own) = std::env::var_os("GAMEDROID_LINPHONE_APK").filter(|v| !v.is_empty()) {
+        let own = PathBuf::from(own);
+        if own.is_file() {
+            return Some(own);
+        }
+        eprintln!(
+            "gameDroid: GAMEDROID_LINPHONE_APK names {}, which is not a file; carrying on without Linphone",
+            own.display()
+        );
+        return None;
+    }
+    let (url, sha256) = LINPHONE_PUBLISHED?;
+    let file = url.rsplit('/').next().unwrap_or("linphone.apk");
+    fetch_app(
+        "Linphone, the calling app (gameDroid's build)",
+        file,
+        &[url.to_string()],
+        sha256,
+        "Android goes without Linphone",
+    )
+}
+
+/// An app's APK in gameDroid's data, as `file`: fetched from the first of
+/// `urls` that has it if it is not there yet, and kept only if it is the
+/// expected file. Android checks the APK's signature when it installs it.
+fn fetch_app(
+    what: &str,
+    file: &str,
+    urls: &[String],
+    sha256: &str,
+    without: &str,
+) -> Option<PathBuf> {
+    let apps = plan().ok()?.data.join("apps");
+    let apk = apps.join(file);
     if apk.exists() {
         return Some(apk);
     }
     std::fs::create_dir_all(&apps).ok()?;
-    eprintln!("gameDroid: fetching the Firefox browser (Fennec) from F-Droid (128 MB)");
+    eprintln!("gameDroid: fetching {what}");
     let mut why = String::new();
-    for url in browser_urls() {
-        match download(&url, &apk, &mut |_| {}) {
-            Ok(sha256) if sha256 == BROWSER_SHA256 => return Some(apk),
-            Ok(sha256) => {
+    for url in urls {
+        match download(url, &apk, &mut |_| {}) {
+            Ok(got) if got == sha256 => return Some(apk),
+            Ok(got) => {
                 let _ = std::fs::remove_file(&apk);
                 why = format!(
-                    "what arrived is not the expected file (SHA-256 {sha256}); it was deleted"
+                    "what arrived is not the expected file (SHA-256 {got}); it was deleted"
                 );
             }
             Err(e) => why = e,
         }
     }
-    eprintln!(
-        "gameDroid: the browser could not be fetched ({why}); \
-         Android keeps its stock browser, and this is tried again at the next start"
-    );
+    eprintln!("gameDroid: that could not be fetched ({why}); {without}, and this is tried again at the next start");
     None
 }
 

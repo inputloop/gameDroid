@@ -167,6 +167,9 @@ fn run_script(steps: Vec<Step>, session: Session) {
                         failed = true;
                     }
                 }
+                Step::Linphone => {
+                    session.shell(&gamedroid_device::console::linphone_command());
+                }
                 Step::Help => {
                     for line in gamedroid_device::console::help_page_commands() {
                         session.shell(&line);

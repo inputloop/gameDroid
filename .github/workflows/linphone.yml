@@ -1,76 +1,132 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Linphone as an app inside Android (docs/research/linphone.md, option A).
-# The published builds are ARM only and gameDroid's Android is x86-64, so:
-# can the app be built for x86-64 from its source, and does that build
-# install and start on gameDroid? Exploratory; it reports what happened.
-# No call can work yet: the guest has no network or sound device.
+# gameDroid's build of Linphone (docs/research/linphone.md).
+# Linphone is published for ARM processors only and gameDroid's Android is
+# x86-64, so this builds the app from an unchanged release of its source,
+# changed only as tools/linphone/prepare.py says, then installs and starts
+# it on gameDroid. Run by hand with "publish" ticked, and with the signing
+# key in the repository's secrets, it also publishes the build as a release.
 name: linphone
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish this build as a release (needs the signing key in secrets)"
+        type: boolean
+        default: false
   push:
     paths:
       - ".github/workflows/linphone.yml"
+      - "tools/linphone/**"
+      - "tools/engine/scripts/linphone.script"
 permissions:
-  contents: write  # to publish the result to the ci-logs branch
+  contents: write  # the ci-logs branch, and a release when asked
+env:
+  LINPHONE_TAG: "6.2.10"
+  LINPHONE_COMMIT: dd257eb73044be41f752109e11c7bda3a3de30d1
+  # Raised when gameDroid rebuilds the same Linphone release.
+  GAMEDROID_BUILD: "1"
 jobs:
   build-and-try:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-      - name: Build Linphone for x86-64
+      - name: Build Linphone for x86-64, without Google's libraries
+        env:
+          KEYSTORE_B64: ${{ secrets.LINPHONE_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.LINPHONE_KEYSTORE_PASSWORD }}
         run: |
           set +e
           mkdir -p "$HOME/out" && exec > >(tee "$HOME/out/result.txt") 2>&1
-          # Pinned to the commit this was first proven with.
-          git clone -q https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
+          git clone -q --depth 1 -b "$LINPHONE_TAG" https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
           cd "$HOME/linphone"
-          git checkout -q 92318a248f8fe3ba3b6787b97874c6f2bd9bf616
-          echo "linphone-android commit: $(git rev-parse HEAD) ($(git log -1 --format=%cs))"
-          # The one change: build for x86-64 instead of the two ARM kinds.
-          sed -i 's/abiFilters += listOf("armeabi-v7a", "arm64-v8a")/abiFilters += listOf("x86_64")/' app/build.gradle.kts
-          grep -n 'abiFilters' app/build.gradle.kts
-          ls keystore.properties 2>/dev/null || echo "no keystore.properties in the repository"
-          ./gradlew --no-daemon -q assembleDebug > "$HOME/out/gradle.log" 2>&1
-          echo "GRADLE_EXIT=$?"
-          tail -n 40 "$HOME/out/gradle.log" | cut -c1-300 > "$HOME/out/gradle-tail.txt"
-          apk="$(find app/build/outputs -name '*.apk' | head -n 1)"
-          if [ -n "$apk" ]; then
-            cp "$apk" "$HOME/linphone.apk"
-            echo "APK: $(stat -c %s "$apk") bytes"
-            echo "--- native code in the APK, by kind"
-            unzip -l "$apk" | grep -oE 'lib/[^/]+/' | sort | uniq -c
-            aapt2="$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)"
-            echo "package: $("$aapt2" dump packagename "$apk")"
-            "$aapt2" dump packagename "$apk" > "$HOME/out/package.txt"
+          [ "$(git rev-parse HEAD)" = "$LINPHONE_COMMIT" ] || { echo "RESULT: tag $LINPHONE_TAG is not commit $LINPHONE_COMMIT any more; stopping"; exit 0; }
+          echo "linphone-android $LINPHONE_TAG, commit $LINPHONE_COMMIT ($(git log -1 --format=%cs))"
+          export LINPHONE_KEYSTORE="$RUNNER_TEMP/linphone.jks" LINPHONE_KEY_ALIAS=gamedroid
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$LINPHONE_KEYSTORE"
+            export LINPHONE_KEYSTORE_PASSWORD="$KEYSTORE_PASSWORD" LINPHONE_KEY_PASSWORD="$KEYSTORE_PASSWORD"
+            echo "KEY: gameDroid's own, from the repository's secrets" | tee "$HOME/out/key.txt"
           else
-            echo "no APK was produced"
+            export LINPHONE_KEYSTORE_PASSWORD=throwaway LINPHONE_KEY_PASSWORD=throwaway
+            keytool -genkeypair -keystore "$LINPHONE_KEYSTORE" -storepass throwaway -keypass throwaway -alias gamedroid \
+              -keyalg RSA -keysize 3072 -validity 30 -dname "CN=gameDroid CI throwaway key" 2>/dev/null
+            echo "KEY: a throwaway made for this run; this build is for testing only" | tee "$HOME/out/key.txt"
           fi
+          python3 "$GITHUB_WORKSPACE/tools/linphone/prepare.py" "$HOME/linphone" || { echo "RESULT: the source could not be prepared"; exit 0; }
+          git diff > "$HOME/out/changes.patch"; sed -i '/Password=/d' "$HOME/out/changes.patch"
+          ./gradlew --no-daemon assembleRelease > "$HOME/out/gradle.log" 2>&1
+          echo "GRADLE_EXIT=$?"
+          grep -E "Linphone SDK used is|Computed git version|Signing config" "$HOME/out/gradle.log" | sort -u
+          grep -E "^e: |error:|FAILED|What went wrong" -A 6 "$HOME/out/gradle.log" | cut -c1-300 | head -n 60 > "$HOME/out/gradle-errors.txt"
+          tail -n 40 "$HOME/out/gradle.log" | cut -c1-300 > "$HOME/out/gradle-tail.txt"
+          apk="$(find app/build/outputs/apk/release -name '*.apk' | head -n 1)"
+          [ -n "$apk" ] || { echo "RESULT: no APK was produced"; exit 0; }
+          name="linphone-$LINPHONE_TAG-gamedroid$GAMEDROID_BUILD-x86_64.apk"
+          cp "$apk" "$HOME/$name"; echo "$name" > "$HOME/out/name.txt"
+          echo "APK: $name, $(stat -c %s "$apk") bytes (built as $(basename "$apk"))"
+          echo "SHA256: $(sha256sum "$apk" | cut -d' ' -f1)"
+          echo "--- native code in the APK, by kind"
+          unzip -l "$apk" | grep -oE 'lib/[^/]+/' | sort | uniq -c
+          bt="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          echo "--- signed by"
+          "$bt/apksigner" verify --print-certs "$apk" 2>&1 | grep -E "certificate DN|SHA-256" | head -n 2
+          echo "--- Google's libraries left inside (classes defined; 0 is the aim)"
+          an="$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/apkanalyzer | tail -n 1)"
+          "$an" dex packages --defined-only "$apk" 2>/dev/null | awk '$1=="P"' | grep -E "com\.google\.(firebase|android\.gms)" | awk '{print $NF}' | head -n 12
+          echo "firebase/gms packages defined: $("$an" dex packages --defined-only "$apk" 2>/dev/null | awk '$1=="P"' | grep -cE "com\.google\.(firebase|android\.gms)")"
       - uses: dtolnay/rust-toolchain@stable
       - name: Try it on gameDroid
         run: |
           set +e
-          [ -f "$HOME/linphone.apk" ] || { echo "nothing to try" | tee -a "$HOME/out/result.txt"; exit 0; }
+          name="$(cat "$HOME/out/name.txt" 2>/dev/null)"
+          [ -n "$name" ] || { echo "RESULT: nothing to try" | tee -a "$HOME/out/result.txt"; exit 1; }
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          sudo apt-get update -qq && sudo apt-get install -y -qq libasound2-dev >/dev/null
           cargo build --release -p gamedroid-device --bin gamedroid-run 2>&1 | tail -n 2
           export GAMEDROID_DATA="$RUNNER_TEMP/gd-data" GAMEDROID_STORAGE_GB=8
           cd "$HOME/out"
-          sed "s/PACKAGE/$(cat package.txt)/" "$GITHUB_WORKSPACE/tools/engine/scripts/install-and-play.script" > play.script
           timeout 600 "$GITHUB_WORKSPACE/target/release/gamedroid-run" --setup \
-            --memory 4096 --display 720x1280 --apk "$HOME/linphone.apk" --script play.script > android.log 2> run.err
-          echo "RUN_EXIT=$? (0: installed, started and in front; 3: an expectation failed; 124: out of time)" | tee -a result.txt
-          grep -E "gamedroid-run:" run.err | cut -c1-200 | tee -a result.txt
-          echo "--- crashes and native-library trouble" | tee -a result.txt
-          grep -E "FATAL EXCEPTION|UnsatisfiedLinkError|INSTALL_FAILED|NO_MATCHING_ABIS|Process: org.linphone|has died" android.log | cut -c1-240 | head -n 12 | tee -a result.txt
+            --memory 4096 --display 720x1280 --apk "$HOME/$name" \
+            --script "$GITHUB_WORKSPACE/tools/engine/scripts/linphone.script" > android.log 2> run.err
+          {
+            echo "RUN_EXIT=$? (0: installed, readied, started and in front; 3: an expectation failed; 124: out of time)"
+            grep -E "gamedroid-run:" run.err | cut -c1-200
+            echo "--- the app as installed (version, permissions, kept awake, crashes counted, class trouble)"
+            sed -n '/^GD_LP_BEGIN/,/^GD_LP_END/p' android.log | grep -v '^\[' | cut -c1-200 | head -n 20
+            echo "--- what its first screen says"
+            sed -n '/^GD_UI_BEGIN/,/^GD_UI_END/p' android.log | grep -v '^\[' | cut -c1-160 | head -n 34
+            echo "--- crashes and native-library trouble"
+            grep -E "FATAL EXCEPTION|UnsatisfiedLinkError|INSTALL_FAILED|NO_MATCHING_ABIS|Process: org.linphone|has died" android.log | cut -c1-240 | head -n 12
+          } | tee -a result.txt
           for f in *.ppm; do [ -f "$f" ] && python3 "$GITHUB_WORKSPACE/tools/engine/ppm_to_png.py" "$f" "${f%.ppm}.png"; done
-      - name: Publish
+          grep -q '^RUN_EXIT=0 ' result.txt
+      - name: Publish the logs
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" linphone result.txt gradle-tail.txt run.err lock.png after-swipe.png game-1.png game-2.png
+        run: cd "$HOME/out" && "$GITHUB_WORKSPACE/tools/ci/publish-logs.sh" linphone result.txt changes.patch gradle-errors.txt gradle-tail.txt run.err linphone-1.png
+      - name: Publish the build as a release
+        if: success() && github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          grep -q "gameDroid's own" "$HOME/out/key.txt" || { echo "not published: the signing key is not in the repository's secrets"; exit 1; }
+          name="$(cat "$HOME/out/name.txt")"; tag="linphone-$LINPHONE_TAG-gamedroid$GAMEDROID_BUILD"
+          cd "$HOME" && sha256sum "$name" > "$name.sha256"
+          cat > notes.md <<NOTES
+          Linphone $LINPHONE_TAG for 64-bit Intel and AMD processors, built by gameDroid for the Android it runs.
+
+          Linphone is free software by Belledonne Communications (GPLv3; its SDK AGPLv3). This is not their build: they publish for ARM processors only. It is their source at tag $LINPHONE_TAG (commit $LINPHONE_COMMIT), with the changes in \`changes.patch\` (attached): built for x86-64, Google's Firebase libraries taken out, and signed with gameDroid's key.
+
+          Source: https://github.com/BelledonneCommunications/linphone-android/tree/$LINPHONE_TAG and, for the native libraries, https://github.com/BelledonneCommunications/linphone-sdk at the version in \`result.txt\`. The build itself is this repository's \`.github/workflows/linphone.yml\` and \`tools/linphone/prepare.py\` at commit $GITHUB_SHA.
+          NOTES
+          sed -i 's/^          //' notes.md
+          gh release create "$tag" "$name" "$name.sha256" "$HOME/out/changes.patch" "$HOME/out/result.txt" \
+            --repo "$GITHUB_REPOSITORY" --title "Linphone $LINPHONE_TAG for gameDroid (build $GAMEDROID_BUILD)" --notes-file notes.md --prerelease

@@ -56,6 +56,7 @@ usage: gamedroid [options]
                       (default: the first). Opened only while Android's
                       camera is in use; with none, a test picture
   --list-cameras      print the webcams this computer has, and stop
+  --no-linphone       do not install Linphone, the calling app
   --frames <n>        exit after n frames (for tests)
 
 in the window:
@@ -234,6 +235,9 @@ struct Args {
     /// Running gameDroid's own image set, which it looks after: it gets
     /// the browser installed.
     own_image: bool,
+    /// Whether to install Linphone, the calling app, when there is a build
+    /// of it to be had.
+    linphone: bool,
 }
 
 fn parse() -> Result<Args, String> {
@@ -246,6 +250,7 @@ fn parse() -> Result<Args, String> {
         console: None,
         frames: None,
         own_image: false,
+        linphone: true,
         gpu: gamedroid_device::gpu::Wish::Auto,
         webcam: std::env::var("GAMEDROID_CAMERA").ok(),
         microphone: std::env::var("GAMEDROID_MICROPHONE").ok(),
@@ -256,6 +261,7 @@ fn parse() -> Result<Args, String> {
         match arg.as_str() {
             "--demo" => a.demo = true,
             "--game-mode" => a.game_mode = true,
+            "--no-linphone" => a.linphone = false,
             "--profile" => a.profile = Some(value(&arg)?.into()),
             "--console" => a.console = Some(value(&arg)?.into()),
             "--gpu" => {
@@ -354,21 +360,43 @@ fn run() -> Result<(), String> {
     let mut help_was_down = false;
     let mut guest = match &args.dir {
         Some(dir) => {
-            // The browser's APK rides on a second disk, for Android to
-            // install once it has booted.
             let mut options = args.options.clone();
             // The host's speakers and microphone, behind Android's sound card.
             let host_sound = gamedroid::audio::HostSound::new(args.microphone.clone());
             options.sound_card = Some(gamedroid_device::android::SoundCard(
                 bvmm::virtio::snd::Sound::new(Box::new(host_sound)),
             ));
-            let mut browser_bytes = None;
+            // The apps gameDroid installs ride on a second disk, for
+            // Android to install once it has booted.
+            let mut apps = Vec::new();
             if args.own_image {
+                use gamedroid_device::console::{Carried, FIREFOX, LINPHONE};
+                let mut found = Vec::new();
                 if let Some(apk) = gamedroid_device::setup::browser_apk() {
-                    let layout = dir.join("browser.layout");
-                    if let Ok(bytes) = gamedroid_device::android::file_as_disk(&apk, &layout) {
-                        options.extra_disk = Some(layout);
-                        browser_bytes = Some(bytes);
+                    found.push((FIREFOX, apk));
+                }
+                if args.linphone {
+                    if let Some(apk) = gamedroid_device::setup::linphone_apk() {
+                        found.push((LINPHONE, apk));
+                    }
+                }
+                let layout = dir.join("apps.layout");
+                let files: Vec<&std::path::Path> = found.iter().map(|(_, f)| f.as_path()).collect();
+                if !files.is_empty() {
+                    match gamedroid_device::android::files_as_disk(&files, &layout) {
+                        Ok(places) => {
+                            options.extra_disk = Some(layout);
+                            apps = found
+                                .iter()
+                                .zip(places)
+                                .map(|((package, _), (sector, bytes))| Carried {
+                                    package,
+                                    sector,
+                                    bytes,
+                                })
+                                .collect();
+                        }
+                        Err(e) => eprintln!("gameDroid: {e}; no apps will be installed"),
                     }
                 }
             }
@@ -438,7 +466,7 @@ fn run() -> Result<(), String> {
                     }
                 });
             }
-            gamedroid_device::console::after_boot(booted, console.marks(), shell, browser_bytes);
+            gamedroid_device::console::after_boot(booted, console.marks(), shell, apps);
             std::thread::spawn(move || {
                 match bvmm::run_linux(&config, Box::new(console), Some(Box::new(keys))) {
                     Ok(_) => eprintln!("gamedroid: Android stopped"),

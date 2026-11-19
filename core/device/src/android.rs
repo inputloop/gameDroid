@@ -80,21 +80,34 @@ impl Default for Options {
 }
 
 /// Write a disk layout that presents `file` as a read-only disk, padded with
-/// zeros to a whole number of sectors. Returns the layout's path and the
-/// file's true length, which the guest needs to cut the padding off again.
+/// zeros to a whole number of sectors. Returns the file's true length,
+/// which the guest needs to cut the padding off again.
 pub fn file_as_disk(file: &Path, layout: &Path) -> Result<u64, String> {
-    let len = std::fs::metadata(file)
-        .map_err(|e| format!("reading {}: {e}", file.display()))?
-        .len();
-    if len == 0 {
-        return Err(format!("{} is empty", file.display()));
+    Ok(files_as_disk(&[file], layout)?[0].1)
+}
+
+/// Write a disk layout that presents `files`, one after another, as one
+/// read-only disk. Each starts on a sector boundary. Returns, for each,
+/// the sector it starts at and its true length.
+pub fn files_as_disk(files: &[&Path], layout: &Path) -> Result<Vec<(u64, u64)>, String> {
+    let mut text = String::from("bvmm-disk-layout 1\n");
+    let (mut sector, mut places) = (0u64, Vec::new());
+    for file in files {
+        let len = std::fs::metadata(file)
+            .map_err(|e| format!("reading {}: {e}", file.display()))?
+            .len();
+        if len == 0 {
+            return Err(format!("{} is empty", file.display()));
+        }
+        let absolute = std::fs::canonicalize(file)
+            .map_err(|e| format!("resolving {}: {e}", file.display()))?;
+        let sectors = len.div_ceil(512);
+        text.push_str(&format!("{} ro {}\n", sectors * 512, absolute.display()));
+        places.push((sector, len));
+        sector += sectors;
     }
-    let absolute =
-        std::fs::canonicalize(file).map_err(|e| format!("resolving {}: {e}", file.display()))?;
-    let padded = len.div_ceil(512) * 512;
-    let text = format!("bvmm-disk-layout 1\n{padded} ro {}\n", absolute.display());
     std::fs::write(layout, text).map_err(|e| format!("writing {}: {e}", layout.display()))?;
-    Ok(len)
+    Ok(places)
 }
 
 /// What the host holds on to while the machine runs.
@@ -351,6 +364,15 @@ mod tests {
         std::fs::write(&apk, vec![7u8; 1000]).unwrap();
         let layout = dir.join("apk.layout");
         assert_eq!(file_as_disk(&apk, &layout).unwrap(), 1000);
+        let second = dir.join("second.apk");
+        std::fs::write(&second, vec![9u8; 600]).unwrap();
+        let both = dir.join("both.layout");
+        assert_eq!(
+            files_as_disk(&[&apk, &second], &both).unwrap(),
+            vec![(0, 1000), (2, 600)],
+            "the second starts on the sector after the first's padding"
+        );
+        assert_eq!(std::fs::read_to_string(&both).unwrap().lines().count(), 3);
         let text = std::fs::read_to_string(&layout).unwrap();
         // An absolute path, however this system writes one.
         let line = text.lines().nth(1).unwrap_or_default();

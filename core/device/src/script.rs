@@ -52,6 +52,8 @@ pub enum Step {
     Install,
     /// Store the help page on the phone and open it in the browser.
     Help,
+    /// Ready Linphone, if it is installed, as the app does after boot.
+    Linphone,
     /// Start an installed app by package name.
     Start(String),
 }
@@ -134,6 +136,10 @@ pub fn parse(text: &str) -> Result<Vec<Step>, String> {
             "help" => {
                 count(0)?;
                 Step::Help
+            }
+            "linphone" => {
+                count(0)?;
+                Step::Linphone
             }
             "start" => {
                 count(1)?;

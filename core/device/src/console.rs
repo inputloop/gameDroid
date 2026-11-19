@@ -173,20 +173,71 @@ pub fn open_help_command() -> String {
     )
 }
 
-/// A shell command line that installs the browser from the start of the
-/// second disk (`bytes` long there) unless it is installed already, and
-/// prints a mark when it has finished either way.
-pub fn install_browser_command(bytes: u64) -> String {
-    let apk = "/data/local/tmp/gd-browser.apk";
+/// An app's APK on the second disk, for Android to install.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Carried {
+    /// Its package name: [`FIREFOX`] or [`LINPHONE`].
+    pub package: &'static str,
+    /// The sector of the second disk it starts at.
+    pub sector: u64,
+    /// Its length in bytes.
+    pub bytes: u64,
+}
+
+/// The line Android's shell prints when it has finished with `package`.
+fn install_mark(package: &str) -> String {
+    let name: String = package
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() {
+                c.to_ascii_uppercase()
+            } else {
+                '_'
+            }
+        })
+        .collect();
+    format!("GD_MARK_INSTALLED_{name}")
+}
+
+/// A shell command line that installs an app from the second disk unless
+/// it is installed already, and prints a mark when it has finished either
+/// way.
+pub fn install_command(app: &Carried) -> String {
+    let apk = "/data/local/tmp/gd-app.apk";
+    let Carried {
+        package,
+        sector,
+        bytes,
+    } = app;
+    let mark = install_mark(package);
     format!(
-        "su 0 sh -c 'pm path {FIREFOX} >/dev/null 2>&1 || {{ head -c {bytes} /dev/block/vdb > {apk}; \
-         chmod 644 {apk}; pm install -r {apk}; rm -f {apk}; }}; echo GD_MARK_BROWSER'"
+        "su 0 sh -c 'pm path {package} >/dev/null 2>&1 || {{ \
+         dd if=/dev/block/vdb bs=512 skip={sector} 2>/dev/null | head -c {bytes} > {apk}; \
+         chmod 644 {apk}; pm install -r {apk}; rm -f {apk}; }}; echo {mark}'"
+    )
+}
+
+/// Linphone (GPLv3), the free calling app, in gameDroid's own build of it
+/// for this kind of processor.
+pub const LINPHONE: &str = "org.linphone";
+
+/// A shell command line that readies Linphone, if it is installed, to be
+/// a telephone: it may use the microphone, the camera and notifications
+/// without asking, and Android will not put it to sleep, which is how it
+/// hears an incoming call on an Android without Google's services.
+pub fn linphone_command() -> String {
+    let p = LINPHONE;
+    format!(
+        "su 0 sh -c 'pm path {p} >/dev/null 2>&1 || exit 0; \
+         for g in RECORD_AUDIO CAMERA POST_NOTIFICATIONS READ_PHONE_STATE; \
+         do pm grant {p} android.permission.$g 2>/dev/null; done; \
+         dumpsys deviceidle whitelist +{p} >/dev/null; echo GD_LINPHONE_SET'"
     )
 }
 
 /// Set Android up as a games machine once it has booted, on a thread of its
-/// own: the settings, then the browser (if its APK was handed over on the
-/// second disk, `browser_apk` bytes long), then the help page.
+/// own: the settings, then the apps handed over on the second disk, then
+/// the help page and each app's own setting up.
 ///
 /// The serial line has no flow control, so lines go one at a time with a
 /// pause, and the slow step (installing) is waited for by its mark.
@@ -194,7 +245,7 @@ pub fn after_boot(
     booted: Arc<AtomicBool>,
     marks: Marks,
     shell: Sender<Vec<u8>>,
-    browser_apk: Option<u64>,
+    apps: Vec<Carried>,
 ) {
     use std::time::Duration;
     std::thread::spawn(move || {
@@ -207,11 +258,12 @@ pub fn after_boot(
             return;
         }
         std::thread::sleep(Duration::from_secs(5));
-        if let Some(bytes) = browser_apk {
-            send(&install_browser_command(bytes));
+        for app in &apps {
+            send(&install_command(app));
+            let mark = install_mark(app.package);
             // A large app on a slow machine: up to ten minutes.
             for _ in 0..1200 {
-                if marks.lock().unwrap().iter().any(|m| m == "GD_MARK_BROWSER") {
+                if marks.lock().unwrap().contains(&mark) {
                     break;
                 }
                 std::thread::sleep(Duration::from_millis(500));
@@ -223,6 +275,7 @@ pub fn after_boot(
             }
             std::thread::sleep(Duration::from_millis(150));
         }
+        send(&linphone_command());
         // Keep the sender: dropping it would close Android's serial line.
         loop {
             std::thread::park();
@@ -339,14 +392,30 @@ mod tests {
         // A mark is a line of its own; the echo of the command is not one.
         let marks = watch.marks();
         watch
-            .write_all(b"console:/ $ su 0 sh -c 'x; echo GD_MARK_BROWSER'\r\nGD_MARK_BROWSER\r\n")
+            .write_all(
+                b"console:/ $ su 0 sh -c 'x; echo GD_MARK_INSTALLED_X'\r\nGD_MARK_INSTALLED_X\r\n",
+            )
             .unwrap();
-        assert_eq!(*marks.lock().unwrap(), vec!["GD_MARK_BROWSER"]);
-        let install = install_browser_command(9_359_352);
+        assert_eq!(*marks.lock().unwrap(), vec!["GD_MARK_INSTALLED_X"]);
+        let app = Carried {
+            package: FIREFOX,
+            sector: 18_281,
+            bytes: 9_359_352,
+        };
+        let install = install_command(&app);
         assert!(
-            install.contains("head -c 9359352 /dev/block/vdb")
-                && install.ends_with("echo GD_MARK_BROWSER'")
+            install.contains("skip=18281 2>/dev/null | head -c 9359352 >")
+                && install.contains("pm path org.mozilla.fennec_fdroid >/dev/null 2>&1 ||")
+                && install.ends_with("echo GD_MARK_INSTALLED_ORG_MOZILLA_FENNEC_FDROID'")
         );
+        // The mark is one the watcher keeps.
+        assert!(install_mark(LINPHONE) == "GD_MARK_INSTALLED_ORG_LINPHONE");
+        let ready = linphone_command();
+        assert!(ready.contains("pm grant org.linphone android.permission.$g"));
+        assert!(!ready
+            .trim_start_matches("su 0 sh -c '")
+            .trim_end_matches('\'')
+            .contains('\''));
     }
 
     #[test]
