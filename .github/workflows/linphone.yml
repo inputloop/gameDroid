@@ -23,6 +23,8 @@ permissions:
 env:
   LINPHONE_TAG: "6.2.10"
   LINPHONE_COMMIT: dd257eb73044be41f752109e11c7bda3a3de30d1
+  # The newest SDK release on the day that tag was made (2026-11-05).
+  LINPHONE_SDK_VERSION: "5.5.40"
   # Raised when gameDroid rebuilds the same Linphone release.
   GAMEDROID_BUILD: "1"
 jobs:
@@ -131,7 +133,7 @@ jobs:
 
           Linphone is free software by Belledonne Communications (GPLv3; its SDK AGPLv3). This is not their build: they publish for ARM processors only. It is their source at tag $LINPHONE_TAG (commit $LINPHONE_COMMIT), with the changes in \`changes.patch\` (attached): built for x86-64, Google's Firebase libraries taken out, and signed with gameDroid's key.
 
-          Source: https://github.com/BelledonneCommunications/linphone-android/tree/$LINPHONE_TAG and, for the native libraries, https://github.com/BelledonneCommunications/linphone-sdk at the version in \`result.txt\`. The build itself is this repository's \`.github/workflows/linphone.yml\` and \`tools/linphone/prepare.py\` at commit $GITHUB_SHA.
+          Source: https://github.com/BelledonneCommunications/linphone-android/tree/$LINPHONE_TAG and, for the native libraries, https://github.com/BelledonneCommunications/linphone-sdk at tag $LINPHONE_SDK_VERSION. The build itself is this repository's \`.github/workflows/linphone.yml\` and \`tools/linphone/prepare.py\` at commit $GITHUB_SHA.
           NOTES
           sed -i 's/^          //' notes.md
           gh release create "$tag" "$name" "$name.sha256" "$HOME/out/changes.patch" "$HOME/out/result.txt" \

@@ -11,10 +11,12 @@ unchanged release of the source plus exactly what this script does:
      reports), which are not free software and do nothing on an Android
      without Google's services. The changes follow F-Droid's recipe for
      the same app;
-  3. sign with the key named in the environment.
+  3. sign with the key named in the environment;
+  4. name the exact Linphone SDK release to build with, where the source
+     says "the newest".
 
 Usage: prepare.py <linphone-android checkout>
-Environment: LINPHONE_KEYSTORE (a path), LINPHONE_KEY_ALIAS,
+Environment: LINPHONE_SDK_VERSION, LINPHONE_KEYSTORE (a path), LINPHONE_KEY_ALIAS,
 LINPHONE_KEYSTORE_PASSWORD, LINPHONE_KEY_PASSWORD.
 """
 import os
@@ -40,6 +42,14 @@ def main():
     main_src = app / "src" / "main"
 
     (app / "google-services.json").unlink(missing_ok=True)
+
+    # The source asks for "the newest 5.5 SDK", which by now is newer than
+    # this release of the app was written for, and no longer fits it. Name
+    # the SDK release that was current when the app was released.
+    edit(
+        root / "gradle" / "libs.versions.toml",
+        [(r'^linphone = "[^"]*"', 'linphone = "{}"'.format(os.environ["LINPHONE_SDK_VERSION"]), 1)],
+    )
 
     edit(
         app / "build.gradle.kts",
