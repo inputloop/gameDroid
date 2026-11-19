@@ -42,7 +42,7 @@ jobs:
         run: |
           set +e
           mkdir -p "$HOME/out" && exec > >(tee "$HOME/out/result.txt") 2>&1
-          git clone -q --depth 1 -b "$LINPHONE_TAG" https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone"
+          git -c advice.detachedHead=false clone -q --depth 1 -b "$LINPHONE_TAG" https://github.com/BelledonneCommunications/linphone-android "$HOME/linphone" 2>/dev/null
           cd "$HOME/linphone"
           [ "$(git rev-parse HEAD)" = "$LINPHONE_COMMIT" ] || { echo "RESULT: tag $LINPHONE_TAG is not commit $LINPHONE_COMMIT any more; stopping"; exit 0; }
           echo "linphone-android $LINPHONE_TAG, commit $LINPHONE_COMMIT ($(git log -1 --format=%cs))"
@@ -57,10 +57,16 @@ jobs:
               -keyalg RSA -keysize 3072 -validity 30 -dname "CN=gameDroid CI throwaway key" 2>/dev/null
             echo "KEY: a throwaway made for this run; this build is for testing only" | tee "$HOME/out/key.txt"
           fi
-          python3 "$GITHUB_WORKSPACE/tools/linphone/prepare.py" "$HOME/linphone" || { echo "RESULT: the source could not be prepared"; exit 0; }
+          python3 "$GITHUB_WORKSPACE/tools/linphone/prepare.py" "$HOME/linphone" > "$HOME/out/prepare.txt" || { echo "RESULT: the source could not be prepared"; exit 0; }
           git diff > "$HOME/out/changes.patch"; sed -i '/Password=/d' "$HOME/out/changes.patch"
-          ./gradlew --no-daemon assembleRelease > "$HOME/out/gradle.log" 2>&1
-          echo "GRADLE_EXIT=$?"
+          # The package servers sometimes refuse a runner for a minute.
+          for attempt in 1 2 3; do
+            ./gradlew --no-daemon assembleRelease > "$HOME/out/gradle.log" 2>&1; status=$?
+            echo "GRADLE_EXIT=$status (attempt $attempt)"
+            [ "$status" = 0 ] && break
+            grep -q "Could not \(find\|resolve\|GET\)" "$HOME/out/gradle.log" || break
+            sleep 90
+          done
           grep -E "Linphone SDK used is|Computed git version|Signing config" "$HOME/out/gradle.log" | sort -u
           grep -E "^e: |error:|FAILED|What went wrong" -A 6 "$HOME/out/gradle.log" | cut -c1-300 | head -n 60 > "$HOME/out/gradle-errors.txt"
           tail -n 40 "$HOME/out/gradle.log" | cut -c1-300 > "$HOME/out/gradle-tail.txt"
