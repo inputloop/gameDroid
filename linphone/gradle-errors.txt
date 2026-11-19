@@ -12,5 +12,5 @@ Execution failed for task ':app:mergeReleaseNativeLibs' (registered by plugin 'c
          project ':app'
 
 --
-BUILD FAILED in 7s
+BUILD FAILED in 8s
 3 actionable tasks: 2 executed, 1 up-to-date

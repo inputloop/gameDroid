@@ -36,5 +36,5 @@ Execution failed for task ':app:mergeReleaseNativeLibs' (registered by plugin 'c
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 7s
+BUILD FAILED in 8s
 3 actionable tasks: 2 executed, 1 up-to-date
