@@ -59,6 +59,10 @@ jobs:
               -keyalg RSA -keysize 3072 -validity 30 -dname "CN=gameDroid CI throwaway key" 2>/dev/null
             echo "KEY: a throwaway made for this run; this build is for testing only" | tee "$HOME/out/key.txt"
           fi
+          echo "--- SDK versions near $LINPHONE_SDK_VERSION in Linphone's package store"
+          curl -sSfL https://download.linphone.org/maven_repository/org/linphone/linphone-sdk-android/maven-metadata.xml -o "$RUNNER_TEMP/sdk.xml" || echo "the list could not be fetched"
+          grep -oE '<version>5\.5\.(3[6-9]|4[0-9])[^<]*' "$RUNNER_TEMP/sdk.xml" | sed 's/<version>//' | tr '\n' ' '; echo
+          echo "release: $(grep -oE '<release>[^<]*' "$RUNNER_TEMP/sdk.xml") latest: $(grep -oE '<latest>[^<]*' "$RUNNER_TEMP/sdk.xml")"
           python3 "$GITHUB_WORKSPACE/tools/linphone/prepare.py" "$HOME/linphone" > "$HOME/out/prepare.txt" || { echo "RESULT: the source could not be prepared"; exit 0; }
           git diff > "$HOME/out/changes.patch"; sed -i '/Password=/d' "$HOME/out/changes.patch"
           # The package servers sometimes refuse a runner for a minute.
